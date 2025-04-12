@@ -1,0 +1,20 @@
+-- run_test.py: invoking following command in '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package':
+ - /opt/ros/humble/bin/ament_xmllint --xunit-file /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/test_results/test_package/xmllint.xunit.xml
+
+File 'package.xml' is valid
+
+File 'build/test_package/test_results/test_package/cppcheck.xunit.xml' is valid
+
+File 'build/test_package/test_results/test_package/lint_cmake.xunit.xml' is valid
+
+File 'build/test_package/test_results/test_package/uncrustify.xunit.xml' is valid
+
+File 'build/test_package/test_results/test_package/xmllint.xunit.xml' is valid
+
+File 'install/test_package/share/test_package/package.xml' is valid
+
+No problems found
+
+
+-- run_test.py: return code 0
+-- run_test.py: verify result file '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/test_results/test_package/xmllint.xunit.xml'

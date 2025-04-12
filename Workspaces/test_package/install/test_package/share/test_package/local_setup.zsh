@@ -1,0 +1,1 @@
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/local_setup.zsh
