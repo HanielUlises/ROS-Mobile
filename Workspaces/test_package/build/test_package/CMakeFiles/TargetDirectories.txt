@@ -1,6 +1,7 @@
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/uninstall.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/test_package_uninstall.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/publisher.dir
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/subscriber.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/test.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/edit_cache.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/rebuild_cache.dir

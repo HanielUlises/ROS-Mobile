@@ -13,6 +13,10 @@ find_package(std_msgs REQUIRED)
 add_executable(publisher src/publisher.cpp)
 ament_target_dependencies(publisher rclcpp std_msgs)
 
+
+add_executable(subscriber src/subscriber.cpp)
+ament_target_dependencies(subscriber rclcpp std_msgs)
+
 install(TARGETS
   publisher
   DESTINATION lib/${PROJECT_NAME}
