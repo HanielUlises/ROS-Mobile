@@ -1,0 +1,53 @@
+[0.011s] Invoking command in '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package -- -j16 -l16
+[0.064s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.201s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.217s] -- Found rclcpp: 16.0.12 (/opt/ros/humble/share/rclcpp/cmake)
+[0.256s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.260s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.268s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.280s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.294s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.337s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.339s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.443s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.507s] -- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.655s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[0.655s] -- Configured cppcheck include dirs: 
+[0.656s] -- Configured cppcheck exclude dirs and/or files: 
+[0.657s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.660s] -- Added test 'lint_cmake' to check CMake code style
+[0.664s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.680s] -- Added test 'uncrustify' to check C / C++ code style
+[0.681s] -- Configured uncrustify additional arguments: 
+[0.683s] -- Added test 'xmllint' to check XML markup files
+[0.685s] -- Configuring done
+[0.703s] -- Generating done
+[0.709s] -- Build files have been written to: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package
+[0.757s] [35m[1mConsolidate compiler generated dependencies of target publisher[0m
+[0.757s] [35m[1mConsolidate compiler generated dependencies of target subscriber[0m
+[0.779s] [ 50%] Built target subscriber
+[0.780s] [ 75%] [32mBuilding CXX object CMakeFiles/publisher.dir/src/publisher.cpp.o[0m
+[6.524s] [100%] [32m[1mLinking CXX executable publisher[0m
+[6.693s] [100%] Built target publisher
+[6.703s] Invoked command in '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package -- -j16 -l16
+[6.711s] Invoking command in '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package
+[6.716s] -- Install configuration: ""
+[6.716s] -- Execute custom install script
+[6.716s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/publisher
+[6.717s] -- Symlinking: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/subscriber
+[6.723s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/package_run_dependencies/test_package
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/parent_prefix_path/test_package
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/ament_prefix_path.sh
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/ament_prefix_path.dsv
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/path.sh
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/path.dsv
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.bash
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.sh
+[6.724s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.zsh
+[6.725s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.dsv
+[6.725s] -- Symlinking: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/package.dsv
+[6.732s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/packages/test_package
+[6.732s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/cmake/test_packageConfig.cmake
+[6.732s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/cmake/test_packageConfig-version.cmake
+[6.732s] -- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/package.xml
+[6.734s] Invoked command in '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package

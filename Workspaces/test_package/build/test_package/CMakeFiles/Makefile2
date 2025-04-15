@@ -63,8 +63,8 @@ CMAKE_BINARY_DIR = /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/buil
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/publisher.dir/all
-all: CMakeFiles/subscriber.dir/all
+all: CMakeFiles/rpm_pub.dir/all
+all: CMakeFiles/rpm_sub.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -74,8 +74,8 @@ preinstall:
 # The main recursive "clean" target.
 clean: CMakeFiles/uninstall.dir/clean
 clean: CMakeFiles/test_package_uninstall.dir/clean
-clean: CMakeFiles/publisher.dir/clean
-clean: CMakeFiles/subscriber.dir/clean
+clean: CMakeFiles/rpm_pub.dir/clean
+clean: CMakeFiles/rpm_sub.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -131,56 +131,56 @@ CMakeFiles/test_package_uninstall.dir/clean:
 .PHONY : CMakeFiles/test_package_uninstall.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/publisher.dir
+# Target rules for target CMakeFiles/rpm_pub.dir
 
 # All Build rule for target.
-CMakeFiles/publisher.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles --progress-num=1,2 "Built target publisher"
-.PHONY : CMakeFiles/publisher.dir/all
+CMakeFiles/rpm_pub.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles --progress-num=1,2 "Built target rpm_pub"
+.PHONY : CMakeFiles/rpm_pub.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/publisher.dir/rule: cmake_check_build_system
+CMakeFiles/rpm_pub.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/publisher.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/rpm_pub.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles 0
-.PHONY : CMakeFiles/publisher.dir/rule
+.PHONY : CMakeFiles/rpm_pub.dir/rule
 
 # Convenience name for target.
-publisher: CMakeFiles/publisher.dir/rule
-.PHONY : publisher
+rpm_pub: CMakeFiles/rpm_pub.dir/rule
+.PHONY : rpm_pub
 
 # clean rule for target.
-CMakeFiles/publisher.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/clean
-.PHONY : CMakeFiles/publisher.dir/clean
+CMakeFiles/rpm_pub.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/clean
+.PHONY : CMakeFiles/rpm_pub.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/subscriber.dir
+# Target rules for target CMakeFiles/rpm_sub.dir
 
 # All Build rule for target.
-CMakeFiles/subscriber.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles --progress-num=3,4 "Built target subscriber"
-.PHONY : CMakeFiles/subscriber.dir/all
+CMakeFiles/rpm_sub.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles --progress-num=3,4 "Built target rpm_sub"
+.PHONY : CMakeFiles/rpm_sub.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/subscriber.dir/rule: cmake_check_build_system
+CMakeFiles/rpm_sub.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/subscriber.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/rpm_sub.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles 0
-.PHONY : CMakeFiles/subscriber.dir/rule
+.PHONY : CMakeFiles/rpm_sub.dir/rule
 
 # Convenience name for target.
-subscriber: CMakeFiles/subscriber.dir/rule
-.PHONY : subscriber
+rpm_sub: CMakeFiles/rpm_sub.dir/rule
+.PHONY : rpm_sub
 
 # clean rule for target.
-CMakeFiles/subscriber.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/clean
-.PHONY : CMakeFiles/subscriber.dir/clean
+CMakeFiles/rpm_sub.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/clean
+.PHONY : CMakeFiles/rpm_sub.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

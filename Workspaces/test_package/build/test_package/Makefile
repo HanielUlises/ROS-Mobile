@@ -198,78 +198,78 @@ test_package_uninstall/fast:
 .PHONY : test_package_uninstall/fast
 
 #=============================================================================
-# Target rules for targets named publisher
+# Target rules for targets named rpm_pub
 
 # Build rule for target.
-publisher: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 publisher
-.PHONY : publisher
+rpm_pub: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rpm_pub
+.PHONY : rpm_pub
 
 # fast build rule for target.
-publisher/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/build
-.PHONY : publisher/fast
+rpm_pub/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/build
+.PHONY : rpm_pub/fast
 
 #=============================================================================
-# Target rules for targets named subscriber
+# Target rules for targets named rpm_sub
 
 # Build rule for target.
-subscriber: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 subscriber
-.PHONY : subscriber
+rpm_sub: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rpm_sub
+.PHONY : rpm_sub
 
 # fast build rule for target.
-subscriber/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/build
-.PHONY : subscriber/fast
+rpm_sub/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/build
+.PHONY : rpm_sub/fast
 
-src/publisher.o: src/publisher.cpp.o
-.PHONY : src/publisher.o
-
-# target to build an object file
-src/publisher.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/src/publisher.cpp.o
-.PHONY : src/publisher.cpp.o
-
-src/publisher.i: src/publisher.cpp.i
-.PHONY : src/publisher.i
-
-# target to preprocess a source file
-src/publisher.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/src/publisher.cpp.i
-.PHONY : src/publisher.cpp.i
-
-src/publisher.s: src/publisher.cpp.s
-.PHONY : src/publisher.s
-
-# target to generate assembly for a file
-src/publisher.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/publisher.dir/build.make CMakeFiles/publisher.dir/src/publisher.cpp.s
-.PHONY : src/publisher.cpp.s
-
-src/subscriber.o: src/subscriber.cpp.o
-.PHONY : src/subscriber.o
+src/rpm_pub.o: src/rpm_pub.cpp.o
+.PHONY : src/rpm_pub.o
 
 # target to build an object file
-src/subscriber.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/src/subscriber.cpp.o
-.PHONY : src/subscriber.cpp.o
+src/rpm_pub.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/src/rpm_pub.cpp.o
+.PHONY : src/rpm_pub.cpp.o
 
-src/subscriber.i: src/subscriber.cpp.i
-.PHONY : src/subscriber.i
+src/rpm_pub.i: src/rpm_pub.cpp.i
+.PHONY : src/rpm_pub.i
 
 # target to preprocess a source file
-src/subscriber.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/src/subscriber.cpp.i
-.PHONY : src/subscriber.cpp.i
+src/rpm_pub.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/src/rpm_pub.cpp.i
+.PHONY : src/rpm_pub.cpp.i
 
-src/subscriber.s: src/subscriber.cpp.s
-.PHONY : src/subscriber.s
+src/rpm_pub.s: src/rpm_pub.cpp.s
+.PHONY : src/rpm_pub.s
 
 # target to generate assembly for a file
-src/subscriber.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/subscriber.dir/build.make CMakeFiles/subscriber.dir/src/subscriber.cpp.s
-.PHONY : src/subscriber.cpp.s
+src/rpm_pub.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_pub.dir/build.make CMakeFiles/rpm_pub.dir/src/rpm_pub.cpp.s
+.PHONY : src/rpm_pub.cpp.s
+
+src/rpm_sub.o: src/rpm_sub.cpp.o
+.PHONY : src/rpm_sub.o
+
+# target to build an object file
+src/rpm_sub.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/src/rpm_sub.cpp.o
+.PHONY : src/rpm_sub.cpp.o
+
+src/rpm_sub.i: src/rpm_sub.cpp.i
+.PHONY : src/rpm_sub.i
+
+# target to preprocess a source file
+src/rpm_sub.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/src/rpm_sub.cpp.i
+.PHONY : src/rpm_sub.cpp.i
+
+src/rpm_sub.s: src/rpm_sub.cpp.s
+.PHONY : src/rpm_sub.s
+
+# target to generate assembly for a file
+src/rpm_sub.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/src/rpm_sub.cpp.s
+.PHONY : src/rpm_sub.cpp.s
 
 # Help Target
 help:
@@ -286,14 +286,14 @@ help:
 	@echo "... test"
 	@echo "... test_package_uninstall"
 	@echo "... uninstall"
-	@echo "... publisher"
-	@echo "... subscriber"
-	@echo "... src/publisher.o"
-	@echo "... src/publisher.i"
-	@echo "... src/publisher.s"
-	@echo "... src/subscriber.o"
-	@echo "... src/subscriber.i"
-	@echo "... src/subscriber.s"
+	@echo "... rpm_pub"
+	@echo "... rpm_sub"
+	@echo "... src/rpm_pub.o"
+	@echo "... src/rpm_pub.i"
+	@echo "... src/rpm_pub.s"
+	@echo "... src/rpm_sub.o"
+	@echo "... src/rpm_sub.i"
+	@echo "... src/rpm_sub.s"
 .PHONY : help
 
 

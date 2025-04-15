@@ -310,7 +310,7 @@ message(STATUS "Execute custom install script")
 
 # begin of custom install code
 
-# install("TARGETS" "publisher" "DESTINATION" "lib/test_package")
+# install("TARGETS" "rpm_pub" "rpm_sub" "DESTINATION" "lib/test_package")
 include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_0_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/test_package" "DESTINATION" "share/ament_index/resource_index/package_run_dependencies")

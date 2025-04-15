@@ -653,6 +653,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/uninstall.dir/DependInfo.cmake"
   "CMakeFiles/test_package_uninstall.dir/DependInfo.cmake"
-  "CMakeFiles/publisher.dir/DependInfo.cmake"
-  "CMakeFiles/subscriber.dir/DependInfo.cmake"
+  "CMakeFiles/rpm_pub.dir/DependInfo.cmake"
+  "CMakeFiles/rpm_sub.dir/DependInfo.cmake"
   )
