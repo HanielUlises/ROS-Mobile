@@ -16,9 +16,13 @@ ament_target_dependencies(rpm_pub rclcpp std_msgs)
 add_executable(rpm_sub src/rpm_sub.cpp)
 ament_target_dependencies(rpm_sub rclcpp std_msgs)
 
+add_executable(speed_calc src/speed_calc.cpp)
+ament_target_dependencies(speed_calc rclcpp std_msgs)
+
 install(TARGETS
   rpm_pub
   rpm_sub
+  speed_calc
   DESTINATION lib/${PROJECT_NAME}
 )
 
