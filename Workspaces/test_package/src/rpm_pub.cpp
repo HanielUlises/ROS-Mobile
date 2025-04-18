@@ -7,29 +7,32 @@
 
 using namespace std::chrono_literals;
 
-const double RPM_VAL = 100.0f;
+const double RPM_DEFAULT_VALUE = 100.0f;
 
 class RpmPubNode : public rclcpp :: Node{
     public:
         RpmPubNode() : Node ("rpm_pub_node") {
+            this -> declare_parameter<double>("rpm_val", RPM_DEFAULT_VALUE); 
             publisher_ = this -> create_publisher<std_msgs::msg::Float64>(
                 "hello_world", 10
             );
             timer_ = this -> create_wall_timer(1s,
-            std::bind(&RpmPubNode::publish_hello_world, this));
+            std::bind(&RpmPubNode::publish_rpm, this));
             std::cout << "RPM Publisher Node is running... " << '\n';
         }
 
     private:
-        void publish_hello_world(){
+        void publish_rpm(){
             auto message = std_msgs::msg::Float64();
-            message.data = RPM_VAL;
+            this -> get_parameter("rpm_val", rpm_val_param);
+            message.data = rpm_val_param;
 
             publisher_ -> publish(message);
         }
         
         rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr publisher_;
         rclcpp::TimerBase::SharedPtr timer_;
+        double rpm_val_param = RPM_DEFAULT_VALUE;
 };
 
 int main (int argc, char** argv){
