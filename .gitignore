@@ -1,0 +1,75 @@
+# ROS-specific generated files
+*.bag
+*.bag.*
+*.ros
+*.world
+*.sdf
+*.gazebo
+*.rviz
+*.pyc
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.so
+
+# C++ build artifacts
+*.o
+*.a
+*.cmake
+*.make
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# Common IDE and editor files
+*.swp
+*.swo
+*.swn
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Logs and temporary files
+*.log
+*.pid
+*.seed
+*.tgz
+*.tbz2
+*.tar.gz
+*.zip
+*.bak
+*.tmp
+*.temp
+*.backup
+
+# Dependency management
+*.lock
+
+# Testing and coverage
+*.gcda
+*.gcno
+*.gcov
+test_results.*
+
+# Documentation generated files
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.toc
+
+# Environment-specific files
+*.env
+*.local
