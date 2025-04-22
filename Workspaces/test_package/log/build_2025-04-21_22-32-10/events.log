@@ -1,0 +1,85 @@
+[0.000000] (-) TimerEvent: {}
+[0.000401] (test_package) JobQueued: {'identifier': 'test_package', 'dependencies': OrderedDict()}
+[0.000733] (test_package) JobStarted: {'identifier': 'test_package'}
+[0.007569] (test_package) JobProgress: {'identifier': 'test_package', 'progress': 'cmake'}
+[0.008277] (test_package) JobProgress: {'identifier': 'test_package', 'progress': 'build'}
+[0.009011] (test_package) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package', '--', '-j16', '-l16'], 'cwd': '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package', 'env': OrderedDict([('TMUX', '/tmp/tmux-1000/default,8859,3'), ('LC_TIME', 'es_MX.UTF-8'), ('USER', 'haniel'), ('XDG_SESSION_TYPE', 'x11'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('SHLVL', '2'), ('HOME', '/home/haniel'), ('LESS', '-R'), ('OLDPWD', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package'), ('DESKTOP_SESSION', 'ubuntu'), ('TERM_PROGRAM_VERSION', '3.2a'), ('LSCOLORS', 'Gxfxcxdxbxegedabagacad'), ('ZSH', '/home/haniel/.oh-my-zsh'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('PAGER', 'less'), ('ROS_PYTHON_VERSION', '3'), ('LC_MONETARY', 'es_MX.UTF-8'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('SYSTEMD_EXEC_PID', '3392'), ('COLORTERM', 'truecolor'), ('_colcon_cd_root', '/opt/ros/humble/'), ('COLCON_PREFIX_PATH', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'haniel'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'screen-256color'), ('USERNAME', 'haniel'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/home/haniel/.cabal/bin:/home/haniel/.ghcup/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/haniel/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/scripts/noConfigScripts'), ('SESSION_MANAGER', 'local/HanielUlises:@/tmp/.ICE-unix/3369,unix/HanielUlises:/tmp/.ICE-unix/3369'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/292fee1b_2d05_4977_97eb_4c9ec15b25c0'), ('LC_ADDRESS', 'es_MX.UTF-8'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LC_TELEPHONE', 'es_MX.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('GNOME_TERMINAL_SERVICE', ':1.134'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'tmux'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XMODIFIERS', '@im=ibus'), ('AMENT_PREFIX_PATH', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package:/opt/ros/humble'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('LC_NAME', 'es_MX.UTF-8'), ('SHELL', '/bin/zsh'), ('GDMSESSION', 'ubuntu'), ('QT_ACCESSIBILITY', '1'), ('LC_MEASUREMENT', 'es_MX.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('LC_IDENTIFICATION', 'es_MX.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('LC_NUMERIC', 'es_MX.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_PAPER', 'es_MX.UTF-8'), ('COLCON', '1'), ('TMUX_PANE', '%11'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package:/opt/ros/humble')]), 'shell': False}
+[0.051177] (test_package) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target speed_calc\x1b[0m\n'}
+[0.051897] (test_package) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target rpm_pub\x1b[0m\n'}
+[0.064405] (test_package) StdoutLine: {'line': b'[ 33%] Built target rpm_sub\n'}
+[0.066347] (test_package) StdoutLine: {'line': b'[ 66%] Built target speed_calc\n'}
+[0.071368] (test_package) StdoutLine: {'line': b'[ 83%] \x1b[32mBuilding CXX object CMakeFiles/rpm_pub.dir/src/rpm_pub.cpp.o\x1b[0m\n'}
+[0.099704] (-) TimerEvent: {}
+[0.200017] (-) TimerEvent: {}
+[0.300267] (-) TimerEvent: {}
+[0.400628] (-) TimerEvent: {}
+[0.501241] (-) TimerEvent: {}
+[0.601933] (-) TimerEvent: {}
+[0.702382] (-) TimerEvent: {}
+[0.802677] (-) TimerEvent: {}
+[0.902950] (-) TimerEvent: {}
+[1.003225] (-) TimerEvent: {}
+[1.103483] (-) TimerEvent: {}
+[1.203768] (-) TimerEvent: {}
+[1.304018] (-) TimerEvent: {}
+[1.404286] (-) TimerEvent: {}
+[1.504556] (-) TimerEvent: {}
+[1.605038] (-) TimerEvent: {}
+[1.705377] (-) TimerEvent: {}
+[1.805645] (-) TimerEvent: {}
+[1.906046] (-) TimerEvent: {}
+[2.006723] (-) TimerEvent: {}
+[2.107255] (-) TimerEvent: {}
+[2.207811] (-) TimerEvent: {}
+[2.308142] (-) TimerEvent: {}
+[2.408360] (-) TimerEvent: {}
+[2.508630] (-) TimerEvent: {}
+[2.608882] (-) TimerEvent: {}
+[2.709113] (-) TimerEvent: {}
+[2.809341] (-) TimerEvent: {}
+[2.909550] (-) TimerEvent: {}
+[3.009896] (-) TimerEvent: {}
+[3.110286] (-) TimerEvent: {}
+[3.210578] (-) TimerEvent: {}
+[3.310921] (-) TimerEvent: {}
+[3.411182] (-) TimerEvent: {}
+[3.511728] (-) TimerEvent: {}
+[3.612319] (-) TimerEvent: {}
+[3.712694] (-) TimerEvent: {}
+[3.813109] (-) TimerEvent: {}
+[3.913402] (-) TimerEvent: {}
+[4.013752] (-) TimerEvent: {}
+[4.114149] (-) TimerEvent: {}
+[4.214402] (-) TimerEvent: {}
+[4.290745] (test_package) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable rpm_pub\x1b[0m\n'}
+[4.314500] (-) TimerEvent: {}
+[4.414811] (-) TimerEvent: {}
+[4.462151] (test_package) StdoutLine: {'line': b'[100%] Built target rpm_pub\n'}
+[4.473184] (test_package) CommandEnded: {'returncode': 0}
+[4.473548] (test_package) JobProgress: {'identifier': 'test_package', 'progress': 'install'}
+[4.480741] (test_package) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package'], 'cwd': '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package', 'env': OrderedDict([('TMUX', '/tmp/tmux-1000/default,8859,3'), ('LC_TIME', 'es_MX.UTF-8'), ('USER', 'haniel'), ('XDG_SESSION_TYPE', 'x11'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('SHLVL', '2'), ('HOME', '/home/haniel'), ('LESS', '-R'), ('OLDPWD', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package'), ('DESKTOP_SESSION', 'ubuntu'), ('TERM_PROGRAM_VERSION', '3.2a'), ('LSCOLORS', 'Gxfxcxdxbxegedabagacad'), ('ZSH', '/home/haniel/.oh-my-zsh'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('PAGER', 'less'), ('ROS_PYTHON_VERSION', '3'), ('LC_MONETARY', 'es_MX.UTF-8'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('SYSTEMD_EXEC_PID', '3392'), ('COLORTERM', 'truecolor'), ('_colcon_cd_root', '/opt/ros/humble/'), ('COLCON_PREFIX_PATH', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'haniel'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'screen-256color'), ('USERNAME', 'haniel'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/home/haniel/.cabal/bin:/home/haniel/.ghcup/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/haniel/.vscode/extensions/ms-python.debugpy-2025.6.0-linux-x64/bundled/scripts/noConfigScripts'), ('SESSION_MANAGER', 'local/HanielUlises:@/tmp/.ICE-unix/3369,unix/HanielUlises:/tmp/.ICE-unix/3369'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/292fee1b_2d05_4977_97eb_4c9ec15b25c0'), ('LC_ADDRESS', 'es_MX.UTF-8'), ('XDG_MENU_PREFIX', 'gnome-'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LC_TELEPHONE', 'es_MX.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('GNOME_TERMINAL_SERVICE', ':1.134'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'tmux'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XMODIFIERS', '@im=ibus'), ('AMENT_PREFIX_PATH', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package:/opt/ros/humble'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('LC_NAME', 'es_MX.UTF-8'), ('SHELL', '/bin/zsh'), ('GDMSESSION', 'ubuntu'), ('QT_ACCESSIBILITY', '1'), ('LC_MEASUREMENT', 'es_MX.UTF-8'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('LC_IDENTIFICATION', 'es_MX.UTF-8'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('LC_NUMERIC', 'es_MX.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_PAPER', 'es_MX.UTF-8'), ('COLCON', '1'), ('TMUX_PANE', '%11'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package:/opt/ros/humble')]), 'shell': False}
+[4.488283] (test_package) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[4.488643] (test_package) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[4.488951] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/rpm_pub\n'}
+[4.489106] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/rpm_sub\n'}
+[4.489256] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/speed_calc\n'}
+[4.489370] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package//launch/rpm_node_launch.py\n'}
+[4.489509] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/package_run_dependencies/test_package\n'}
+[4.489711] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/parent_prefix_path/test_package\n'}
+[4.489831] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/ament_prefix_path.sh\n'}
+[4.489945] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/ament_prefix_path.dsv\n'}
+[4.490132] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/path.sh\n'}
+[4.490204] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/path.dsv\n'}
+[4.490306] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.bash\n'}
+[4.490417] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.sh\n'}
+[4.490528] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.zsh\n'}
+[4.490791] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/local_setup.dsv\n'}
+[4.490941] (test_package) StdoutLine: {'line': b'-- Symlinking: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/package.dsv\n'}
+[4.498913] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/packages/test_package\n'}
+[4.499134] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/cmake/test_packageConfig.cmake\n'}
+[4.499223] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/cmake/test_packageConfig-version.cmake\n'}
+[4.499277] (test_package) StdoutLine: {'line': b'-- Up-to-date symlink: /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/package.xml\n'}
+[4.501220] (test_package) CommandEnded: {'returncode': 0}
+[4.514928] (-) TimerEvent: {}
+[4.517232] (test_package) JobEnded: {'identifier': 'test_package', 'rc': 0}
+[4.518006] (-) EventReactorShutdown: {}

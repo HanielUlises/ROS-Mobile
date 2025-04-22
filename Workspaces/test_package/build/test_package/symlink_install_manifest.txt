@@ -1,5 +1,7 @@
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/rpm_pub
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/rpm_sub
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/lib/test_package/speed_calc
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package//launch/rpm_node_launch.py
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/package_run_dependencies/test_package
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/ament_index/resource_index/parent_prefix_path/test_package
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/install/test_package/share/test_package/environment/ament_prefix_path.sh

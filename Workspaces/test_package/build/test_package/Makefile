@@ -223,6 +223,19 @@ rpm_sub/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/build
 .PHONY : rpm_sub/fast
 
+#=============================================================================
+# Target rules for targets named speed_calc
+
+# Build rule for target.
+speed_calc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 speed_calc
+.PHONY : speed_calc
+
+# fast build rule for target.
+speed_calc/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/build
+.PHONY : speed_calc/fast
+
 src/rpm_pub.o: src/rpm_pub.cpp.o
 .PHONY : src/rpm_pub.o
 
@@ -271,6 +284,30 @@ src/rpm_sub.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/src/rpm_sub.cpp.s
 .PHONY : src/rpm_sub.cpp.s
 
+src/speed_calc.o: src/speed_calc.cpp.o
+.PHONY : src/speed_calc.o
+
+# target to build an object file
+src/speed_calc.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/src/speed_calc.cpp.o
+.PHONY : src/speed_calc.cpp.o
+
+src/speed_calc.i: src/speed_calc.cpp.i
+.PHONY : src/speed_calc.i
+
+# target to preprocess a source file
+src/speed_calc.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/src/speed_calc.cpp.i
+.PHONY : src/speed_calc.cpp.i
+
+src/speed_calc.s: src/speed_calc.cpp.s
+.PHONY : src/speed_calc.s
+
+# target to generate assembly for a file
+src/speed_calc.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/src/speed_calc.cpp.s
+.PHONY : src/speed_calc.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -288,12 +325,16 @@ help:
 	@echo "... uninstall"
 	@echo "... rpm_pub"
 	@echo "... rpm_sub"
+	@echo "... speed_calc"
 	@echo "... src/rpm_pub.o"
 	@echo "... src/rpm_pub.i"
 	@echo "... src/rpm_pub.s"
 	@echo "... src/rpm_sub.o"
 	@echo "... src/rpm_sub.i"
 	@echo "... src/rpm_sub.s"
+	@echo "... src/speed_calc.o"
+	@echo "... src/speed_calc.i"
+	@echo "... src/speed_calc.s"
 .PHONY : help
 
 

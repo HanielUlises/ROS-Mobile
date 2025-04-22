@@ -65,6 +65,7 @@ CMAKE_BINARY_DIR = /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/buil
 # The main recursive "all" target.
 all: CMakeFiles/rpm_pub.dir/all
 all: CMakeFiles/rpm_sub.dir/all
+all: CMakeFiles/speed_calc.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -76,6 +77,7 @@ clean: CMakeFiles/uninstall.dir/clean
 clean: CMakeFiles/test_package_uninstall.dir/clean
 clean: CMakeFiles/rpm_pub.dir/clean
 clean: CMakeFiles/rpm_sub.dir/clean
+clean: CMakeFiles/speed_calc.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -181,6 +183,32 @@ rpm_sub: CMakeFiles/rpm_sub.dir/rule
 CMakeFiles/rpm_sub.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/clean
 .PHONY : CMakeFiles/rpm_sub.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/speed_calc.dir
+
+# All Build rule for target.
+CMakeFiles/speed_calc.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles --progress-num=5,6 "Built target speed_calc"
+.PHONY : CMakeFiles/speed_calc.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/speed_calc.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/speed_calc.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles 0
+.PHONY : CMakeFiles/speed_calc.dir/rule
+
+# Convenience name for target.
+speed_calc: CMakeFiles/speed_calc.dir/rule
+.PHONY : speed_calc
+
+# clean rule for target.
+CMakeFiles/speed_calc.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/clean
+.PHONY : CMakeFiles/speed_calc.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

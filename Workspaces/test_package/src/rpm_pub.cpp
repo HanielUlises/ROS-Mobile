@@ -14,7 +14,7 @@ class RpmPubNode : public rclcpp :: Node{
         RpmPubNode() : Node ("rpm_pub_node") {
             this -> declare_parameter<double>("rpm_val", RPM_DEFAULT_VALUE); 
             publisher_ = this -> create_publisher<std_msgs::msg::Float64>(
-                "hello_world", 10
+                "rpm_pub", 10
             );
             timer_ = this -> create_wall_timer(1s,
             std::bind(&RpmPubNode::publish_rpm, this));
