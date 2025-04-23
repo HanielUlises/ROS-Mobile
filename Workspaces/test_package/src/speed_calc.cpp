@@ -10,7 +10,7 @@ class SpeedCalcNode : public rclcpp :: Node{
     public:
         SpeedCalcNode() : Node ("speed_calc_node") {
             rpm_subscription_ = this -> create_subscription<std_msgs::msg::Float64>(
-                "rpm", 10, std::bind(&SpeedCalcNode::calculate_and_pub_speed, this, std::placeholders::_1)
+                "rpm_pub", 10, std::bind(&SpeedCalcNode::calculate_and_pub_speed, this, std::placeholders::_1)
             ); 
             speed_publisher_ = this -> create_publisher<std_msgs::msg::Float64>("speed", 10);
             std::cout << "Speed Calc Node Is Running... " << '\n';
