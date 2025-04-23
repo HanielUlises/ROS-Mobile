@@ -4,11 +4,12 @@
 #include <cmath>
 #include <iostream>
 
-const double WHEEL_RADIUS = 12.5/100.0f;
+const double DEFAULT_WHEEL_RADIUS = 12.5/100.0f;
 
 class SpeedCalcNode : public rclcpp :: Node{
     public:
         SpeedCalcNode() : Node ("speed_calc_node") {
+            this -> declare_parameter<double> ("wheel_radius", DEFAULT_WHEEL_RADIUS);
             rpm_subscription_ = this -> create_subscription<std_msgs::msg::Float64>(
                 "rpm_pub", 10, std::bind(&SpeedCalcNode::calculate_and_pub_speed, this, std::placeholders::_1)
             ); 
@@ -19,8 +20,10 @@ class SpeedCalcNode : public rclcpp :: Node{
     private:
         void calculate_and_pub_speed(const std_msgs::msg::Float64 & rpm_msg) const {
             auto speed_msg = std_msgs::msg::Float64(); 
+            float wheel_radius_param = DEFAULT_WHEEL_RADIUS;
+            this -> get_parameter("wheel_radius", wheel_radius_param);
             // Speed [m/s] = RPM [rev/min] * Wheel Circumference [meters/rev] / 60 [seconds/min]
-            speed_msg.data = rpm_msg.data * (2 * WHEEL_RADIUS * M_PI)/60; // m/s
+            speed_msg.data = rpm_msg.data * (2 * DEFAULT_WHEEL_RADIUS * M_PI)/60; // m/s
             speed_publisher_ -> publish(speed_msg);
         }
 
