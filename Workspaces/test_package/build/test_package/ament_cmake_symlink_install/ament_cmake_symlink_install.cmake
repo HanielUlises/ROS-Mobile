@@ -310,8 +310,68 @@ message(STATUS "Execute custom install script")
 
 # begin of custom install code
 
-# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "DESTINATION" "lib/test_package")
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_index/share/ament_index/resource_index/rosidl_interfaces/test_package" "DESTINATION" "share/ament_index/resource_index/rosidl_interfaces")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_index/share/ament_index/resource_index/rosidl_interfaces/test_package" "DESTINATION" "share/ament_index/resource_index/rosidl_interfaces")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_c/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.h")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_c/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.h")
+
+# install(FILES "/opt/ros/humble/lib/python3.10/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/test_package/environment")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/opt/ros/humble/lib/python3.10/site-packages/ament_package/template/environment_hook/library_path.sh" "DESTINATION" "share/test_package/environment")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/library_path.dsv" "DESTINATION" "share/test_package/environment")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/library_path.dsv" "DESTINATION" "share/test_package/environment")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_fastrtps_c/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN_EXCLUDE" "*.cpp")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_fastrtps_c/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN_EXCLUDE" "*.cpp")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_cpp/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.hpp")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_cpp/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.hpp")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_fastrtps_cpp/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN_EXCLUDE" "*.cpp")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_fastrtps_cpp/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN_EXCLUDE" "*.cpp")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_introspection_c/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.h")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_introspection_c/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.h")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_introspection_cpp/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.hpp")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_introspection_cpp/test_package/" "DESTINATION" "include/test_package/test_package" "PATTERN" "*.hpp")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/pythonpath.sh" "DESTINATION" "share/test_package/environment")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/pythonpath.sh" "DESTINATION" "share/test_package/environment")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/pythonpath.dsv" "DESTINATION" "share/test_package/environment")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_environment_hooks/pythonpath.dsv" "DESTINATION" "share/test_package/environment")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_python/test_package/test_package.egg-info/" "DESTINATION" "local/lib/python3.10/dist-packages/test_package-0.0.0-py3.10.egg-info")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_python/test_package/test_package.egg-info/" "DESTINATION" "local/lib/python3.10/dist-packages/test_package-0.0.0-py3.10.egg-info")
+
+# install(DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_py/test_package/" "DESTINATION" "local/lib/python3.10/dist-packages/test_package" "PATTERN_EXCLUDE" "*.pyc" "PATTERN_EXCLUDE" "__pycache__")
+ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_py/test_package/" "DESTINATION" "local/lib/python3.10/dist-packages/test_package" "PATTERN_EXCLUDE" "*.pyc" "PATTERN_EXCLUDE" "__pycache__")
+
+# install("TARGETS" "test_package__rosidl_typesupport_fastrtps_c__pyext" "DESTINATION" "local/lib/python3.10/dist-packages/test_package")
 include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_0_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
+
+# install("TARGETS" "test_package__rosidl_typesupport_introspection_c__pyext" "DESTINATION" "local/lib/python3.10/dist-packages/test_package")
+include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_1_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
+
+# install("TARGETS" "test_package__rosidl_typesupport_c__pyext" "DESTINATION" "local/lib/python3.10/dist-packages/test_package")
+include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_2_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/OddEvenCheck.idl" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/OddEvenCheck.idl" "DESTINATION" "share/test_package/srv")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/OddEvenCheck.srv" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/OddEvenCheck.srv" "DESTINATION" "share/test_package/srv")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Request.msg" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Request.msg" "DESTINATION" "share/test_package/srv")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Response.msg" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Response.msg" "DESTINATION" "share/test_package/srv")
+
+# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "DESTINATION" "lib/test_package")
+include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_3_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
 # install(DIRECTORY "launch" "DESTINATION" "share/test_package/")
 ament_cmake_symlink_install_directory("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" DIRECTORY "launch" "DESTINATION" "share/test_package/")
@@ -351,6 +411,27 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_index/share/ament_index/resource_index/packages/test_package" "DESTINATION" "share/ament_index/resource_index/packages")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_index/share/ament_index/resource_index/packages/test_package" "DESTINATION" "share/ament_index/resource_index/packages")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_libraries/ament_cmake_export_libraries-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_libraries/ament_cmake_export_libraries-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_targets/ament_cmake_export_targets-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_targets/ament_cmake_export_targets-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_targets-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_targets-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake" "DESTINATION" "share/test_package/cmake")
 
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_core/test_packageConfig.cmake" "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_core/test_packageConfig-version.cmake" "DESTINATION" "share/test_package/cmake")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_core/test_packageConfig.cmake" "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_core/test_packageConfig-version.cmake" "DESTINATION" "share/test_package/cmake")

@@ -152,7 +152,9 @@ fi
 
 # list all environment hooks of this package
 ament_append_value AMENT_ENVIRONMENT_HOOKS "$AMENT_CURRENT_PREFIX/share/test_package/environment/ament_prefix_path.sh"
+ament_append_value AMENT_ENVIRONMENT_HOOKS "$AMENT_CURRENT_PREFIX/share/test_package/environment/library_path.sh"
 ament_append_value AMENT_ENVIRONMENT_HOOKS "$AMENT_CURRENT_PREFIX/share/test_package/environment/path.sh"
+ament_append_value AMENT_ENVIRONMENT_HOOKS "$AMENT_CURRENT_PREFIX/share/test_package/environment/pythonpath.sh"
 
 # source all shell-specific environment hooks of this package
 # if not returning them

@@ -9,6 +9,16 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+# Generate custom interfaces
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/OddEvenCheck.srv"
+  ADD_LINTER_TESTS
+)
+
+# Set support for using custom interfaces in C++ from this package
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 
 add_executable(rpm_pub src/rpm_pub.cpp)
 ament_target_dependencies(rpm_pub rclcpp std_msgs)
@@ -19,10 +29,15 @@ ament_target_dependencies(rpm_sub rclcpp std_msgs)
 add_executable(speed_calc src/speed_calc.cpp)
 ament_target_dependencies(speed_calc rclcpp std_msgs)
 
+add_executable(service_server src/service_server.cpp)
+ament_target_dependencies(service_server rclcpp std_msgs)
+target_link_libraries(service_server "${cpp_typesupport_target }")
+
 install(TARGETS
   rpm_pub
   rpm_sub
   speed_calc
+  service_server
   DESTINATION lib/${PROJECT_NAME}
 )
 
