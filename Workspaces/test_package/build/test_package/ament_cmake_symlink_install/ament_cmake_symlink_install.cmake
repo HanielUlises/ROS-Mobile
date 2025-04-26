@@ -370,7 +370,7 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Response.msg" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Response.msg" "DESTINATION" "share/test_package/srv")
 
-# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "DESTINATION" "lib/test_package")
+# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "service_server" "service_client" "DESTINATION" "lib/test_package")
 include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_3_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
 # install(DIRECTORY "launch" "DESTINATION" "share/test_package/")

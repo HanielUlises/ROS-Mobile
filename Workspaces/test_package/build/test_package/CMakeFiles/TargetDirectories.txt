@@ -18,6 +18,8 @@
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/rpm_pub.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/rpm_sub.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/speed_calc.dir
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/service_server.dir
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/service_client.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/test.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/edit_cache.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/rebuild_cache.dir

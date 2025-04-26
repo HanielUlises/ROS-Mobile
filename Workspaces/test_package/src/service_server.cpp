@@ -15,7 +15,7 @@ class OddEvenCheckServiceNode : public rclcpp::Node{
     private:
         void check_num_odd_even(const OddEvenCheck::Request::SharedPtr request,
             OddEvenCheck::Response::SharedPtr response){
-                int remainder = request -> number % 2;
+                int remainder = std::abs(request -> number % 2);
                 switch (remainder){
                     case 0:
                         response -> decision = "Even";

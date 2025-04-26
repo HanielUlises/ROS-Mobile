@@ -432,6 +432,32 @@ speed_calc/fast:
 .PHONY : speed_calc/fast
 
 #=============================================================================
+# Target rules for targets named service_server
+
+# Build rule for target.
+service_server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 service_server
+.PHONY : service_server
+
+# fast build rule for target.
+service_server/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/build
+.PHONY : service_server/fast
+
+#=============================================================================
+# Target rules for targets named service_client
+
+# Build rule for target.
+service_client: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 service_client
+.PHONY : service_client
+
+# fast build rule for target.
+service_client/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/build
+.PHONY : service_client/fast
+
+#=============================================================================
 # Target rules for targets named test_package__py
 
 # Build rule for target.
@@ -756,6 +782,54 @@ src/rpm_sub.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/src/rpm_sub.cpp.s
 .PHONY : src/rpm_sub.cpp.s
 
+src/service_client.o: src/service_client.cpp.o
+.PHONY : src/service_client.o
+
+# target to build an object file
+src/service_client.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/src/service_client.cpp.o
+.PHONY : src/service_client.cpp.o
+
+src/service_client.i: src/service_client.cpp.i
+.PHONY : src/service_client.i
+
+# target to preprocess a source file
+src/service_client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/src/service_client.cpp.i
+.PHONY : src/service_client.cpp.i
+
+src/service_client.s: src/service_client.cpp.s
+.PHONY : src/service_client.s
+
+# target to generate assembly for a file
+src/service_client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/src/service_client.cpp.s
+.PHONY : src/service_client.cpp.s
+
+src/service_server.o: src/service_server.cpp.o
+.PHONY : src/service_server.o
+
+# target to build an object file
+src/service_server.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/src/service_server.cpp.o
+.PHONY : src/service_server.cpp.o
+
+src/service_server.i: src/service_server.cpp.i
+.PHONY : src/service_server.i
+
+# target to preprocess a source file
+src/service_server.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/src/service_server.cpp.i
+.PHONY : src/service_server.cpp.i
+
+src/service_server.s: src/service_server.cpp.s
+.PHONY : src/service_server.s
+
+# target to generate assembly for a file
+src/service_server.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/src/service_server.cpp.s
+.PHONY : src/service_server.cpp.s
+
 src/speed_calc.o: src/speed_calc.cpp.o
 .PHONY : src/speed_calc.o
 
@@ -802,6 +876,8 @@ help:
 	@echo "... uninstall"
 	@echo "... rpm_pub"
 	@echo "... rpm_sub"
+	@echo "... service_client"
+	@echo "... service_server"
 	@echo "... speed_calc"
 	@echo "... test_package__rosidl_generator_c"
 	@echo "... test_package__rosidl_generator_py"
@@ -853,6 +929,12 @@ help:
 	@echo "... src/rpm_sub.o"
 	@echo "... src/rpm_sub.i"
 	@echo "... src/rpm_sub.s"
+	@echo "... src/service_client.o"
+	@echo "... src/service_client.i"
+	@echo "... src/service_client.s"
+	@echo "... src/service_server.o"
+	@echo "... src/service_server.i"
+	@echo "... src/service_server.s"
 	@echo "... src/speed_calc.o"
 	@echo "... src/speed_calc.i"
 	@echo "... src/speed_calc.s"

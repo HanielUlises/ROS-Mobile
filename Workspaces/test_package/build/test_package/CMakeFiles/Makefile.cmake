@@ -789,5 +789,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/rpm_pub.dir/DependInfo.cmake"
   "CMakeFiles/rpm_sub.dir/DependInfo.cmake"
   "CMakeFiles/speed_calc.dir/DependInfo.cmake"
+  "CMakeFiles/service_server.dir/DependInfo.cmake"
+  "CMakeFiles/service_client.dir/DependInfo.cmake"
   "test_package__py/CMakeFiles/test_package__py.dir/DependInfo.cmake"
   )
