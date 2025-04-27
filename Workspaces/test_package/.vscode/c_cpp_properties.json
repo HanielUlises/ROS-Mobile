@@ -10,7 +10,7 @@
                 "/usr/include/x86_64-linux-gnu/c++/11",
                 "/usr/lib/gcc/x86_64-linux-gnu/11/include",
                 "/usr/include/x86_64-linux-gnu",
-                "/usr/include/opencv4/opencv2/**"
+                "/usr/local/include/opencv4"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

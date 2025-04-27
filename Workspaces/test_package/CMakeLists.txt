@@ -17,6 +17,9 @@ find_package(cv_bridge REQUIRED)
 # Generate custom interfaces
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/OddEvenCheck.srv"
+  "srv/TurnCamera.srv"
+  DEPENDENCIES 
+  sensor_msgs
   ADD_LINTER_TESTS
 )
 
@@ -32,21 +35,20 @@ ament_target_dependencies(rpm_sub rclcpp std_msgs)
 add_executable(speed_calc src/speed_calc.cpp)
 ament_target_dependencies(speed_calc rclcpp std_msgs)
 
-add_executable(service_server src/service_server.cpp)
-ament_target_dependencies(service_server rclcpp std_msgs)
-target_link_libraries(service_server "${cpp_typesupport_target}")
+add_executable(turn_camera_service src/turn_camera_service.cpp)
+ament_target_dependencies(turn_camera_service rclcpp std_msgs sensor_msgs OpenCV cv_bridge)
+target_link_libraries(turn_camera_service "${cpp_typesupport_target}")
 
-add_executable(service_client src/service_client.cpp)
-ament_target_dependencies(service_client rclcpp std_msgs)
-target_link_libraries(service_client "${cpp_typesupport_target}")
-
+add_executable(turn_camera_client src/turn_camera_client.cpp)
+ament_target_dependencies(turn_camera_client rclcpp std_msgs sensor_msgs OpenCV cv_bridge)
+target_link_libraries(turn_camera_client "${cpp_typesupport_target}")
 
 install(TARGETS
   rpm_pub
   rpm_sub
   speed_calc
-  service_server
-  service_client
+  turn_camera_service
+  turn_camera_client  
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -432,30 +432,30 @@ speed_calc/fast:
 .PHONY : speed_calc/fast
 
 #=============================================================================
-# Target rules for targets named service_server
+# Target rules for targets named turn_camera_service
 
 # Build rule for target.
-service_server: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 service_server
-.PHONY : service_server
+turn_camera_service: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 turn_camera_service
+.PHONY : turn_camera_service
 
 # fast build rule for target.
-service_server/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/build
-.PHONY : service_server/fast
+turn_camera_service/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_service.dir/build.make CMakeFiles/turn_camera_service.dir/build
+.PHONY : turn_camera_service/fast
 
 #=============================================================================
-# Target rules for targets named service_client
+# Target rules for targets named turn_camera_client
 
 # Build rule for target.
-service_client: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 service_client
-.PHONY : service_client
+turn_camera_client: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 turn_camera_client
+.PHONY : turn_camera_client
 
 # fast build rule for target.
-service_client/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/build
-.PHONY : service_client/fast
+turn_camera_client/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_client.dir/build.make CMakeFiles/turn_camera_client.dir/build
+.PHONY : turn_camera_client/fast
 
 #=============================================================================
 # Target rules for targets named test_package__py
@@ -493,6 +493,30 @@ rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.s: rosidl_g
 rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_c.dir/build.make CMakeFiles/test_package__rosidl_generator_c.dir/rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.c.s
 .PHONY : rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.c.s
+
+rosidl_generator_c/test_package/srv/detail/turn_camera__functions.o: rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.o
+.PHONY : rosidl_generator_c/test_package/srv/detail/turn_camera__functions.o
+
+# target to build an object file
+rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_c.dir/build.make CMakeFiles/test_package__rosidl_generator_c.dir/rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.o
+.PHONY : rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.o
+
+rosidl_generator_c/test_package/srv/detail/turn_camera__functions.i: rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.i
+.PHONY : rosidl_generator_c/test_package/srv/detail/turn_camera__functions.i
+
+# target to preprocess a source file
+rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_c.dir/build.make CMakeFiles/test_package__rosidl_generator_c.dir/rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.i
+.PHONY : rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.i
+
+rosidl_generator_c/test_package/srv/detail/turn_camera__functions.s: rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.s
+.PHONY : rosidl_generator_c/test_package/srv/detail/turn_camera__functions.s
+
+# target to generate assembly for a file
+rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_c.dir/build.make CMakeFiles/test_package__rosidl_generator_c.dir/rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.s
+.PHONY : rosidl_generator_c/test_package/srv/detail/turn_camera__functions.c.s
 
 rosidl_generator_py/test_package/_test_package_s.ep.rosidl_typesupport_c.o: rosidl_generator_py/test_package/_test_package_s.ep.rosidl_typesupport_c.c.o
 .PHONY : rosidl_generator_py/test_package/_test_package_s.ep.rosidl_typesupport_c.o
@@ -590,6 +614,30 @@ rosidl_generator_py/test_package/srv/_odd_even_check_s.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_py.dir/build.make CMakeFiles/test_package__rosidl_generator_py.dir/rosidl_generator_py/test_package/srv/_odd_even_check_s.c.s
 .PHONY : rosidl_generator_py/test_package/srv/_odd_even_check_s.c.s
 
+rosidl_generator_py/test_package/srv/_turn_camera_s.o: rosidl_generator_py/test_package/srv/_turn_camera_s.c.o
+.PHONY : rosidl_generator_py/test_package/srv/_turn_camera_s.o
+
+# target to build an object file
+rosidl_generator_py/test_package/srv/_turn_camera_s.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_py.dir/build.make CMakeFiles/test_package__rosidl_generator_py.dir/rosidl_generator_py/test_package/srv/_turn_camera_s.c.o
+.PHONY : rosidl_generator_py/test_package/srv/_turn_camera_s.c.o
+
+rosidl_generator_py/test_package/srv/_turn_camera_s.i: rosidl_generator_py/test_package/srv/_turn_camera_s.c.i
+.PHONY : rosidl_generator_py/test_package/srv/_turn_camera_s.i
+
+# target to preprocess a source file
+rosidl_generator_py/test_package/srv/_turn_camera_s.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_py.dir/build.make CMakeFiles/test_package__rosidl_generator_py.dir/rosidl_generator_py/test_package/srv/_turn_camera_s.c.i
+.PHONY : rosidl_generator_py/test_package/srv/_turn_camera_s.c.i
+
+rosidl_generator_py/test_package/srv/_turn_camera_s.s: rosidl_generator_py/test_package/srv/_turn_camera_s.c.s
+.PHONY : rosidl_generator_py/test_package/srv/_turn_camera_s.s
+
+# target to generate assembly for a file
+rosidl_generator_py/test_package/srv/_turn_camera_s.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_generator_py.dir/build.make CMakeFiles/test_package__rosidl_generator_py.dir/rosidl_generator_py/test_package/srv/_turn_camera_s.c.s
+.PHONY : rosidl_generator_py/test_package/srv/_turn_camera_s.c.s
+
 rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.o: rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.cpp.o
 .PHONY : rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.o
 
@@ -613,6 +661,30 @@ rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.s: rosidl_typ
 rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_c.dir/rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.cpp.s
 .PHONY : rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.cpp.s
+
+rosidl_typesupport_c/test_package/srv/turn_camera__type_support.o: rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_c/test_package/srv/turn_camera__type_support.o
+
+# target to build an object file
+rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_c.dir/rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.o
+
+rosidl_typesupport_c/test_package/srv/turn_camera__type_support.i: rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_c/test_package/srv/turn_camera__type_support.i
+
+# target to preprocess a source file
+rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_c.dir/rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.i
+
+rosidl_typesupport_c/test_package/srv/turn_camera__type_support.s: rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_c/test_package/srv/turn_camera__type_support.s
+
+# target to generate assembly for a file
+rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_c.dir/rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_c/test_package/srv/turn_camera__type_support.cpp.s
 
 rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.o: rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.cpp.o
 .PHONY : rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.o
@@ -638,6 +710,30 @@ rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.cpp.s
 .PHONY : rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.cpp.s
 
+rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.o: rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.o
+
+# target to build an object file
+rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.o
+
+rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.i: rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.i
+
+# target to preprocess a source file
+rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.i
+
+rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.s: rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.s
+
+# target to generate assembly for a file
+rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.cpp.s
+
 rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.o: rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.cpp.o
 .PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.o
 
@@ -661,6 +757,30 @@ rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_suppo
 rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.cpp.s
 .PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.cpp.s
+
+rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.o: rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.o
+.PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.o
+
+# target to build an object file
+rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.o
+.PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.o
+
+rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.i: rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.i
+.PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.i
+
+# target to preprocess a source file
+rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.i
+.PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.i
+
+rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.s: rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.s
+.PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.s
+
+# target to generate assembly for a file
+rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.s
+.PHONY : rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.cpp.s
 
 rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.o: rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.cpp.o
 .PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.o
@@ -686,6 +806,30 @@ rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_ch
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.cpp.s
 .PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.cpp.s
 
+rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.o: rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.o
+
+# target to build an object file
+rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.o
+
+rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.i: rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.i
+
+# target to preprocess a source file
+rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.i
+
+rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.s: rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.s
+
+# target to generate assembly for a file
+rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.cpp.s
+
 rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.o: rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.c.o
 .PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.o
 
@@ -710,6 +854,30 @@ rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.c.s
 .PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.c.s
 
+rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.o: rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.o
+.PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.o
+
+# target to build an object file
+rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.o
+.PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.o
+
+rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.i: rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.i
+.PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.i
+
+# target to preprocess a source file
+rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.i
+.PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.i
+
+rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.s: rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.s
+.PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.s
+
+# target to generate assembly for a file
+rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.s
+.PHONY : rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.c.s
+
 rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.o: rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.cpp.o
 .PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.o
 
@@ -733,6 +901,30 @@ rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__typ
 rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.cpp.s
 .PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.cpp.s
+
+rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.o: rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.o
+
+# target to build an object file
+rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.o
+.PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.o
+
+rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.i: rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.i
+
+# target to preprocess a source file
+rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.i
+.PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.i
+
+rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.s: rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.s
+
+# target to generate assembly for a file
+rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/build.make CMakeFiles/test_package__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.s
+.PHONY : rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.cpp.s
 
 src/rpm_pub.o: src/rpm_pub.cpp.o
 .PHONY : src/rpm_pub.o
@@ -782,54 +974,6 @@ src/rpm_sub.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rpm_sub.dir/build.make CMakeFiles/rpm_sub.dir/src/rpm_sub.cpp.s
 .PHONY : src/rpm_sub.cpp.s
 
-src/service_client.o: src/service_client.cpp.o
-.PHONY : src/service_client.o
-
-# target to build an object file
-src/service_client.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/src/service_client.cpp.o
-.PHONY : src/service_client.cpp.o
-
-src/service_client.i: src/service_client.cpp.i
-.PHONY : src/service_client.i
-
-# target to preprocess a source file
-src/service_client.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/src/service_client.cpp.i
-.PHONY : src/service_client.cpp.i
-
-src/service_client.s: src/service_client.cpp.s
-.PHONY : src/service_client.s
-
-# target to generate assembly for a file
-src/service_client.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_client.dir/build.make CMakeFiles/service_client.dir/src/service_client.cpp.s
-.PHONY : src/service_client.cpp.s
-
-src/service_server.o: src/service_server.cpp.o
-.PHONY : src/service_server.o
-
-# target to build an object file
-src/service_server.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/src/service_server.cpp.o
-.PHONY : src/service_server.cpp.o
-
-src/service_server.i: src/service_server.cpp.i
-.PHONY : src/service_server.i
-
-# target to preprocess a source file
-src/service_server.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/src/service_server.cpp.i
-.PHONY : src/service_server.cpp.i
-
-src/service_server.s: src/service_server.cpp.s
-.PHONY : src/service_server.s
-
-# target to generate assembly for a file
-src/service_server.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/service_server.dir/build.make CMakeFiles/service_server.dir/src/service_server.cpp.s
-.PHONY : src/service_server.cpp.s
-
 src/speed_calc.o: src/speed_calc.cpp.o
 .PHONY : src/speed_calc.o
 
@@ -854,6 +998,54 @@ src/speed_calc.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/speed_calc.dir/build.make CMakeFiles/speed_calc.dir/src/speed_calc.cpp.s
 .PHONY : src/speed_calc.cpp.s
 
+src/turn_camera_client.o: src/turn_camera_client.cpp.o
+.PHONY : src/turn_camera_client.o
+
+# target to build an object file
+src/turn_camera_client.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_client.dir/build.make CMakeFiles/turn_camera_client.dir/src/turn_camera_client.cpp.o
+.PHONY : src/turn_camera_client.cpp.o
+
+src/turn_camera_client.i: src/turn_camera_client.cpp.i
+.PHONY : src/turn_camera_client.i
+
+# target to preprocess a source file
+src/turn_camera_client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_client.dir/build.make CMakeFiles/turn_camera_client.dir/src/turn_camera_client.cpp.i
+.PHONY : src/turn_camera_client.cpp.i
+
+src/turn_camera_client.s: src/turn_camera_client.cpp.s
+.PHONY : src/turn_camera_client.s
+
+# target to generate assembly for a file
+src/turn_camera_client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_client.dir/build.make CMakeFiles/turn_camera_client.dir/src/turn_camera_client.cpp.s
+.PHONY : src/turn_camera_client.cpp.s
+
+src/turn_camera_service.o: src/turn_camera_service.cpp.o
+.PHONY : src/turn_camera_service.o
+
+# target to build an object file
+src/turn_camera_service.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_service.dir/build.make CMakeFiles/turn_camera_service.dir/src/turn_camera_service.cpp.o
+.PHONY : src/turn_camera_service.cpp.o
+
+src/turn_camera_service.i: src/turn_camera_service.cpp.i
+.PHONY : src/turn_camera_service.i
+
+# target to preprocess a source file
+src/turn_camera_service.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_service.dir/build.make CMakeFiles/turn_camera_service.dir/src/turn_camera_service.cpp.i
+.PHONY : src/turn_camera_service.cpp.i
+
+src/turn_camera_service.s: src/turn_camera_service.cpp.s
+.PHONY : src/turn_camera_service.s
+
+# target to generate assembly for a file
+src/turn_camera_service.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/turn_camera_service.dir/build.make CMakeFiles/turn_camera_service.dir/src/turn_camera_service.cpp.s
+.PHONY : src/turn_camera_service.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -876,8 +1068,6 @@ help:
 	@echo "... uninstall"
 	@echo "... rpm_pub"
 	@echo "... rpm_sub"
-	@echo "... service_client"
-	@echo "... service_server"
 	@echo "... speed_calc"
 	@echo "... test_package__rosidl_generator_c"
 	@echo "... test_package__rosidl_generator_py"
@@ -890,9 +1080,14 @@ help:
 	@echo "... test_package__rosidl_typesupport_introspection_c"
 	@echo "... test_package__rosidl_typesupport_introspection_c__pyext"
 	@echo "... test_package__rosidl_typesupport_introspection_cpp"
+	@echo "... turn_camera_client"
+	@echo "... turn_camera_service"
 	@echo "... rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.o"
 	@echo "... rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.i"
 	@echo "... rosidl_generator_c/test_package/srv/detail/odd_even_check__functions.s"
+	@echo "... rosidl_generator_c/test_package/srv/detail/turn_camera__functions.o"
+	@echo "... rosidl_generator_c/test_package/srv/detail/turn_camera__functions.i"
+	@echo "... rosidl_generator_c/test_package/srv/detail/turn_camera__functions.s"
 	@echo "... rosidl_generator_py/test_package/_test_package_s.ep.rosidl_typesupport_c.o"
 	@echo "... rosidl_generator_py/test_package/_test_package_s.ep.rosidl_typesupport_c.i"
 	@echo "... rosidl_generator_py/test_package/_test_package_s.ep.rosidl_typesupport_c.s"
@@ -905,39 +1100,60 @@ help:
 	@echo "... rosidl_generator_py/test_package/srv/_odd_even_check_s.o"
 	@echo "... rosidl_generator_py/test_package/srv/_odd_even_check_s.i"
 	@echo "... rosidl_generator_py/test_package/srv/_odd_even_check_s.s"
+	@echo "... rosidl_generator_py/test_package/srv/_turn_camera_s.o"
+	@echo "... rosidl_generator_py/test_package/srv/_turn_camera_s.i"
+	@echo "... rosidl_generator_py/test_package/srv/_turn_camera_s.s"
 	@echo "... rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.o"
 	@echo "... rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.i"
 	@echo "... rosidl_typesupport_c/test_package/srv/odd_even_check__type_support.s"
+	@echo "... rosidl_typesupport_c/test_package/srv/turn_camera__type_support.o"
+	@echo "... rosidl_typesupport_c/test_package/srv/turn_camera__type_support.i"
+	@echo "... rosidl_typesupport_c/test_package/srv/turn_camera__type_support.s"
 	@echo "... rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.o"
 	@echo "... rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.i"
 	@echo "... rosidl_typesupport_cpp/test_package/srv/odd_even_check__type_support.s"
+	@echo "... rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.o"
+	@echo "... rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.i"
+	@echo "... rosidl_typesupport_cpp/test_package/srv/turn_camera__type_support.s"
 	@echo "... rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.o"
 	@echo "... rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.i"
 	@echo "... rosidl_typesupport_fastrtps_c/test_package/srv/detail/odd_even_check__type_support_c.s"
+	@echo "... rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.o"
+	@echo "... rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.i"
+	@echo "... rosidl_typesupport_fastrtps_c/test_package/srv/detail/turn_camera__type_support_c.s"
 	@echo "... rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.o"
 	@echo "... rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.i"
 	@echo "... rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/odd_even_check__type_support.s"
+	@echo "... rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.o"
+	@echo "... rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.i"
+	@echo "... rosidl_typesupport_fastrtps_cpp/test_package/srv/detail/dds_fastrtps/turn_camera__type_support.s"
 	@echo "... rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.o"
 	@echo "... rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.i"
 	@echo "... rosidl_typesupport_introspection_c/test_package/srv/detail/odd_even_check__type_support.s"
+	@echo "... rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.o"
+	@echo "... rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.i"
+	@echo "... rosidl_typesupport_introspection_c/test_package/srv/detail/turn_camera__type_support.s"
 	@echo "... rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.o"
 	@echo "... rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.i"
 	@echo "... rosidl_typesupport_introspection_cpp/test_package/srv/detail/odd_even_check__type_support.s"
+	@echo "... rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.o"
+	@echo "... rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.i"
+	@echo "... rosidl_typesupport_introspection_cpp/test_package/srv/detail/turn_camera__type_support.s"
 	@echo "... src/rpm_pub.o"
 	@echo "... src/rpm_pub.i"
 	@echo "... src/rpm_pub.s"
 	@echo "... src/rpm_sub.o"
 	@echo "... src/rpm_sub.i"
 	@echo "... src/rpm_sub.s"
-	@echo "... src/service_client.o"
-	@echo "... src/service_client.i"
-	@echo "... src/service_client.s"
-	@echo "... src/service_server.o"
-	@echo "... src/service_server.i"
-	@echo "... src/service_server.s"
 	@echo "... src/speed_calc.o"
 	@echo "... src/speed_calc.i"
 	@echo "... src/speed_calc.s"
+	@echo "... src/turn_camera_client.o"
+	@echo "... src/turn_camera_client.i"
+	@echo "... src/turn_camera_client.s"
+	@echo "... src/turn_camera_service.o"
+	@echo "... src/turn_camera_service.i"
+	@echo "... src/turn_camera_service.s"
 .PHONY : help
 
 

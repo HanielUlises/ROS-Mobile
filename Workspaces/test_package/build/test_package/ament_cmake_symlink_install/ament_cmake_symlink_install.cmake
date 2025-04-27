@@ -361,6 +361,9 @@ include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_pac
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/OddEvenCheck.idl" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/OddEvenCheck.idl" "DESTINATION" "share/test_package/srv")
 
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/TurnCamera.idl" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/TurnCamera.idl" "DESTINATION" "share/test_package/srv")
+
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/OddEvenCheck.srv" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/OddEvenCheck.srv" "DESTINATION" "share/test_package/srv")
 
@@ -370,7 +373,16 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Response.msg" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/OddEvenCheck_Response.msg" "DESTINATION" "share/test_package/srv")
 
-# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "service_server" "service_client" "DESTINATION" "lib/test_package")
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/TurnCamera.srv" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/TurnCamera.srv" "DESTINATION" "share/test_package/srv")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/TurnCamera_Request.msg" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/TurnCamera_Request.msg" "DESTINATION" "share/test_package/srv")
+
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/TurnCamera_Response.msg" "DESTINATION" "share/test_package/srv")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/TurnCamera_Response.msg" "DESTINATION" "share/test_package/srv")
+
+# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "turn_camera_service" "turn_camera_client" "DESTINATION" "lib/test_package")
 include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_3_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
 # install(DIRECTORY "launch" "DESTINATION" "share/test_package/")
@@ -415,6 +427,9 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake-extras.cmake" "DESTINATION" "share/test_package/cmake")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake-extras.cmake" "DESTINATION" "share/test_package/cmake")
 
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/test_package/cmake")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/test_package/cmake")
+
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/test_package/cmake")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake" "DESTINATION" "share/test_package/cmake")
 
@@ -426,9 +441,6 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_targets-extras.cmake" "DESTINATION" "share/test_package/cmake")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_targets-extras.cmake" "DESTINATION" "share/test_package/cmake")
-
-# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/test_package/cmake")
-ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake" "DESTINATION" "share/test_package/cmake")
 
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake" "DESTINATION" "share/test_package/cmake")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake" "DESTINATION" "share/test_package/cmake")

@@ -2,3 +2,7 @@ srv/OddEvenCheck.idl
 srv/OddEvenCheck.srv
 srv/OddEvenCheck_Request.msg
 srv/OddEvenCheck_Response.msg
+srv/TurnCamera.idl
+srv/TurnCamera.srv
+srv/TurnCamera_Request.msg
+srv/TurnCamera_Response.msg
