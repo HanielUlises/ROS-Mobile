@@ -364,6 +364,9 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/TurnCamera.idl" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/srv/TurnCamera.idl" "DESTINATION" "share/test_package/srv")
 
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/action/Navigate.idl" "DESTINATION" "share/test_package/action")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_adapter/test_package/action/Navigate.idl" "DESTINATION" "share/test_package/action")
+
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/OddEvenCheck.srv" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/srv/OddEvenCheck.srv" "DESTINATION" "share/test_package/srv")
 
@@ -382,7 +385,10 @@ ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/t
 # install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/TurnCamera_Response.msg" "DESTINATION" "share/test_package/srv")
 ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_cmake/srv/TurnCamera_Response.msg" "DESTINATION" "share/test_package/srv")
 
-# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "turn_camera_service" "turn_camera_client" "DESTINATION" "lib/test_package")
+# install(FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/action/Navigate.action" "DESTINATION" "share/test_package/action")
+ament_cmake_symlink_install_files("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package" FILES "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/action/Navigate.action" "DESTINATION" "share/test_package/action")
+
+# install("TARGETS" "rpm_pub" "rpm_sub" "speed_calc" "turn_camera_service" "turn_camera_client" "action_server" "action_client" "DESTINATION" "lib/test_package")
 include("/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/ament_cmake_symlink_install_targets_3_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
 # install(DIRECTORY "launch" "DESTINATION" "share/test_package/")

@@ -13,13 +13,17 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(action_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 # Generate custom interfaces
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/OddEvenCheck.srv"
   "srv/TurnCamera.srv"
+  "action/Navigate.action"
   DEPENDENCIES 
-  sensor_msgs
+  sensor_msgs geometry_msgs action_msgs
   ADD_LINTER_TESTS
 )
 
@@ -43,12 +47,22 @@ add_executable(turn_camera_client src/turn_camera_client.cpp)
 ament_target_dependencies(turn_camera_client rclcpp std_msgs sensor_msgs OpenCV cv_bridge)
 target_link_libraries(turn_camera_client "${cpp_typesupport_target}")
 
+add_executable(action_server src/action_server.cpp)
+ament_target_dependencies(action_server rclcpp std_msgs geometry_msgs action_msgs rclcpp_action)
+target_link_libraries(action_server "${cpp_typesupport_target}")
+
+add_executable(action_client src/action_client.cpp)
+ament_target_dependencies(action_client rclcpp std_msgs geometry_msgs action_msgs rclcpp_action)
+target_link_libraries(action_client "${cpp_typesupport_target}")
+
 install(TARGETS
   rpm_pub
   rpm_sub
   speed_calc
   turn_camera_service
   turn_camera_client  
+  action_server
+  action_client
   DESTINATION lib/${PROJECT_NAME}
 )
 

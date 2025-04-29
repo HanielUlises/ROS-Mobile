@@ -20,6 +20,8 @@
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/speed_calc.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/turn_camera_service.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/turn_camera_client.dir
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/action_server.dir
+/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/action_client.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/test.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/edit_cache.dir
 /home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/CMakeFiles/rebuild_cache.dir
