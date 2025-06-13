@@ -1,6 +1,7 @@
 {
     "cmake.sourceDirectory": "/home/haniel/Projects/ROS-Mobile/Workspaces/test_package",
     "files.associations": {
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "__node_handle": "cpp"
     }
 }
