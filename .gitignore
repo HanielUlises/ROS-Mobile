@@ -1,3 +1,11 @@
+# ROS 2 build artifacts
+build/
+install/
+log/
+colcon-build/
+colcon_install/
+colcon_log/
+
 # ROS-specific generated files
 *.bag
 *.bag.*
@@ -6,25 +14,51 @@
 *.sdf
 *.gazebo
 *.rviz
-*.pyc
+*.urdf
+*.xacro
+*.launch.py
+*.launch.xml
+*.last
+*.ini
 
 # Python artifacts
+*.pyc
 __pycache__/
-*.py[cod]
+*.pyo
+*.pyd
 *.egg-info/
 *.so
+.Python
+env/
+venv/
+pip-wheel-metadata/
+dist/
+build/lib/
+build/scripts/
+*.egg
+.pytest_cache/
 
-# C++ build artifacts
+# C++ and CMake build artifacts
 *.o
 *.a
+*.so
 *.cmake
 *.make
+CMakeFiles/
 CMakeCache.txt
-Makefile
 cmake_install.cmake
 install_manifest.txt
+compile_commands.json
+CPackConfig.cmake
+CPackSourceConfig.cmake
+*.d
+*.dep
+*.elf
+*.map
 
 # Common IDE and editor files
+.vscode/
+.idea/
 *.swp
 *.swo
 *.swn
@@ -44,15 +78,21 @@ install_manifest.txt
 *.tmp
 *.temp
 *.backup
+rosdep/
 
 # Dependency management
 *.lock
+poetry.lock
+Pipfile.lock
 
 # Testing and coverage
 *.gcda
 *.gcno
 *.gcov
 test_results.*
+coverage/
+.coverage
+*.lcov
 
 # Documentation generated files
 *.aux
@@ -69,7 +109,39 @@ test_results.*
 *.out
 *.synctex.gz
 *.toc
+docs/_build/
+docs/generated/
+*.md5
+*.sha1
 
 # Environment-specific files
 *.env
 *.local
+*.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Additional ROS 2 and Gazebo-related files
+*.gazebo_model_cache
+*.gazebo_log
+*.gazebo_tmp
+*.sdf.bak
+*.world.bak
+*.rosinstall
+*.rosdep
+*.catkin
+*.catkin_tools
+*.ros2
+*.ros1
+*.bag.active
+*.bag.orig
+*.msg
+*.srv
+*.action
+*.dds
+*.idl
+*.tlog
+*.test
+*.launch
+*.yaml.bak
+*.xml.bak
