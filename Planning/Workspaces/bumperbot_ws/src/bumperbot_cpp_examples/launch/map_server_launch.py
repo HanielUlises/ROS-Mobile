@@ -4,7 +4,14 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    map_yaml_file = '/home/haniel/Projects/ROS-Mobile/Planning/Workspaces/bumperbot_ws/maps/map.yaml'
+    map_yaml_file = '/home/haniel/Projects/ROS-Mobile/Planning/Workspaces/bumperbot_ws/src/maps/map.yaml'
+
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+    )
 
     map_yaml_arg = DeclareLaunchArgument(
         'map',
@@ -20,7 +27,8 @@ def generate_launch_description():
         parameters=[{
             'yaml_filename': LaunchConfiguration('map'),
             'topic_name': 'map',
-            'frame_id': 'map'
+            'frame_id': 'map',
+            'use_sim_time': False 
         }],
         arguments=['--ros-args', '--log-level', 'debug']
     )
@@ -32,12 +40,14 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'autostart': True,
-            'node_names': ['map_server']
+            'node_names': ['map_server'],
+            'bond_timeout': 4.0
         }]
     )
 
     return LaunchDescription([
         map_yaml_arg,
         map_server_node,
-        lifecycle_manager_node
+        lifecycle_manager_node,
+        rviz_node
     ])

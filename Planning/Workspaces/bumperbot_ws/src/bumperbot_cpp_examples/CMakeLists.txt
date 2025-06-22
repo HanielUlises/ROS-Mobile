@@ -10,6 +10,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(nav2_map_server REQUIRED)
+find_package(nav2_lifecycle_manager REQUIRED)
 
 # Add executables
 add_executable(simple_publisher src/simple_publisher.cpp)
@@ -35,5 +37,8 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(DIRECTORY launch
+        DESTINATION share/${PROJECT_NAME})
 
 ament_package()
