@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 
 # Add executables
 add_executable(simple_publisher src/simple_publisher.cpp)
@@ -17,10 +18,14 @@ ament_target_dependencies(simple_publisher rclcpp std_msgs)
 add_executable(simple_subscriber src/simple_subscriber.cpp)
 ament_target_dependencies(simple_subscriber rclcpp std_msgs)
 
+add_executable(simple_lifecycle_node src/simple_lifecycle_node.cpp)
+ament_target_dependencies(simple_lifecycle_node rclcpp std_msgs rclcpp_lifecycle)
+
 # Install executables
 install(TARGETS
   simple_publisher
   simple_subscriber
+  simple_lifecycle_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
