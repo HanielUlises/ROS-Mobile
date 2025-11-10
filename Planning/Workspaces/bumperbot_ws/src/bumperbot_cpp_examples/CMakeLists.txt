@@ -12,7 +12,7 @@ find_package(std_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(nav2_map_server REQUIRED)
 find_package(nav2_lifecycle_manager REQUIRED)
-find_package(rcl_interaces REQUIRED)
+find_package(rcl_interfaces REQUIRED)
 
 # Add executables
 add_executable(simple_publisher src/simple_publisher.cpp)
@@ -32,6 +32,7 @@ install(TARGETS
   simple_publisher
   simple_subscriber
   simple_lifecycle_node
+  simple_parameter
   DESTINATION lib/${PROJECT_NAME}
 )
 
