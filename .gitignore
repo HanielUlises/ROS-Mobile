@@ -15,7 +15,6 @@ colcon_log/
 *.gazebo
 *.rviz
 *.urdf
-*.xacro
 *.launch.py
 *.launch.xml
 *.last
