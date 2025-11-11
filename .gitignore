@@ -10,15 +10,6 @@ colcon_log/
 *.bag
 *.bag.*
 *.ros
-*.world
-*.sdf
-*.gazebo
-*.rviz
-*.urdf
-*.launch.py
-*.launch.xml
-*.last
-*.ini
 
 # Python artifacts
 *.pyc
