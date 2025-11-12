@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name = "bumperbot">
+    <xacro:include filename = "$(find bumperbot_description)/urdf/bumperbot_gazebo.xacro"/>
+
     <link name = "base_footprint"></link>
 
     <link name = "base_link">
