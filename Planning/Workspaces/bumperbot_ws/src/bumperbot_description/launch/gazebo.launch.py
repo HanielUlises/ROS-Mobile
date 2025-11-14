@@ -11,10 +11,10 @@ from pathlib import Path
 import os
 
 def generate_launch_description():
-    bumperbod_description_dir = get_package_share_directory("bumperbot_description")
+    bumperbot_description_dir = get_package_share_directory("bumperbot_description")
     model_argument = DeclareLaunchArgument(
         name = "model",
-        default_value =  os.path.join(bumperbod_description_dir, "urdf", "bumperbot.urdf.xacro"),
+        default_value =  os.path.join(bumperbot_description_dir, "urdf", "bumperbot.urdf.xacro"),
         description = "Absolute path to the URDF model"
     )
 
@@ -28,7 +28,7 @@ def generate_launch_description():
     
     gazebo_resource_path = SetEnvironmentVariable(
         name= "GZ_SIM_RESOURCE_PATH",
-        value=[str(Path(bumperbod_description_dir).parent.resolve())]
+        value=[str(Path(bumperbot_description_dir).parent.resolve())]
     )
 
     gazebo = IncludeLaunchDescription(PythonLaunchDescriptionSource([
@@ -43,7 +43,7 @@ def generate_launch_description():
         package= "ros_gz_sim",
         executable= "create",
         output = "screen",
-        arguments= ["-topic", "robot_description"
+        arguments= ["-topic", "robot_description",
                     "-name", "bumperbot"]
     )
 
