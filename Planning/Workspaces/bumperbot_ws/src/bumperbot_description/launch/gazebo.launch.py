@@ -24,7 +24,8 @@ def generate_launch_description():
     robot_description = ParameterValue(Command([
         "xacro ", 
         LaunchConfiguration("model"),
-        " is_igniton:=", is_ignition
+        " is_igniton:=", 
+        is_ignition
         ]), value_type = str)
 
     robot_state_publisher = Node(
