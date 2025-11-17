@@ -13,6 +13,9 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(nav2_map_server REQUIRED)
 find_package(nav2_lifecycle_manager REQUIRED)
 find_package(rcl_interfaces REQUIRED)
+find_package(turtlesim REQUIRED)
+
+include_directories(include)
 
 # Add executables
 add_executable(simple_publisher src/simple_publisher.cpp)
@@ -27,12 +30,22 @@ ament_target_dependencies(simple_lifecycle_node rclcpp std_msgs rclcpp_lifecycle
 add_executable(simple_parameter src/simple_parameter.cpp)
 ament_target_dependencies(simple_parameter rclcpp std_msgs rclcpp_lifecycle)
 
+add_executable(turtlesim_kinematics src/turtlesim_kinematics.cpp)
+ament_target_dependencies(turtlesim_kinematics rclcpp turtlesim)
+
+
+install(
+  DIRECTORY include
+  DESTINATION include
+)
+
 # Install executables
 install(TARGETS
   simple_publisher
   simple_subscriber
   simple_lifecycle_node
   simple_parameter
+  turtlesim_kinematics
   DESTINATION lib/${PROJECT_NAME}
 )
 
