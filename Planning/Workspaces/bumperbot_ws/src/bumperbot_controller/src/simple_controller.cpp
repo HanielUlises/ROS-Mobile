@@ -12,8 +12,8 @@ SimpleController::SimpleController(const std::string &name)
     wheel_radius = get_parameter("wheel_radius").as_double();
     wheel_separation = get_parameter("wheel_separation").as_double();
 
-    RCLCPP_INFO_STREAM(get_logger(), "Using wheel_radius" << wheel_radius);
-    RCLCPP_INFO_STREAM(get_logger(), "Using wheel_separation" << wheel_separation);
+    RCLCPP_INFO_STREAM(get_logger(), "Using wheel_radius: " << wheel_radius);
+    RCLCPP_INFO_STREAM(get_logger(), "Using wheel_separation: " << wheel_separation);
 
     wheel_cmd_pub = create_publisher<std_msgs::msg::Float64MultiArray>("/simple_velocity_controller/commands", 10);
     vel_sub = create_subscription<geometry_msgs::msg::TwistStamped>("/bumperbot_controller/cmd_vel", 
