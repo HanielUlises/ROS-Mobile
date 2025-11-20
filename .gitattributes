@@ -1,0 +1,18 @@
+build/**        linguist-generated
+install/**      linguist-generated
+log/**          linguist-generated
+
+*.dir/          linguist-generated
+*.make          linguist-generated
+*.cmake        linguist-generated
+CMakeCache.txt  linguist-generated
+CMakeFiles/     linguist-generated
+cmake_install.cmake linguist-generated
+compile_commands.json linguist-generated
+
+*.d             linguist-generated
+flags.make      linguist-generated
+progress.make   linguist-generated
+depend.make     linguist-generated
+build.make      linguist-generated
+link.txt        linguist-generated
