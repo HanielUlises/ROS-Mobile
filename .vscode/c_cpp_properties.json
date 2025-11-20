@@ -7,13 +7,23 @@
                 "/opt/ros/humble/include/**",
                 "/usr/include",
                 "/usr/include/c++/11",
-                "/usr/lib/gcc/x86_64-linux-gnu/11/include"
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include",
+                "/usr/include/eigen3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
             "cppStandard": "c++20",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/opt/ros/humble/include",
+                    "/usr/include/eigen3"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${workspaceFolder}/.vscode/browse.vscode-db"
+            }
         }
     ],
     "version": 4
