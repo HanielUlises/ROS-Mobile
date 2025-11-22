@@ -1,0 +1,19 @@
+#ifndef SIMPLE_TF_KINEMATICS_HPP
+#define SIMPLE_TF_KINEMATICS_HPP
+
+#include <rclcpp/rclcpp.hpp>
+#include <tf2_ros/static_transform_broadcaster.hpp>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+
+#include <memory>
+
+class SimpleTfKinematics : public rclcpp::Node{
+    public:
+        SimpleTfKinematics(const std::string &name);
+
+    private:
+        std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster;
+        geometry_msgs::msg::TransformStamped static_transform_stamped;
+};
+
+#endif

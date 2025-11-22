@@ -14,6 +14,8 @@ find_package(nav2_map_server REQUIRED)
 find_package(nav2_lifecycle_manager REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(turtlesim REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 include_directories(include)
 
@@ -35,6 +37,9 @@ ament_target_dependencies(simple_parameter rclcpp std_msgs rclcpp_lifecycle)
 
 add_executable(turtlesim_kinematics src/turtlesim_kinematics.cpp)
 ament_target_dependencies(turtlesim_kinematics rclcpp turtlesim)
+
+add_executable(simple_tf_kinematics src/simple_tf_kinematics.cpp)
+ament_target_dependencies(simple_tf_kinematics rclcpp tf2_ros geometry_msgs)
 
 
 install(
