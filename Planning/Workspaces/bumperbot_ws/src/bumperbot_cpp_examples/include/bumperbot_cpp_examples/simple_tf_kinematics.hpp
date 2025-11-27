@@ -6,6 +6,8 @@
 #include <tf2_ros/transform_broadcaster.hpp>
 #include <tf2_ros/buffer.hpp>
 #include <tf2_ros/transform_listener.hpp>
+#include <tf2/LinearMath/Quaternion.hpp>
+
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <bumperbot_msgs/srv/get_transform.hpp>
 
@@ -31,6 +33,10 @@ class SimpleTfKinematics : public rclcpp::Node{
 
         double x_increment;
         double last_x;
+        
+        int rotations_counter;
+        tf2::Quaternion last_orientation;
+        tf2::Quaternion orientation_increment;
 
         void timer_callback();
 

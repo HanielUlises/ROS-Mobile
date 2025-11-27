@@ -3,7 +3,7 @@
 using namespace std::chrono_literals;
 using namespace std::placeholders;
 
-SimpleTfKinematics::SimpleTfKinematics(const std::string &name) : Node(name), x_increment(0.05f), last_x(0.0f) {
+SimpleTfKinematics::SimpleTfKinematics(const std::string &name) : Node(name), x_increment(0.05f), last_x(0.0f), rotations_counter(0) {
     static_tf_broadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
     dynamic_tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
@@ -33,6 +33,9 @@ SimpleTfKinematics::SimpleTfKinematics(const std::string &name) : Node(name), x_
 
     get_transform_srv = create_service<bumperbot_msgs::srv::GetTransform>("get_transform", 
         std::bind(&SimpleTfKinematics::get_transform_callback, this, _1, _2));
+
+    last_orientation.setRPY(0, 0,0);
+    orientation_increment.setRPY(0, 0, 0.05);
 }
 
 void SimpleTfKinematics::timer_callback() {
@@ -44,14 +47,25 @@ void SimpleTfKinematics::timer_callback() {
     dynamic_transform_stamped.transform.translation.y = 0.0f;
     dynamic_transform_stamped.transform.translation.z = 0.0f;
 
-    dynamic_transform_stamped.transform.rotation.x = 0.0f;
-    dynamic_transform_stamped.transform.rotation.y = 0.0f;
-    dynamic_transform_stamped.transform.rotation.z = 0.0f;
-    dynamic_transform_stamped.transform.rotation.w = 1.0f;
+    tf2::Quaternion q;
+    q = last_orientation * orientation_increment; q.normalize();
+
+    // Base and frame have the same orientation
+    dynamic_transform_stamped.transform.rotation.x = q.x();
+    dynamic_transform_stamped.transform.rotation.y = q.y();
+    dynamic_transform_stamped.transform.rotation.z = q.z();
+    dynamic_transform_stamped.transform.rotation.w = q.w();
 
     dynamic_tf_broadcaster -> sendTransform(dynamic_transform_stamped);
 
     last_x = dynamic_transform_stamped.transform.translation.x;
+    rotations_counter++;
+    last_orientation = q;
+
+    if(rotations_counter >= 100) {
+        orientation_increment = orientation_increment.inverse();
+        rotations_counter = 0;
+    }
 }
 
 bool SimpleTfKinematics::get_transform_callback(const std::shared_ptr<bumperbot_msgs::srv::GetTransform::Request> req,
