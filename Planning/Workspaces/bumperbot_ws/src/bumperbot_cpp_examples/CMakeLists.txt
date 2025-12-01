@@ -60,6 +60,7 @@ install(TARGETS
   simple_publisher
   simple_subscriber
   simple_lifecycle_node
+  simple_tf_kinematics
   simple_parameter
   turtlesim_kinematics
   simple_service_server

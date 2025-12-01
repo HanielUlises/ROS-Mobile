@@ -22,7 +22,7 @@ SimpleTfKinematics::SimpleTfKinematics(const std::string &name) : Node(name), x_
     static_transform_stamped.transform.rotation.x = 0.0;
     static_transform_stamped.transform.rotation.y = 0.0;
     static_transform_stamped.transform.rotation.z = 0.0;
-    static_transform_stamped.transform.rotation.w = 0.0;
+    static_transform_stamped.transform.rotation.w = 1.0;
 
     static_tf_broadcaster -> sendTransform(static_transform_stamped);
 
