@@ -1,11 +1,13 @@
 #include "bumperbot_controller/simple_controller.hpp"
 
+#include <tf2/LinearMath/Quaternion.hpp>
+
 #include <Eigen/Geometry>
 
 using std::placeholders::_1;
 
 SimpleController::SimpleController(const std::string &name) : Node(name), 
-    left_wheel_prev_pos(0.0), right_wheel_prev_pos(0.0) {
+    left_wheel_prev_pos(0.0), right_wheel_prev_pos(0.0), x(0.0), y(0.0), theta(0.0) {
     declare_parameter("wheel_radius", 0.033);
     declare_parameter("wheel_separation", 0.17);
 
@@ -24,7 +26,16 @@ SimpleController::SimpleController(const std::string &name) : Node(name),
     joint_sub = create_subscription<sensor_msgs::msg::JointState>("/joint_states",
         10, std::bind(&SimpleController::joint_callback, this, _1));
 
+    odom_pub = create_publisher<nav_msgs::msg::Odometry>("/bumperbot_controller/odom", 10);
+
     speed_conversion << wheel_radius/2, wheel_radius/2, wheel_radius/wheel_separation, -wheel_radius/wheel_separation;  
+
+    odom_msg.header.frame_id = "odom";
+    odom_msg.child_frame_id = "base_footprint";
+    odom_msg.pose.pose.orientation.x = 0.0;
+    odom_msg.pose.pose.orientation.y = 0.0;
+    odom_msg.pose.pose.orientation.z = 0.0;
+    odom_msg.pose.pose.orientation.w = 1.0;
 
     RCLCPP_INFO_STREAM(get_logger(), "Conversion matrix: \n" << speed_conversion);
 
@@ -60,7 +71,32 @@ void SimpleController::joint_callback(const sensor_msgs::msg::JointState &msg) {
     double linear = (wheel_radius * fi_right + wheel_radius * fi_left) / 2;
     double angular = (wheel_radius * fi_right - wheel_radius * fi_left) / wheel_separation;
 
+    // Position increment
+    double d_s = (wheel_radius * delta_right + wheel_radius * delta_left) / 2;
+    double d_theta = (wheel_radius * delta_right - wheel_radius * delta_left) / wheel_separation;
+
+    theta += d_theta; 
+    x += d_s * cos(theta); 
+    y += d_s * sin(theta);
+
+    tf2::Quaternion q;
+    q.setRPY(0, 0, theta);
+
+    odom_msg.pose.pose.orientation.x = q.x();
+    odom_msg.pose.pose.orientation.y = q.y();
+    odom_msg.pose.pose.orientation.z = q.z();
+    odom_msg.pose.pose.orientation.w = q.w();
+
+    odom_msg.header.stamp = get_clock() -> now();
+    odom_msg.pose.pose.position.x = x;
+    odom_msg.pose.pose.position.y = y;
+    odom_msg.twist.twist.linear.x = linear;
+    odom_msg.twist.twist.angular.z = angular;
+
     RCLCPP_INFO_STREAM(get_logger(), "Linear velocity: " << linear << "\n" <<"Angular Velocity" << angular);
+    RCLCPP_INFO_STREAM(get_logger(), "x: " << x << ", y: " << y << ", theta: " << theta);
+
+    odom_pub -> publish(odom_msg);
 }
 
 int main(int argc, char* argv[]){
