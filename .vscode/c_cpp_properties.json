@@ -9,7 +9,8 @@
                 "/usr/include",
                 "/usr/include/c++/11",
                 "/usr/lib/gcc/x86_64-linux-gnu/11/include",
-                "/usr/include/eigen3"
+                "/usr/include/eigen3",
+                "/usr/local/include/opencv4"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
