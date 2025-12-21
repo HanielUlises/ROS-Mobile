@@ -6,6 +6,13 @@ colcon-build/
 colcon_install/
 colcon_log/
 
+# ROS 1 (catkin / Noetic) build artifacts
+devel/
+.catkin_tools/
+.catkin_workspace
+logs/
+test_results/
+
 # ROS-specific generated files
 *.bag
 *.bag.*
