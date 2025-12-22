@@ -53,10 +53,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ### Generate services in the 'srv' folder
-#add_service_files(
-#   FILES
-#   GoToPosition.srv
-#)
+add_service_files(
+   FILES
+   GoToPosition.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -66,10 +66,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ### Generate added messages and services with any dependencies listed here
-#generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-#)
+generate_messages(
+   DEPENDENCIES
+   std_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -192,6 +192,9 @@ catkin_package(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+add_compile_options(-std=c++11)
+
+
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(simple_mover src/simple_mover.cpp)
