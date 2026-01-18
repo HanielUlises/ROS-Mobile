@@ -23,4 +23,8 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+add_executable(simple_nav_node src/simple_nav_node.cpp)
+ament_target_dependencies(simple_nav_node rclcpp nav2_msgs geometry_msgs)
+install(TARGETS simple_nav_node DESTINATION lib/${PROJECT_NAME})
+
 ament_package()
