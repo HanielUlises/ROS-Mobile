@@ -1,1 +1,0 @@
-/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_generator_cpp/test_package/srv/detail/turn_camera__type_support.hpp

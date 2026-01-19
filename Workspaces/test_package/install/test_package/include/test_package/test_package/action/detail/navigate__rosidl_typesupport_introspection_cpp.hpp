@@ -1,1 +1,0 @@
-/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/build/test_package/rosidl_typesupport_introspection_cpp/test_package/action/detail/navigate__rosidl_typesupport_introspection_cpp.hpp

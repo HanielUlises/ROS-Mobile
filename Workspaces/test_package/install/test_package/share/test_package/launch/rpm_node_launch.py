@@ -1,1 +1,0 @@
-/home/haniel/Projects/ROS-Mobile/Workspaces/test_package/launch/rpm_node_launch.py
