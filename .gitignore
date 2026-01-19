@@ -6,6 +6,8 @@ colcon-build/
 colcon_install/
 colcon_log/
 
+Workspaces/
+
 # ROS 1 (catkin / Noetic) build artifacts
 devel/
 .catkin_tools/
