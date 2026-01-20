@@ -40,7 +40,6 @@ def generate_launch_description():
             "--controller-manager",
             "/controller_manager"
         ],
-        condition=UnlessCondition(use_simple_controller)
     )
 
     wheel_controller_spawner = Node(
@@ -50,7 +49,8 @@ def generate_launch_description():
             "bumperbot_controller",
             "--controller-manager",
             "/controller_manager"
-        ]
+        ],
+        condition=UnlessCondition(use_simple_controller)
     )
 
     simple_controller = GroupAction(
