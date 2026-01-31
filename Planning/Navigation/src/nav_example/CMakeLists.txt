@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -24,7 +25,7 @@ if(BUILD_TESTING)
 endif()
 
 add_executable(simple_nav_node src/simple_nav_node.cpp)
-ament_target_dependencies(simple_nav_node rclcpp nav2_msgs geometry_msgs)
+ament_target_dependencies(simple_nav_node rclcpp nav2_msgs geometry_msgs rclcpp_action)
 install(TARGETS simple_nav_node DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
