@@ -1929,7 +1929,7 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+              <uri>model://cafe_table/meshes/cafe_table.stl</uri>
             </mesh>
           </geometry>
         </visual>
@@ -1958,7 +1958,7 @@
           <pose>0 0 0.05 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>model://euro_pallet/meshes/pallet.dae</uri>
+              <uri>model://euro_pallet/meshes/pallet.stl</uri>
               <scale>0.1 0.1 0.1</scale>
             </mesh>
           </geometry>
@@ -1980,7 +1980,7 @@
           <pose>0 0 0.05 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>model://euro_pallet/meshes/pallet.dae</uri>
+              <uri>model://euro_pallet/meshes/pallet.stl</uri>
               <scale>0.1 0.1 0.1</scale>
             </mesh>
           </geometry>
@@ -2010,7 +2010,7 @@
           <pose>0 0 0.05 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>model://euro_pallet/meshes/pallet.dae</uri>
+              <uri>model://euro_pallet/meshes/pallet.stl</uri>
               <scale>0.1 0.1 0.1</scale>
             </mesh>
           </geometry>
@@ -2032,7 +2032,7 @@
           <pose>0 0 0.05 0 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>model://euro_pallet/meshes/pallet.dae</uri>
+              <uri>model://euro_pallet/meshes/pallet.stl</uri>
               <scale>0.1 0.1 0.1</scale>
             </mesh>
           </geometry>
