@@ -37,6 +37,11 @@ SimpleController::SimpleController(const std::string &name) : Node(name),
     odom_msg.pose.pose.orientation.z = 0.0;
     odom_msg.pose.pose.orientation.w = 1.0;
 
+    transform_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    transform_stamped.header.frame_id = "odom";
+    transform_stamped.child_frame_id = "base_footprint";
+
+
     RCLCPP_INFO_STREAM(get_logger(), "Conversion matrix: \n" << speed_conversion);
 
 }
@@ -96,7 +101,16 @@ void SimpleController::joint_callback(const sensor_msgs::msg::JointState &msg) {
     RCLCPP_INFO_STREAM(get_logger(), "Linear velocity: " << linear << "\n" <<"Angular Velocity" << angular);
     RCLCPP_INFO_STREAM(get_logger(), "x: " << x << ", y: " << y << ", theta: " << theta);
 
+    transform_stamped.transform.translation.x = x;
+    transform_stamped.transform.translation.y = y;
+    transform_stamped.transform.rotation.x = q.x();
+    transform_stamped.transform.rotation.y = q.y();
+    transform_stamped.transform.rotation.z = q.z();
+    transform_stamped.transform.rotation.w = q.w();
+    transform_stamped.header.stamp = get_clock() -> now();
+
     odom_pub -> publish(odom_msg);
+    transform_broadcaster -> sendTransform(transform_stamped);
 }
 
 int main(int argc, char* argv[]){
