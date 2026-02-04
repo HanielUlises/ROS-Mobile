@@ -1,4 +1,4 @@
-#include "path_tracker.hpp"
+#include "bumperbot_utils/path_tracker.hpp"
 
 PathTracker::PathTracker() : Node("path_tracker") {
     declare_parameter<std::string> ("odom/topic", "bumperbot_controller/odom");

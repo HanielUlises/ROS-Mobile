@@ -5,15 +5,18 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+include_directories(include)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
+find_package(rclcpp REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
 add_executable(path_tracker src/path_tracker.cpp)
-ament_target_dependencies(path_tracker rclcpp geometry_msgs nav_msgs)
+ament_target_dependencies(path_tracker rclcpp geometry_msgs nav_msgs rclcpp)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
