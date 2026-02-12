@@ -40,26 +40,31 @@ SimpleNavNode::SimpleNavNode() : Node("simple_nav_node")
 
 void SimpleNavNode::loadGoals()
 {
-    auto multi_goals = this->get_parameter("goals").as_double_array_2d();
-    if (!multi_goals.empty()) {
-        for (const auto& g : multi_goals) {
-            if (g.size() == 3) {
-                goals_.push_back({g[0], g[1], g[2]});
-            } else {
-                RCLCPP_WARN(this->get_logger(), "Invalid goal format (need x,y,yaw). Skipping.");
-            }
-        }
-        RCLCPP_INFO(this->get_logger(), "Loaded %zu goals from 'goals' parameter", goals_.size());
-        return;
-    }
+  std::vector<double> flat_goals;
+  this->get_parameter("goals", flat_goals);
 
-    double x = this->get_parameter("goal_x").as_double();
-    double y = this->get_parameter("goal_y").as_double();
-    double yaw = this->get_parameter("goal_yaw").as_double();
+  if (flat_goals.size() % 3 != 0) {
+    RCLCPP_ERROR(this->get_logger(),
+                 "goals parameter length must be multiple of 3 (x,y,yaw), got %zu",
+                 flat_goals.size());
+    return;
+  }
 
-    // radians -> quaternion
+  goals_.clear();
+  for (size_t i = 0; i < flat_goals.size(); i += 3) {
+    goals_.push_back({flat_goals[i], flat_goals[i+1], flat_goals[i+2]});
+  }
+
+  if (goals_.empty()) {
+    // Fallback to single goal parameters
+    double x = 1.0, y = 0.5, yaw = 0.0;
+    this->get_parameter_or("goal_x", x, 1.0);
+    this->get_parameter_or("goal_y", y, 0.5);
+    this->get_parameter_or("goal_yaw", yaw, 0.0);
     goals_.push_back({x, y, yaw});
-    RCLCPP_INFO(this->get_logger(), "Loaded single goal from parameters: (%.2f, %.2f, yaw=%.2f rad)", x, y, yaw);
+  }
+
+  RCLCPP_INFO(this->get_logger(), "Loaded %zu goals", goals_.size());
 }
 
 void SimpleNavNode::sendNextGoal()
@@ -102,7 +107,7 @@ void SimpleNavNode::sendNextGoal()
     send_goal_options.result_callback =
         std::bind(&SimpleNavNode::resultCallback, this, std::placeholders::_1);
 
-    current_goal_handle_ = client_->async_send_goal(goal_msg, send_goal_options);
+    client_->async_send_goal(goal_msg, send_goal_options);
 }
 
 void SimpleNavNode::goalResponseCallback(const GoalHandle::SharedPtr &goal_handle)
