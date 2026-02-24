@@ -1,0 +1,364 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="logistics_world">
+
+    <!-- Physics -->
+    <physics type="ode">
+      <real_time_update_rate>1000.0</real_time_update_rate>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+
+    <!-- Lighting -->
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <light name="ceiling_light_warehouse" type="point">
+      <pose>0 0 4 0 0 0</pose>
+      <diffuse>1.0 0.95 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.05</linear>
+      </attenuation>
+    </light>
+
+    <!-- Ground plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <surface><friction><ode><mu>100</mu><mu2>50</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ═══════════════════════════════════════════════
+         WAREHOUSE ROOM  (center: 0, 0)  8×8 m
+         ═══════════════════════════════════════════════ -->
+
+    <!-- Warehouse floor (darker) -->
+    <model name="warehouse_floor">
+      <static>true</static>
+      <pose>0 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>8 8 0.02</size></box></geometry>
+          <material><ambient>0.4 0.35 0.3 1</ambient><diffuse>0.5 0.45 0.4 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Warehouse label -->
+    <model name="warehouse_sign">
+      <static>true</static>
+      <pose>-3.5 0 1.5 0 0 1.5708</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>0.05 1.5 0.4</size></box></geometry>
+          <material><ambient>0.8 0.6 0.1 1</ambient><diffuse>1.0 0.8 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Warehouse walls -->
+    <model name="warehouse_wall_north">
+      <static>true</static><pose>0 4 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>8 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>8 0.2 2</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="warehouse_wall_south">
+      <static>true</static><pose>0 -4 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>8 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>8 0.2 2</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="warehouse_wall_west">
+      <static>true</static><pose>-4 0 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 8 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 8 2</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient></material></visual>
+      </link>
+    </model>
+    <!-- East wall of warehouse has a doorway gap to office corridor -->
+    <model name="warehouse_wall_east_top">
+      <static>true</static><pose>4 2.5 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 3 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 3 2</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="warehouse_wall_east_bottom">
+      <static>true</static><pose>4 -2.5 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 3 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 3 2</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient></material></visual>
+      </link>
+    </model>
+
+    <!-- Warehouse shelves -->
+    <model name="shelf_1">
+      <static>true</static><pose>-2 1.5 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.4 2.0 1.2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.4 2.0 1.2</size></box></geometry>
+          <material><ambient>0.5 0.35 0.2 1</ambient><diffuse>0.6 0.45 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="shelf_2">
+      <static>true</static><pose>-2 -1.5 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.4 2.0 1.2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.4 2.0 1.2</size></box></geometry>
+          <material><ambient>0.5 0.35 0.2 1</ambient><diffuse>0.6 0.45 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Package 1 (red box) -->
+    <model name="package1">
+      <static>false</static><pose>-1.5 1.5 1.3 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>1.0</mass><inertia><ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.25 0.25 0.25</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.25 0.25 0.25</size></box></geometry>
+          <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>1.0 0.2 0.2 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Package 2 (blue box) -->
+    <model name="package2">
+      <static>false</static><pose>-1.5 -1.5 1.3 0 0 0</pose>
+      <link name="link">
+        <inertial><mass>1.0</mass><inertia><ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.25 0.25 0.25</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.25 0.25 0.25</size></box></geometry>
+          <material><ambient>0.1 0.1 0.8 1</ambient><diffuse>0.2 0.2 1.0 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ═══════════════════════════════════════════════
+         CORRIDOR  warehouse->office  (x: 4->10, y: -1->1)
+         ═══════════════════════════════════════════════ -->
+    <model name="corridor_wall_north">
+      <static>true</static><pose>7 1 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>6 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>6 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="corridor_wall_south">
+      <static>true</static><pose>7 -1 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>6 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>6 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material></visual>
+      </link>
+    </model>
+
+    <!-- ═══════════════════════════════════════════════
+         OFFICE ROOM  (center: 12, 0)  6×6 m
+         ═══════════════════════════════════════════════ -->
+    <model name="office_floor">
+      <static>true</static><pose>12 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>6 6 0.02</size></box></geometry>
+          <material><ambient>0.6 0.6 0.7 1</ambient><diffuse>0.75 0.75 0.85 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="office_wall_north">
+      <static>true</static><pose>12 3 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>6 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>6 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.95 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="office_wall_east">
+      <static>true</static><pose>15 0 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 6 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 6 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.95 1</ambient></material></visual>
+      </link>
+    </model>
+    <!-- Office south wall with doorway to kitchen corridor -->
+    <model name="office_wall_south_left">
+      <static>true</static><pose>10.5 -3 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.95 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="office_wall_south_right">
+      <static>true</static><pose>13.5 -3 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.95 1</ambient></material></visual>
+      </link>
+    </model>
+    <!-- Office west wall with doorway -->
+    <model name="office_wall_west_top">
+      <static>true</static><pose>9 1.5 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 3 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 3 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.95 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="office_wall_west_bottom">
+      <static>true</static><pose>9 -1.5 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 3 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 3 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.95 1</ambient></material></visual>
+      </link>
+    </model>
+
+    <!-- Office desk -->
+    <model name="office_desk">
+      <static>true</static><pose>13 1 0.4 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>1.6 0.8 0.8</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.6 0.8 0.8</size></box></geometry>
+          <material><ambient>0.6 0.4 0.2 1</ambient><diffuse>0.75 0.5 0.3 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Delivery zone marker (office) -->
+    <model name="office_delivery_zone">
+      <static>true</static><pose>11 -1.5 0.02 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>1.0 1.0 0.01</size></box></geometry>
+          <material><ambient>0.0 0.8 0.0 1</ambient><diffuse>0.0 1.0 0.0 0.7</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ═══════════════════════════════════════════════
+         CORRIDOR  office->kitchen  (x: 11->13, y: -3->-7)
+         ═══════════════════════════════════════════════ -->
+    <model name="corridor2_wall_west">
+      <static>true</static><pose>11 -5 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 4 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 4 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="corridor2_wall_east">
+      <static>true</static><pose>13 -5 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 4 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 4 2</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material></visual>
+      </link>
+    </model>
+
+    <!-- ═══════════════════════════════════════════════
+         KITCHEN ROOM  (center: 12, -10)  6×6 m
+         ═══════════════════════════════════════════════ -->
+    <model name="kitchen_floor">
+      <static>true</static><pose>12 -10 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>6 6 0.02</size></box></geometry>
+          <material><ambient>0.7 0.65 0.5 1</ambient><diffuse>0.85 0.8 0.65 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="kitchen_wall_south">
+      <static>true</static><pose>12 -13 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>6 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>6 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.85 0.8 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="kitchen_wall_east">
+      <static>true</static><pose>15 -10 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 6 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 6 2</size></box></geometry>
+          <material><ambient>0.9 0.85 0.8 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="kitchen_wall_west">
+      <static>true</static><pose>9 -10 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.2 6 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 6 2</size></box></geometry>
+          <material><ambient>0.9 0.85 0.8 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="kitchen_wall_north_left">
+      <static>true</static><pose>10.5 -7 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.85 0.8 1</ambient></material></visual>
+      </link>
+    </model>
+    <model name="kitchen_wall_north_right">
+      <static>true</static><pose>13.5 -7 1 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3 0.2 2</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3 0.2 2</size></box></geometry>
+          <material><ambient>0.9 0.85 0.8 1</ambient></material></visual>
+      </link>
+    </model>
+
+    <!-- Kitchen counter -->
+    <model name="kitchen_counter">
+      <static>true</static><pose>14 -11 0.45 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.6 3 0.9</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3 0.9</size></box></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient><diffuse>0.9 0.9 0.9 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Delivery zone marker (kitchen) -->
+    <model name="kitchen_delivery_zone">
+      <static>true</static><pose>10.5 -11 0.02 0 0 0</pose>
+      <link name="link">
+        <visual name="v">
+          <geometry><box><size>1.0 1.0 0.01</size></box></geometry>
+          <material><ambient>0.0 0.8 0.0 1</ambient><diffuse>0.0 1.0 0.0 0.7</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
