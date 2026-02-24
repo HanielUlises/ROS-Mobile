@@ -1,0 +1,11 @@
+plansys2_problem_expert:
+  ros__parameters:
+    model_file: "robot_plansys/pddl/domain.pddl"
+
+plansys2_planner:
+  ros__parameters:
+    plan_solver_plugins: ["POPF"]
+
+POPF:
+  ros__parameters:
+    output_dir: "/tmp"
