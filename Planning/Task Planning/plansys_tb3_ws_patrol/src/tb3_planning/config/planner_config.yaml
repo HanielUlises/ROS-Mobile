@@ -1,0 +1,12 @@
+plansys2_node:
+  ros__parameters:
+    model_file: ""
+    
+plansys2_planner:
+  ros__parameters:
+    plan_solver_plugins:
+      - "POPF"
+
+POPF:
+  ros__parameters:
+    plugin: "plansys2/POPFPlanSolver"
