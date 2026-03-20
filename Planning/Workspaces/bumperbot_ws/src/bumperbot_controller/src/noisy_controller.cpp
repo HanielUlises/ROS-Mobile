@@ -1,0 +1,123 @@
+#include "bumperbot_controller/noisy_controller.hpp"
+
+#include <tf2/LinearMath/Quaternion.hpp>
+
+#include <Eigen/Geometry>
+
+using std::placeholders::_1;
+
+NoisyController::NoisyController(const std::string &name) : Node(name), 
+    left_wheel_prev_pos(0.0), right_wheel_prev_pos(0.0), x(0.0), y(0.0), theta(0.0) {
+    declare_parameter("wheel_radius", 0.033);
+    declare_parameter("wheel_separation", 0.17);
+
+    wheel_radius = get_parameter("wheel_radius").as_double();
+    wheel_separation = get_parameter("wheel_separation").as_double();
+
+    RCLCPP_INFO_STREAM(get_logger(), "Using wheel_radius: " << wheel_radius);
+    RCLCPP_INFO_STREAM(get_logger(), "Using wheel_separation: " << wheel_separation);
+
+    previous_time = get_clock() -> now();
+
+    wheel_cmd_pub = create_publisher<std_msgs::msg::Float64MultiArray>("/simple_velocity_controller/commands", 10);
+    vel_sub = create_subscription<geometry_msgs::msg::TwistStamped>("/bumperbot_controller/cmd_vel", 
+        10, std::bind(&NoisyController::velocity_callback, this, _1));
+
+    joint_sub = create_subscription<sensor_msgs::msg::JointState>("/joint_states",
+        10, std::bind(&NoisyController::joint_callback, this, _1));
+
+    odom_pub = create_publisher<nav_msgs::msg::Odometry>("/bumperbot_controller/odom", 10);
+
+    speed_conversion << wheel_radius/2, wheel_radius/2, wheel_radius/wheel_separation, -wheel_radius/wheel_separation;  
+
+    odom_msg.header.frame_id = "odom";
+    odom_msg.child_frame_id = "base_footprint";
+    odom_msg.pose.pose.orientation.x = 0.0;
+    odom_msg.pose.pose.orientation.y = 0.0;
+    odom_msg.pose.pose.orientation.z = 0.0;
+    odom_msg.pose.pose.orientation.w = 1.0;
+
+    transform_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    transform_stamped.header.frame_id = "odom";
+    transform_stamped.child_frame_id = "base_footprint";
+
+
+    RCLCPP_INFO_STREAM(get_logger(), "Conversion matrix: \n" << speed_conversion);
+
+}
+
+void NoisyController::velocity_callback(const geometry_msgs::msg::TwistStamped &msg){
+    Eigen::Vector2d robot_speed(msg.twist.linear.x, msg.twist.angular.z);   
+    Eigen::Vector2d wheel_speed = speed_conversion.inverse() * robot_speed;
+    
+    std_msgs::msg::Float64MultiArray wheel_speed_msg;
+    wheel_speed_msg.data.push_back(wheel_speed.coeff(1));
+    wheel_speed_msg.data.push_back(wheel_speed.coeff(0));
+    
+    wheel_cmd_pub -> publish(wheel_speed_msg);
+
+}
+
+void NoisyController::joint_callback(const sensor_msgs::msg::JointState &msg) {
+    double delta_right = msg.position.at(0) - right_wheel_prev_pos;
+    double delta_left = msg.position.at(1) - left_wheel_prev_pos;
+    
+    rclcpp::Time msg_time = msg.header.stamp;
+    rclcpp::Duration dt = msg_time - previous_time;
+
+    right_wheel_prev_pos = msg.position.at(0);
+    left_wheel_prev_pos = msg.position.at(1);
+
+    previous_time = msg_time;
+
+    double fi_right = delta_right / dt.seconds();
+    double fi_left = delta_left / dt.seconds();
+
+    double linear = (wheel_radius * fi_right + wheel_radius * fi_left) / 2;
+    double angular = (wheel_radius * fi_right - wheel_radius * fi_left) / wheel_separation;
+
+    // Position increment
+    double d_s = (wheel_radius * delta_right + wheel_radius * delta_left) / 2;
+    double d_theta = (wheel_radius * delta_right - wheel_radius * delta_left) / wheel_separation;
+
+    theta += d_theta; 
+    x += d_s * cos(theta); 
+    y += d_s * sin(theta);
+
+    tf2::Quaternion q;
+    q.setRPY(0, 0, theta);
+
+    odom_msg.pose.pose.orientation.x = q.x();
+    odom_msg.pose.pose.orientation.y = q.y();
+    odom_msg.pose.pose.orientation.z = q.z();
+    odom_msg.pose.pose.orientation.w = q.w();
+
+    odom_msg.header.stamp = get_clock() -> now();
+    odom_msg.pose.pose.position.x = x;
+    odom_msg.pose.pose.position.y = y;
+    odom_msg.twist.twist.linear.x = linear;
+    odom_msg.twist.twist.angular.z = angular;
+
+    RCLCPP_INFO_STREAM(get_logger(), "Linear velocity: " << linear << "\n" <<"Angular Velocity" << angular);
+    RCLCPP_INFO_STREAM(get_logger(), "x: " << x << ", y: " << y << ", theta: " << theta);
+
+    transform_stamped.transform.translation.x = x;
+    transform_stamped.transform.translation.y = y;
+    transform_stamped.transform.rotation.x = q.x();
+    transform_stamped.transform.rotation.y = q.y();
+    transform_stamped.transform.rotation.z = q.z();
+    transform_stamped.transform.rotation.w = q.w();
+    transform_stamped.header.stamp = get_clock() -> now();
+
+    odom_pub -> publish(odom_msg);
+    transform_broadcaster -> sendTransform(transform_stamped);
+}
+
+int main(int argc, char* argv[]){
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<NoisyController>("noisy_controller");
+    rclcpp::spin(node);
+    rclcpp::shutdown();
+    
+    return 0;
+}
