@@ -11,7 +11,7 @@
 
 #include <Eigen/Core>
 
-class SimpleController : public rclcpp::Node{
+class NoisyController : public rclcpp::Node{
     public:
         SimpleController(const std::string &name);
 
