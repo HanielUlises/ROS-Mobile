@@ -13,7 +13,7 @@
 
 class NoisyController : public rclcpp::Node{
     public:
-        SimpleController(const std::string &name);
+        NoisyController(const std::string &name);
 
     private: 
         void velocity_callback(const geometry_msgs::msg::TwistStamped &msg);
