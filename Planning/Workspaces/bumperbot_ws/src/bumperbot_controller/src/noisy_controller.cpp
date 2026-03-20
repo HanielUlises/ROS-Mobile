@@ -1,5 +1,7 @@
 #include "bumperbot_controller/noisy_controller.hpp"
 
+#include <random>
+
 #include <tf2/LinearMath/Quaternion.hpp>
 
 #include <Eigen/Geometry>
@@ -26,12 +28,12 @@ NoisyController::NoisyController(const std::string &name) : Node(name),
     joint_sub = create_subscription<sensor_msgs::msg::JointState>("/joint_states",
         10, std::bind(&NoisyController::joint_callback, this, _1));
 
-    odom_pub = create_publisher<nav_msgs::msg::Odometry>("/bumperbot_controller/odom", 10);
+    odom_pub = create_publisher<nav_msgs::msg::Odometry>("/bumperbot_controller/odom_noisy", 10);
 
     speed_conversion << wheel_radius/2, wheel_radius/2, wheel_radius/wheel_separation, -wheel_radius/wheel_separation;  
 
     odom_msg.header.frame_id = "odom";
-    odom_msg.child_frame_id = "base_footprint";
+    odom_msg.child_frame_id = "base_footprint_ekf";
     odom_msg.pose.pose.orientation.x = 0.0;
     odom_msg.pose.pose.orientation.y = 0.0;
     odom_msg.pose.pose.orientation.z = 0.0;
@@ -39,7 +41,7 @@ NoisyController::NoisyController(const std::string &name) : Node(name),
 
     transform_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
     transform_stamped.header.frame_id = "odom";
-    transform_stamped.child_frame_id = "base_footprint";
+    transform_stamped.child_frame_id = "base_footprint_noisy";
 
 
     RCLCPP_INFO_STREAM(get_logger(), "Conversion matrix: \n" << speed_conversion);
@@ -59,6 +61,13 @@ void NoisyController::velocity_callback(const geometry_msgs::msg::TwistStamped &
 }
 
 void NoisyController::joint_callback(const sensor_msgs::msg::JointState &msg) {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine noise_generator(seed);
+    std::normal_distribution<double> left_encoder_noise(0.0, 0.005);
+    std::normal_distribution<double> right_encoder_noise(0.0, 0.005);
+
+    double wheel_encoder_left = msg.position.at(1) + left_encoder_noise(noise_generator);
+    double wheel_encoder_right = msg.position.at(0) + right_encoder_noise(noise_generator);
     double delta_right = msg.position.at(0) - right_wheel_prev_pos;
     double delta_left = msg.position.at(1) - left_wheel_prev_pos;
     
