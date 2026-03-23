@@ -14,12 +14,13 @@ def noisy_controller(context, *args, **kwargs):
 
     noisy_controller_cpp = Node(
         package="bumperbot_controller",
-        executable="noisy_controller.cpp",
+        executable="noisy_controller",
         parameters=[
             {"wheel_radius": wheel_radius + wheel_radius_error,
              "wheel_separation": wheel_separation + wheel_separation_error}
         ]
     )
+    return noisy_controller_cpp
 
 def generate_launch_description():
 
@@ -103,7 +104,7 @@ def generate_launch_description():
         ]
     )
 
-    noisy_controller_launch = OpaqueFunction()
+    noisy_controller_launch = OpaqueFunction(function=noisy_controller)
 
     return LaunchDescription([
         use_python_arg,
