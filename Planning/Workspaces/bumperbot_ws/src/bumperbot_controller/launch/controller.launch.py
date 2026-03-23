@@ -27,6 +27,14 @@ def generate_launch_description():
         default_value="False"
     )
 
+    wheel_radius_error_arg = DeclareLaunchArgument(
+
+    )
+
+    wheel_separation_error_arg = DeclareLaunchArgument(
+        
+    )
+
     use_python = LaunchConfiguration("use_python")
     wheel_radius = LaunchConfiguration("wheel_radius")
     wheel_separation = LaunchConfiguration("wheel_separation")
