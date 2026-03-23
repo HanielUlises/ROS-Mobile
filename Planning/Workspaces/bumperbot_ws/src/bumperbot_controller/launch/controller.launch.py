@@ -28,11 +28,13 @@ def generate_launch_description():
     )
 
     wheel_radius_error_arg = DeclareLaunchArgument(
-
+        "wheel_radius_error",
+        default_value="True"
     )
 
     wheel_separation_error_arg = DeclareLaunchArgument(
-        
+        "wheel_separation_error",
+        default_value="True"
     )
 
     use_python = LaunchConfiguration("use_python")
