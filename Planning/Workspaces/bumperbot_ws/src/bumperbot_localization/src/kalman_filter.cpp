@@ -10,3 +10,20 @@ KalmanFilter::KalmanFilter(const std::string &name) :
 
     odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("bumperbot_controller/odom_kalman", 10);
 }
+
+void KalmanFilter::odom_callback(const nav_msgs::msg::Odometry &odom) {
+    kalman_odom = odom;
+
+    if(is_first_odom_) {
+        mean = odom.twist.twist.angular.z;
+        last_angular_z_ = odom.twist.twist.angular.z;
+        is_first_odom_ = false;
+        return;
+    }
+
+    
+}
+
+void KalmanFilter::imu_callback(const sensor_msgs::msg::Imu &imu) {
+
+}
