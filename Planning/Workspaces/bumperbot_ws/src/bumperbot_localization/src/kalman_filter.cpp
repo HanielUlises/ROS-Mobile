@@ -6,7 +6,7 @@ KalmanFilter::KalmanFilter(const std::string &name) :
     Node(name), mean(0.0f), variance(1000.0f), imu_angular_z(0.0), is_first_odom_(true), last_angular_z_(0.0), motion_(0.0), motion_variance_(4.0f), measurement_variance_(0.5f) {
     
     odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("bumperbot_controller/odom_noisy", 10, std::bind(&KalmanFilter::odom_callback, this, _1));
-    imu_sub_ = create_subscription<sensor_msgs::msg::Imu>("imu/data", 10, std::bind(&KalmanFilter::imu_callback, this, _1));
+    imu_sub_ = create_subscription<sensor_msgs::msg::Imu>("imu/out", 10, std::bind(&KalmanFilter::imu_callback, this, _1));
 
     odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("bumperbot_controller/odom_kalman", 10);
 }
@@ -20,7 +20,13 @@ void KalmanFilter::odom_callback(const nav_msgs::msg::Odometry &odom) {
         is_first_odom_ = false;
         return;
     }
+    motion_ = odom.twist.twist.angular.z - last_angular_z_;
 
+    state_prediction();
+    measurement_update();
+
+    kalman_odom.twist.twist.angular.z = mean;
+    odom_pub_ -> publish(kalman_odom);
 }
 
 void KalmanFilter::imu_callback(const sensor_msgs::msg::Imu &imu) {
@@ -30,4 +36,18 @@ void KalmanFilter::imu_callback(const sensor_msgs::msg::Imu &imu) {
 void KalmanFilter::measurement_update() {
     mean = (measurement_variance_ * mean + variance * imu_angular_z) / (variance * measurement_variance_);
     variance = (variance * measurement_variance_) / (variance + measurement_variance_);
+}
+
+void KalmanFilter::state_prediction() {
+    mean = mean + motion_;
+    variance = variance + motion_variance_;
+}
+
+int main(int argc, char *argv[]) {
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<KalmanFilter>("kalman_filter");
+    rclcpp::spin(node);
+    rclcpp::shutdown();
+
+    return 0;
 }

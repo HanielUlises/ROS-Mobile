@@ -24,6 +24,7 @@ class KalmanFilter : public rclcpp::Node {
         double measurement_variance_;
 
         void measurement_update();
+        void state_prediction();
 
         bool is_first_odom_;
 
