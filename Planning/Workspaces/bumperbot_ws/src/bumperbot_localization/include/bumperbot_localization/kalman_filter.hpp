@@ -20,6 +20,11 @@ class KalmanFilter : public rclcpp::Node {
         double last_angular_z_;
         double motion_;
 
+        double motion_variance_;
+        double measurement_variance_;
+
+        void measurement_update();
+
         bool is_first_odom_;
 
         nav_msgs::msg::Odometry kalman_odom;
