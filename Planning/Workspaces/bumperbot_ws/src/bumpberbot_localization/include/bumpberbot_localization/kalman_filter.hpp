@@ -8,6 +8,7 @@
 class KalmanFilter : public rclcpp::Node {
     public:
         KalmanFilter(const std::string &name);
+
     private:
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
         rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
@@ -20,6 +21,10 @@ class KalmanFilter : public rclcpp::Node {
 
         bool is_first_odom_;
 
+        nav_msgs::msg::Odometry kalman_odom;
+
+        void odom_callback(const nav_msgs::msg::Odometry &odom);
+        void imu_callback(const sensor_msgs::msg::Imu &imu);
 };
 
 #endif
