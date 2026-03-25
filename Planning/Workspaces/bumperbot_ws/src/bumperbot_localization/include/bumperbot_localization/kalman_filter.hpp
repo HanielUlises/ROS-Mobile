@@ -12,12 +12,13 @@ class KalmanFilter : public rclcpp::Node {
     private:
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
         rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
-        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub;
+        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
 
         double mean;
         double variance;
         double imu_angular_z;
         double last_angular_z_;
+        double motion_;
 
         bool is_first_odom_;
 
