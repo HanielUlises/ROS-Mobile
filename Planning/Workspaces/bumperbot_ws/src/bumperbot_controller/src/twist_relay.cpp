@@ -11,7 +11,10 @@ class TwistRelay : public rclcpp::Node {
                 std::bind(&TwistRelay::controller_twist_callback, this, std::placeholders::_1)
             );
 
-            controller_pub = create_publisher<>();
+            controller_pub = create_publisher<geometry_msgs::msg::Twist>(
+                "/bumperbot_controller/cmd_vel",
+                10
+            );
         }
     
     private:
