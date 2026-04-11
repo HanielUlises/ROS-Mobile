@@ -10,6 +10,8 @@ class TwistRelay : public rclcpp::Node {
                 10,
                 std::bind(&TwistRelay::controller_twist_callback, this, std::placeholders::_1)
             );
+
+            controller_pub = create_publisher<>();
         }
     
     private:
