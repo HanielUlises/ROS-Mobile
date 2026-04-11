@@ -5,7 +5,9 @@
 class TwistRelay : public rclcpp::Node {
     public:
         TwistRelay() : Node("twist_relay") {
-
+            controller_sub = create_subscription<geometry_msgs::msg::Twist>(
+                
+            );
         }
     
     private:
