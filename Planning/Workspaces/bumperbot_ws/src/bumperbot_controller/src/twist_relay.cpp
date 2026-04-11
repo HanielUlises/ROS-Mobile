@@ -6,7 +6,9 @@ class TwistRelay : public rclcpp::Node {
     public:
         TwistRelay() : Node("twist_relay") {
             controller_sub = create_subscription<geometry_msgs::msg::Twist>(
-                
+                "/bumperbot_controller/cmd_vel_unstamped",
+                10,
+                std::bind(&TwistRelay::controller_twist_callback, this, std::placeholders::_1)
             );
         }
     
