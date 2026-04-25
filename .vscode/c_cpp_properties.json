@@ -4,7 +4,6 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/haniel/Projects/ROS-Mobile/Planning/Workspaces/bumperbot_ws/install/**",
                 "/opt/ros/humble/include/**",
                 "/usr/include",
                 "/usr/include/c++/11",
@@ -20,7 +19,6 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "/home/haniel/Projects/ROS-Mobile/Planning/Workspaces/bumperbot_ws/install",
                     "/opt/ros/humble/include",
                     "/usr/include/eigen3"
                 ],
