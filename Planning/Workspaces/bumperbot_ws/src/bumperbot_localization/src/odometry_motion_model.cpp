@@ -1,8 +1,26 @@
 #include "bumperbot_localization/odometry_motion_model.hpp"
 
 #include <geometry_msgs/msg/pose.hpp>
+#include <tf2/utils.hpp>
 
 using std::placeholders::_1;
+
+double angle_diff(double a, double b) {
+    a = atan2(sin(a), cos(a));
+    b = atan2(sin(b), cos(b));
+
+    double d1 = a - b;
+    double d2 = 2 * M_PI - fabs(d1);
+
+    if(d1 > 0) {
+        d2 *= -1.0f;
+    } 
+
+    if(fabs(d1) < fabs(d2))
+        return d1;
+    else 
+        return d2;
+}
 
 OdometryMotionModel::OdometryMotionModel(const std::string &name) : 
     Node(name), alpha1_(0.0f), alpha2_(0.0f), alpha3_(0.0f), alpha4_(0.0f), nr_samples_s(300), last_odom_x_(0.0f), last_odom_y_(0.0f), last_odom_theta_(0.0f), is_first_odom_(true) {
@@ -30,7 +48,24 @@ OdometryMotionModel::OdometryMotionModel(const std::string &name) :
 }
 
 void OdometryMotionModel::odom_callback(const nav_msgs::msg::Odometry &odom) {
+    tf2::Quaternion q(odom.pose.pose.orientation.x, odom.pose.pose.orientation.y, odom.pose.pose.orientation.z, odom.pose.pose.orientation.w);
+    tf2::Matrix3x3 m(q);
+    
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
 
+    if(is_first_odom_) {
+        last_odom_x_ = odom.pose.pose.position.x;
+        last_odom_y_ = odom.pose.pose.position.y;
+        last_odom_theta_ = yaw;
+        samples_.header.frame_id = odom.header.frame_id;
+        is_first_odom_ = false;
+        return;
+    }
+
+    double odom_x_increment = odom.pose.pose.position.x - last_odom_x_;
+    double odom_y_increment = odom.pose.pose.position.y - last_odom_y_;
+    double odom_theta_increment = angle_diff(yaw, last_odom_theta_);
 }
 
 int main(int argc, char *argv[]) {
