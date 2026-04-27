@@ -11,7 +11,7 @@ class OdometryMotionModel : public rclcpp::Node {
     private:
         void odom_callback(const nav_msgs::msg::Odometry &);
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+        rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_pub;
 
         geometry_msgs::msg::PoseArray samples_;
         double alpha1_;
