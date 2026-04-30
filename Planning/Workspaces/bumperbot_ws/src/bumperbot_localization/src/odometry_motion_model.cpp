@@ -23,7 +23,7 @@ double angle_diff(double a, double b) {
 }
 
 OdometryMotionModel::OdometryMotionModel(const std::string &name) : 
-    Node(name), alpha1_(0.0f), alpha2_(0.0f), alpha3_(0.0f), alpha4_(0.0f), nr_samples_s(300), last_odom_x_(0.0f), last_odom_y_(0.0f), last_odom_theta_(0.0f), is_first_odom_(true) {
+    Node(name), alpha1_(0.0), alpha2_(0.0), alpha3_(0.0), alpha4_(0.0), nr_samples_s(300), last_odom_x_(0.0), last_odom_y_(0.0), last_odom_theta_(0.0), is_first_odom_(true) {
     declare_parameter("alpha1", 0.1);
     declare_parameter("alpha2", 0.1);
     declare_parameter("alpha3", 0.1);
@@ -66,6 +66,14 @@ void OdometryMotionModel::odom_callback(const nav_msgs::msg::Odometry &odom) {
     double odom_x_increment = odom.pose.pose.position.x - last_odom_x_;
     double odom_y_increment = odom.pose.pose.position.y - last_odom_y_;
     double odom_theta_increment = angle_diff(yaw, last_odom_theta_);
+
+    double delta_rot1 = 0.0;
+    if(sqrt(std::pow(odom_y_increment, 2) +std::pow(odom_x_increment, 2)) > 0.01) {
+        delta_rot1 = angle_diff(atan2(odom_y_increment, odom_x_increment), yaw);
+    }
+    double delta_trasl = sqrt(std::pow(odom_y_increment, 2) + std::pow(odom_x_increment, 2));
+    double delta_rot2 = angle_diff(odom_theta_increment, delta_rot1);
+
 }
 
 int main(int argc, char *argv[]) {
