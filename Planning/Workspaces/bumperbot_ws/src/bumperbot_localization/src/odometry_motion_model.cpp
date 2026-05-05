@@ -3,6 +3,8 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <tf2/utils.hpp>
 
+#include <random>
+
 using std::placeholders::_1;
 
 double angle_diff(double a, double b) {
@@ -77,6 +79,12 @@ void OdometryMotionModel::odom_callback(const nav_msgs::msg::Odometry &odom) {
     double rot1_variance = alpha1_ * delta_rot1 + alpha2_ * delta_trasl;
     double trasl_variance = alpha3_ * delta_trasl + alpha4_ * (delta_rot1 + delta_rot2);
     double rot2_variance = alpha1_ * delta_rot2 + alpha2_ * delta_trasl;
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine noise_generator(seed); 
+    std::normal_distribution<double> rot1_noise(0.0, rot1_variance);
+    std::normal_distribution<double> trasl_noise(0.0, trasl_variance);
+    std::normal_distribution<double> rot2_nose(0.0, rot2_variance);
 }
 
 int main(int argc, char *argv[]) {
