@@ -74,6 +74,9 @@ void OdometryMotionModel::odom_callback(const nav_msgs::msg::Odometry &odom) {
     double delta_trasl = sqrt(std::pow(odom_y_increment, 2) + std::pow(odom_x_increment, 2));
     double delta_rot2 = angle_diff(odom_theta_increment, delta_rot1);
 
+    double rot1_variance = alpha1_ * delta_rot1 + alpha2_ * delta_trasl;
+    double trasl_variance = alpha3_ * delta_trasl + alpha4_ * (delta_rot1 + delta_rot2);
+    double rot2_variance = alpha1_ * delta_rot2 + alpha2_ * delta_trasl;
 }
 
 int main(int argc, char *argv[]) {
