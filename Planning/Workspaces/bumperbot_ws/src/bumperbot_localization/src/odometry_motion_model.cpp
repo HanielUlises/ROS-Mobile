@@ -14,9 +14,7 @@ double angle_diff(double a, double b) {
     double d1 = a - b;
     double d2 = 2 * M_PI - fabs(d1);
 
-    if(d1 > 0) {
-        d2 *= -1.0f;
-    } 
+    if(d1 > 0) d2 *= -1.0f;
 
     if(fabs(d1) < fabs(d2))
         return d1;
@@ -84,12 +82,39 @@ void OdometryMotionModel::odom_callback(const nav_msgs::msg::Odometry &odom) {
     std::default_random_engine noise_generator(seed); 
     std::normal_distribution<double> rot1_noise(0.0, rot1_variance);
     std::normal_distribution<double> trasl_noise(0.0, trasl_variance);
-    std::normal_distribution<double> rot2_nose(0.0, rot2_variance);
+    std::normal_distribution<double> rot2_noise(0.0, rot2_variance);
+
+    for(auto &sample: samples_.poses) {
+        double delta_rot1_draw = angle_diff(delta_rot1, rot1_noise(noise_generator));
+        double delta_trasl_draw = delta_trasl - trasl_noise(noise_generator);
+        double delta_rot2_draw = angle_diff(delta_rot2, rot2_noise(noise_generator));
+
+        tf2::Quaternion sample_q(sample.orientation.x, sample.orientation.y, sample.orientation.z, sample.orientation.w);
+        tf2::Matrix3x3 sample_m(sample_q);
+        double sample_roll, sample_pitch, sample_yaw;
+        sample_m.getRPY(sample_roll, sample_pitch, sample_yaw);
+
+        sample.position.x += delta_trasl_draw * std::cos(sample_yaw + delta_rot1_draw);
+        sample.position.y += delta_trasl_draw * std::sin(sample_yaw + delta_rot1_draw);
+
+        tf2::Quaternion q;
+        q.setRPY(0.0, 0.0, sample_yaw + delta_rot1_draw + delta_rot2_draw);
+        sample.orientation.x - q.getX();
+        sample.orientation.y - q.getY();
+        sample.orientation.z- q.getZ();
+        sample.orientation.w - q.getW();
+    }
+
+    last_odom_x_ = odom.pose.pose.position.x;
+    last_odom_y_ = odom.pose.pose.position.y;
+    last_odom_theta_ = yaw;
+
+    pose_array_pub -> publish(samples_);
 }
 
 int main(int argc, char *argv[]) {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<OdometryMotionModel>("kalman_filter");
+    auto node = std::make_shared<OdometryMotionModel>("odometry_motion_model");
     rclcpp::spin(node);
     rclcpp::shutdown();
 
