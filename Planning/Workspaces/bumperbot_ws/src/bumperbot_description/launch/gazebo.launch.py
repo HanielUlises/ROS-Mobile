@@ -5,10 +5,11 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.parameter_descriptions import ParameterValue
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from pathlib import Path
 
 import os
+from os import pathsep
 
 def generate_launch_description():
     bumperbot_description_dir = get_package_share_directory("bumperbot_description")
@@ -20,6 +21,20 @@ def generate_launch_description():
         default_value =  os.path.join(bumperbot_description_dir, "urdf", "bumperbot.urdf.xacro"),
         description = "Absolute path to the URDF model"
     )
+
+    world_name_argument = DeclareLaunchArgument(
+        name="world_name",
+        default="empty"
+    )
+
+    world_path = PathJoinSubstitution([
+        bumperbot_description_dir,
+        "worlds",
+        PythonExpression(expression=["'",LaunchConfiguration("world_name"), "'", " + '.world'"])
+    ])
+
+    model_path = str(Path(bumperbot_description_dir).parent.resolve())
+    model_path += pathsep + os.path.join(bumperbot_description_dir, "models")
 
     robot_description = ParameterValue(Command([
         "xacro ", 
@@ -35,16 +50,15 @@ def generate_launch_description():
         )
     
     gazebo_resource_path = SetEnvironmentVariable(
-        name= "GZ_SIM_RESOURCE_PATH",
-        value=[str(Path(bumperbot_description_dir).parent.resolve())]
+        "GZ_SIM_RESOURCE_PATH", model_path
     )
 
     gazebo = IncludeLaunchDescription(PythonLaunchDescriptionSource([
         os.path.join(
             get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
-            launch_arguments = [
-                ("gz_args", [" -v 4", " -r ", " empty.sdf"])
-            ]
+            launch_arguments = {
+                "gz_args": PythonExpression(["'",world_path," -v 4 -r'"])
+            }.items()
         )
 
     gz_spawn_entity = Node(
@@ -57,6 +71,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         model_argument,
+        world_name_argument,
         robot_state_publisher,
         gazebo_resource_path,
         gazebo,
