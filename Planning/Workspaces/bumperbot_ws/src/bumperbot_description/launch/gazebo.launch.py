@@ -24,7 +24,7 @@ def generate_launch_description():
 
     world_name_argument = DeclareLaunchArgument(
         name="world_name",
-        default="empty"
+        default_value="empty"
     )
 
     world_path = PathJoinSubstitution([
