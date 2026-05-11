@@ -53,13 +53,18 @@ def generate_launch_description():
         "GZ_SIM_RESOURCE_PATH", model_path
     )
 
-    gazebo = IncludeLaunchDescription(PythonLaunchDescriptionSource([
-        os.path.join(
-            get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"]),
-            launch_arguments = {
-                "gz_args": PythonExpression(["'",world_path," -v 4 -r'"])
-            }.items()
-        )
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("ros_gz_sim"),
+                "launch",
+                "gz_sim.launch.py"
+            )
+        ),
+        launch_arguments={
+            "gz_args": [world_path, " -v 4 -r"]
+        }.items()
+    )
 
     gz_spawn_entity = Node(
         package= "ros_gz_sim",
