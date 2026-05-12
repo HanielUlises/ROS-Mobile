@@ -100,6 +100,17 @@ def generate_launch_description():
         ],
     )
 
+    gz_ros2_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=[
+            "/imu@sensor_msgs/msg/Imu[ignition.msgs.IMU"
+        ],
+        remappings=[
+            ("/imu", "/imu/out")
+        ]
+    )
+
     ign_plugin_path = SetEnvironmentVariable(
         name="IGN_GAZEBO_SYSTEM_PLUGIN_PATH",
         value="/opt/ros/humble/lib",
@@ -114,4 +125,5 @@ def generate_launch_description():
         robot_state_publisher,
         gazebo,
         gz_spawn_entity,
+        gz_ros2_bridge
     ])
