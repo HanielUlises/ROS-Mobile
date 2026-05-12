@@ -46,12 +46,69 @@
             <plugin filename = "ign_ros2_control-system" name = "ign_ros2_control::IgnitionROS2ControlPlugin">
                 <parameters>$(find bumperbot_controller)/config/bumperbot_controllers.yaml</parameters>
             </plugin>
+            <plugin filename="ignition-gazebo-imu-system" name="ignition::gazebo::system::Imu">
+
+            </plugin>
         </xacro:if>
 
         <xacro:unless value = "$(arg is_ignition)">
             <plugin filename = "gz_ros2_control-system" name = "gz_ros2_control::GazeboSimROS2ControlPlugin">
                 <parameters>$(find bumperbot_controller)/config/bumperbot_controllers.yaml</parameters>
             </plugin>
+            <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
+
+            </plugin>
         </xacro:unless>
+    </gazebo>
+
+    <gazebo reference="imu_link">
+        <sensor name="imu" type="imu">
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <gz_frame_id>imu_link</gz_frame_id>
+            <topic>imu</topic>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <variance>2e-4</variance>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <variance>2e-4</variance>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <variance>2e-4</variance>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <variance>1.7e-2</variance>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <variance>1.7e-2</variance>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <variance>1.7e-2</variance>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
     </gazebo>
 </robot>
