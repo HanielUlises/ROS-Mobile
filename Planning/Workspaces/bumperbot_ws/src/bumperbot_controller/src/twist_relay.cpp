@@ -11,8 +11,19 @@ class TwistRelay : public rclcpp::Node {
                 std::bind(&TwistRelay::controller_twist_callback, this, std::placeholders::_1)
             );
 
-            controller_pub = create_publisher<geometry_msgs::msg::Twist>(
+            controller_pub = create_publisher<geometry_msgs::msg::TwistStamped>(
                 "/bumperbot_controller/cmd_vel",
+                10
+            );
+
+            joy_sub = create_subscription<geometry_msgs::msg::TwistStamped>(
+                "/input_joy/cmd_vel_stamped",
+                10,
+                std::bind(&TwistRelay::joy_twist_callback, this, std::placeholders::_1)
+            );
+
+            joy_pub = create_publisher<geometry_msgs::msg::Twist>(
+                "/input_joy/cmd_vel",
                 10
             );
         }
@@ -20,4 +31,28 @@ class TwistRelay : public rclcpp::Node {
     private:
         rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr controller_sub;
         rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr controller_pub;
+        rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr joy_sub;
+        rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr joy_pub;
+
+        void controller_twist_callback(const geometry_msgs::msg::Twist::SharedPtr msg) {
+            geometry_msgs::msg::TwistStamped twist_stamped;
+            twist_stamped.header.stamp = get_clock() -> now();
+            twist_stamped.twist = *msg;
+            controller_pub -> publish(twist_stamped);
+        }
+
+        void joy_twist_callback(const geometry_msgs::msg::TwistStamped::SharedPtr msg) {
+            geometry_msgs::msg::Twist twist;
+            twist = msg -> twist;
+            joy_pub -> publish(twist);
+        }
 };
+
+int main(int argc, char* argv[]) {
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<TwistRelay>();
+    rclcpp::spin(node);
+    rclcpp::shutdown();
+    
+    return 0;
+}
