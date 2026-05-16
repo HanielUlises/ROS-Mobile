@@ -25,6 +25,9 @@ ament_target_dependencies(simple_controller rclcpp geometry_msgs std_msgs ${Eige
 add_executable(noisy_controller  src/noisy_controller.cpp)
 ament_target_dependencies(noisy_controller rclcpp geometry_msgs std_msgs ${Eigen_LIBRARIES} sensor_msgs nav_msgs tf2 tf2_ros)
 
+add_executable(twist_relay  src/twist_relay.cpp)
+ament_target_dependencies(rclcpp  geometry_msgs)
+
 install(
   DIRECTORY include
   DESTINATION include
@@ -32,6 +35,8 @@ install(
 
 install(TARGETS 
   simple_controller
+  noisy_controller
+  twist_relay
   DESTINATION lib/${PROJECT_NAME}
 )
 
