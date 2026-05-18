@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<robot name = "bumperbot" xmlns:xacro = "http://www.ros.org/wiki/xacro">
+<robot name="bumperbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ========================= -->
+    <!-- MATERIALS -->
+    <!-- ========================= -->
+
+    <gazebo reference="base_link">
+        <material>Gazebo/DarkRed</material>
+    </gazebo>
+
+    <gazebo reference="wheel_left_link">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo reference="wheel_right_link">
+        <material>Gazebo/FlatBlack</material>
+    </gazebo>
+
+    <gazebo reference="caster_front_link">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <gazebo reference="caster_rear_link">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <gazebo reference="laser_link">
+        <material>Gazebo/Chrome</material>
+    </gazebo>
+
+    <gazebo reference="imu_link">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <!-- ========================= -->
+    <!-- WHEEL PHYSICS -->
+    <!-- ========================= -->
+
     <gazebo reference="wheel_left_link">
         <mu1>1000000000000000.0</mu1>
         <mu2>1000000000000000.0</mu2>
@@ -39,107 +76,165 @@
         <maxVel>1.0</maxVel>
     </gazebo>
 
+    <!-- ========================= -->
+    <!-- ROS2 CONTROL + SENSORS -->
+    <!-- ========================= -->
+
     <gazebo>
-        <xacro:if value = "$(arg is_ignition)">
-            <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-                <parameters>$(find bumperbot_controller)/config/bumperbot_controllers.yaml</parameters>
+        <xacro:if value="$(arg is_ignition)">
+
+            <plugin filename="gz_ros2_control-system"
+                    name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                <parameters>
+                    $(find bumperbot_controller)/config/bumperbot_controllers.yaml
+                </parameters>
             </plugin>
-            <plugin filename="libignition-gazebo-imu-system.so" name="ignition::gazebo::systems::Imu">
+
+            <plugin filename="libignition-gazebo-imu-system.so"
+                    name="ignition::gazebo::systems::Imu">
             </plugin>
-            <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+
+            <plugin filename="libignition-gazebo-sensors-system.so"
+                    name="ignition::gazebo::systems::Sensors">
                 <render_engine>ogre2</render_engine>
             </plugin>
+
         </xacro:if>
 
-        <xacro:unless value = "$(arg is_ignition)">
-            <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-                <parameters>$(find bumperbot_controller)/config/bumperbot_controllers.yaml</parameters>
+        <xacro:unless value="$(arg is_ignition)">
+
+            <plugin filename="gz_ros2_control-system"
+                    name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                <parameters>
+                    $(find bumperbot_controller)/config/bumperbot_controllers.yaml
+                </parameters>
             </plugin>
-            <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
+
+            <plugin filename="gz-sim-imu-system"
+                    name="gz::sim::systems::Imu">
             </plugin>
-            <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+
+            <plugin filename="gz-sim-sensors-system"
+                    name="gz::sim::systems::Sensors">
                 <render_engine>ogre2</render_engine>
             </plugin>
+
         </xacro:unless>
     </gazebo>
 
+    <!-- ========================= -->
+    <!-- IMU -->
+    <!-- ========================= -->
+
     <gazebo reference="imu_link">
         <sensor name="imu" type="imu">
+
             <always_on>true</always_on>
             <update_rate>100</update_rate>
+
             <gz_frame_id>imu_link</gz_frame_id>
             <topic>imu</topic>
+
             <imu>
+
                 <angular_velocity>
+
                     <x>
                         <noise type="gaussian">
                             <mean>0.0</mean>
                             <variance>2e-4</variance>
                         </noise>
                     </x>
+
                     <y>
                         <noise type="gaussian">
                             <mean>0.0</mean>
                             <variance>2e-4</variance>
                         </noise>
                     </y>
+
                     <z>
                         <noise type="gaussian">
                             <mean>0.0</mean>
                             <variance>2e-4</variance>
                         </noise>
                     </z>
+
                 </angular_velocity>
+
                 <linear_acceleration>
+
                     <x>
                         <noise type="gaussian">
                             <mean>0.0</mean>
                             <variance>1.7e-2</variance>
                         </noise>
                     </x>
+
                     <y>
                         <noise type="gaussian">
                             <mean>0.0</mean>
                             <variance>1.7e-2</variance>
                         </noise>
                     </y>
+
                     <z>
                         <noise type="gaussian">
                             <mean>0.0</mean>
                             <variance>1.7e-2</variance>
                         </noise>
                     </z>
+
                 </linear_acceleration>
+
             </imu>
+
         </sensor>
     </gazebo>
 
+    <!-- ========================= -->
+    <!-- LIDAR -->
+    <!-- ========================= -->
+
     <gazebo reference="laser_link">
+
         <sensor name="lidar" type="gpu_ray">
+
             <always_on>true</always_on>
             <visualize>true</visualize>
             <update_rate>5</update_rate>
+
             <gz_frame_id>laser_link</gz_frame_id>
+
             <ray>
+
                 <scan>
+
                     <horizontal>
                         <samples>360</samples>
                         <resolution>1.0</resolution>
                         <min_angle>0.0</min_angle>
                         <max_angle>6.28</max_angle>
                     </horizontal>
+
                 </scan>
+
                 <range>
                     <min>0.12</min>
                     <max>12.0</max>
                     <resolution>0.02</resolution>
                 </range>
+
                 <noise>
                     <type>gaussian</type>
                     <mean>0.0</mean>
                     <stddev>0.01</stddev>
                 </noise>
+
             </ray>
+
         </sensor>
+
     </gazebo>
+
 </robot>
