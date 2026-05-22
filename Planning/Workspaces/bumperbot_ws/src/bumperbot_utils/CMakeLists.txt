@@ -14,9 +14,13 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 add_executable(path_tracker src/path_tracker.cpp)
-ament_target_dependencies(path_tracker rclcpp geometry_msgs nav_msgs rclcpp)
+ament_target_dependencies(path_tracker rclcpp geometry_msgs nav_msgs)
+
+add_executable(safety_stop src/safety_stop.cpp)
+ament_target_dependencies(safety_stop rclcpp sensor_msgs std_msgs)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
