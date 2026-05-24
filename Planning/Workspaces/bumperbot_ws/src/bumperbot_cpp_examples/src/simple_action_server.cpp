@@ -2,6 +2,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
+
 #include "bumperbot_msgs/action/fibonacci.hpp"
 
 namespace bumperbot_cpp_examples {
@@ -69,3 +71,5 @@ namespace bumperbot_cpp_examples {
             }
     };
 }
+
+RCLCPP_COMPONENTS_REGISTER_NODE(bumperbot_cpp_examples::SimpleActionServer);
