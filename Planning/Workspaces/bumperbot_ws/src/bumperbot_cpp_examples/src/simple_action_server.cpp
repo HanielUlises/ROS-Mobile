@@ -1,5 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "bumperbot_msgs/action/fibonacci.hpp"
 
 namespace bumperbot_cpp_examples {
     class SimpleActionServer : public rclcpp::Node {
