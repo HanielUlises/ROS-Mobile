@@ -17,12 +17,13 @@ find_package(twist_mux_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 add_executable(path_tracker src/path_tracker.cpp)
 ament_target_dependencies(path_tracker rclcpp geometry_msgs nav_msgs)
 
 add_executable(safety_stop src/safety_stop.cpp)
-ament_target_dependencies(safety_stop rclcpp sensor_msgs std_msgs)
+ament_target_dependencies(safety_stop rclcpp rclcpp_action sensor_msgs std_msgs twist_mux_msgs visualization_msgs)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

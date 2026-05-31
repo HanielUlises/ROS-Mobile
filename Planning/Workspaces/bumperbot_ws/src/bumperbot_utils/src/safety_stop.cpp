@@ -5,6 +5,7 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "twist_mux_msgs/action/joy_turbo.hpp"
+#include "visualization_msgs/msg/marker_array.hpp"
 
 enum State {
     FREE = 0,
@@ -24,11 +25,14 @@ class SafetyStop : public rclcpp::Node {
             scan_topic_ = get_parameter("scan_topic").as_string();
             safety_stop_topic_ = get_parameter("safety_stop_topic").as_string();
 
+            is_first_msg_ = true;
+
             laser_sub = create_subscription<sensor_msgs::msg::LaserScan>(
                 scan_topic_, 10, std::bind(&SafetyStop::laser_callback, this, std::placeholders::_1)
             );
-
             safety_stop_pub = create_publisher<std_msgs::msg::Bool>(safety_stop_topic_, 10);
+            zones_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("zones", 10);
+
             decrease_speed_client_ = rclcpp_action::create_client<twist_mux_msgs::action::JoyTurbo> (this, "joy_turbo_decrease");
             increase_speed_client_ = rclcpp_action::create_client<twist_mux_msgs::action::JoyTurbo> (this, "joy_turbo_increase");
             
@@ -41,17 +45,54 @@ class SafetyStop : public rclcpp::Node {
                 RCLCPP_WARN(get_logger(), "Action /joy_turbo_increase not available. Waiting...");
                 std::this_thread::sleep_for(std::chrono::seconds(2));
             }
+
+            visualization_msgs::msg::Marker warning_zone;
+            warning_zone.id = 1;
+            warning_zone.action = visualization_msgs::msg::Marker::ADD;
+            warning_zone.type = visualization_msgs::msg::Marker::CYLINDER;
+
+            warning_zone.scale.z = 0.001;
+            warning_zone.scale.x = warning_distance_ * 2;
+            warning_zone.scale.y = warning_distance_ * 2;
+
+            warning_zone.color.r = 1.0;
+            warning_zone.color.g = 0.984;
+            warning_zone.color.b = 0.0;
+            warning_zone.color.a = 0.49;
+
+            zones_.markers.push_back(warning_zone);
+
+            visualization_msgs::msg::Marker danger_zone;
+            danger_zone.id = 0;
+            danger_zone.action = visualization_msgs::msg::Marker::ADD;
+            danger_zone.type = visualization_msgs::msg::Marker::CYLINDER;
+
+            danger_zone.scale.z = 0.001;
+            danger_zone.scale.x = danger_distance_ * 2;
+            danger_zone.scale.y = danger_distance_ * 2;
+
+            danger_zone.color.r = 1.0;
+            danger_zone.color.g = 0.0;
+            danger_zone.color.b = 0.0;
+            danger_zone.color.a = 0.49;
+
+            zones_.markers.push_back(danger_zone);
         }
 
     private:
+        bool is_first_msg_ = true;
+
         double danger_distance_, warning_distance_;
         std::string scan_topic_;
         std::string safety_stop_topic_;
         
         State state_, prev_state_;
 
+        visualization_msgs::msg::MarkerArray zones_;
+
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_sub;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr safety_stop_pub;
+        rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr zones_pub_;
         rclcpp_action::Client<twist_mux_msgs::action::JoyTurbo>::SharedPtr decrease_speed_client_;
         rclcpp_action::Client<twist_mux_msgs::action::JoyTurbo>::SharedPtr increase_speed_client_;
 
@@ -71,20 +112,34 @@ class SafetyStop : public rclcpp::Node {
                 std_msgs::msg::Bool is_safety_stop;
                 if(state_ == State::WARNING) {
                     is_safety_stop.data = false;
+                    zones_.markers.at(0).color.a = 1.0;
+                    zones_.markers.at(1).color.a = 0.49;
                     decrease_speed_client_ -> async_send_goal(twist_mux_msgs::action::JoyTurbo::Goal());
                 }
-                if(state_ == State::DANGER) 
+                if(state_ == State::DANGER) {
+                    zones_.markers.at(0).color.a = 1.0;
+                    zones_.markers.at(1).color.a = 1.0;
                     is_safety_stop.data = true;
+                }
                 else if(state_ == State::FREE) {
                     is_safety_stop.data = false;
+                    zones_.markers.at(0).color.a = 0.49;
+                    zones_.markers.at(1).color.a = 0.49;
                     increase_speed_client_ -> async_send_goal(twist_mux_msgs::action::JoyTurbo::Goal());
                 }
                     
-
+                prev_state_ = state_;
                 safety_stop_pub -> publish(is_safety_stop);
             }
 
-            
+            if(is_first_msg_) {
+                for(auto &zone : zones_.markers) {
+                    zone.header.frame_id = msg.header.frame_id;
+                }
+                is_first_msg_ = false;
+            }
+
+            zones_pub_ -> publish(zones_);
         }
 };
 
