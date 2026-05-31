@@ -6,70 +6,149 @@
 
 #include "bumperbot_msgs/action/fibonacci.hpp"
 
-namespace bumperbot_cpp_examples {
-    class SimpleActionServer : public rclcpp::Node {
-        public:
-            explicit SimpleActionServer(const rclcpp::NodeOptions &options = rclcpp::NodeOptions()) : Node("simple_action_server", options) {
-                action_server_= rclcpp_action::create_server<bumperbot_msgs::action::Fibonacci>(this, "fibonacci",
-                    std::bind(&SimpleActionServer::goal_callback, this, std::placeholders::_1, std::placeholders::_2),
-                    std::bind(&SimpleActionServer::cancel_callback, this, std::placeholders::_1), 
-                    std::bind(&SimpleActionServer::accepted_callback, this, std::placeholders::_1)
-                );
+namespace bumperbot_cpp_examples
+{
 
-                RCLCPP_INFO(get_logger(), "Starting the Action Server");
+class SimpleActionServer : public rclcpp::Node
+{
+public:
+    explicit SimpleActionServer(
+        const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+    : Node("simple_action_server", options)
+    {
+        action_server_ =
+            rclcpp_action::create_server<bumperbot_msgs::action::Fibonacci>(
+                this,
+                "fibonacci",
+                std::bind(
+                    &SimpleActionServer::goal_callback,
+                    this,
+                    std::placeholders::_1,
+                    std::placeholders::_2),
+                std::bind(
+                    &SimpleActionServer::cancel_callback,
+                    this,
+                    std::placeholders::_1),
+                std::bind(
+                    &SimpleActionServer::accepted_callback,
+                    this,
+                    std::placeholders::_1));
+
+        RCLCPP_INFO(get_logger(), "Starting the Action Server");
+    }
+
+private:
+    rclcpp_action::Server<
+        bumperbot_msgs::action::Fibonacci>::SharedPtr action_server_;
+
+    rclcpp_action::GoalResponse goal_callback(
+        const rclcpp_action::GoalUUID & uuid,
+        std::shared_ptr<
+            const bumperbot_msgs::action::Fibonacci::Goal> goal)
+    {
+        (void)uuid;
+
+        RCLCPP_INFO(
+            get_logger(),
+            "Received goal request with order %d",
+            goal->order);
+
+        return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    }
+
+    rclcpp_action::CancelResponse cancel_callback(
+        const std::shared_ptr<
+            rclcpp_action::ServerGoalHandle<
+                bumperbot_msgs::action::Fibonacci>> goal_handle)
+    {
+        (void)goal_handle;
+
+        RCLCPP_INFO(
+            get_logger(),
+            "Received request to cancel goal");
+
+        return rclcpp_action::CancelResponse::ACCEPT;
+    }
+
+    void accepted_callback(
+        std::shared_ptr<
+            rclcpp_action::ServerGoalHandle<
+                bumperbot_msgs::action::Fibonacci>> goal_handle)
+    {
+        std::thread(
+            &SimpleActionServer::execute,
+            this,
+            goal_handle).detach();
+    }
+
+    void execute(
+        const std::shared_ptr<
+            rclcpp_action::ServerGoalHandle<
+                bumperbot_msgs::action::Fibonacci>> goal_handle)
+    {
+        RCLCPP_INFO(get_logger(), "Executing goal");
+
+        rclcpp::Rate loop_rate(1);
+
+        const auto goal = goal_handle->get_goal();
+
+        auto feedback =
+            std::make_shared<
+                bumperbot_msgs::action::Fibonacci::Feedback>();
+
+        auto & sequence = feedback->partial_sequence;
+
+        auto result =
+            std::make_shared<
+                bumperbot_msgs::action::Fibonacci::Result>();
+
+        sequence.push_back(0);
+
+        if (goal->order > 1) {
+            sequence.push_back(1);
+        }
+
+        for (int i = 2;
+             i < goal->order && rclcpp::ok();
+             ++i)
+        {
+            if (goal_handle->is_canceling()) {
+                result->sequence = sequence;
+                goal_handle->canceled(result);
+
+                RCLCPP_INFO(
+                    get_logger(),
+                    "Goal canceled");
+
+                return;
             }
 
-        private:
-            rclcpp_action::Server<bumperbot_msgs::action::Fibonacci>::SharedPtr action_server_;
+            sequence.push_back(
+                sequence[i - 1] +
+                sequence[i - 2]);
 
-            rclcpp_action::GoalResponse goal_callback(const rclcpp_action::GoalUUID &uuid, std::shared_ptr<const bumperbot_msgs::action::Fibonacci::Goal> goal) {
-                RCLCPP_INFO(get_logger(), "Received goal request with order %d", goal -> order);
-                return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
-            }
+            goal_handle->publish_feedback(feedback);
 
-            void accepted_callback(std::shared_ptr<rclcpp_action::ServerGoalHandle<bumperbot_msgs::action::Fibonacci>> goal_handle) {
-                std::thread{std::bind(&SimpleActionServer::execute, this, std::placeholders::_1)}.detach();
-            }
+            RCLCPP_INFO(
+                get_logger(),
+                "Publishing feedback");
 
-            void execute(const std::shared_ptr<rclcpp_action::ServerGoalHandle<bumperbot_msgs::action::Fibonacci>> goal_handle) {
-                RCLCPP_INFO(get_logger(), "Executing goal");
-                rclcpp::Rate loop_rate(1);
-                const auto goal = goal_handle -> get_goal();
+            loop_rate.sleep();
+        }
 
-                auto feedback = std::make_shared<bumperbot_msgs::action::Fibonacci::Feedback>();
-                auto &sequence = feedback -> partial_sequence;
+        if (rclcpp::ok()) {
+            result->sequence = sequence;
 
-                sequence.push_back(0);
-                sequence.push_back(1);
+            goal_handle->succeed(result);
 
-                auto result = std::make_shared<bumperbot_msgs::action::Fibonacci::Result>();
+            RCLCPP_INFO(
+                get_logger(),
+                "Goal succeeded");
+        }
+    }
+};
 
-                for(int i = 0; (i < goal -> order) && rclcpp::ok(); i++) {
-                    if(goal_handle -> is_canceling()) {
-                        result -> sequence = sequence;
-                        goal_handle -> canceled(result);
-                        RCLCPP_INFO(get_logger(), "Goal Cancelled");
-                        return;
-                    }
+} // namespace bumperbot_cpp_examples
 
-                    sequence.push_back(sequence[i] + sequence[i - 1]);
-                    goal_handle -> publish_feedback(feedback);
-                    RCLCPP_INFO(get_logger(), "Publishing Feedback");
-                    loop_rate.sleep();
-                }
-
-                if(rclcpp::ok()) {
-                    result -> sequence = sequence;
-                    goal_handle -> succeed(result);
-                    RCLCPP_INFO(get_logger(), "Goal succeded");
-                }
-            }
-
-            rclcpp_action::CancelResponse cancel_callback(const std::shared_ptr<rclcpp_action::ServerGoalHandle<bumperbot_msgs::action::Fibonacci>> goal_handle) {
-                RCLCPP_INFO(get_logger(), "Received request to cancel goal");
-                return rclcpp_action::CancelResponse::ACCEPT;
-            }
-    };
-}
-
-RCLCPP_COMPONENTS_REGISTER_NODE(bumperbot_cpp_examples::SimpleActionServer);
+RCLCPP_COMPONENTS_REGISTER_NODE(
+    bumperbot_cpp_examples::SimpleActionServer)
