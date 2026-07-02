@@ -1,0 +1,19 @@
+services:
+  jazzy:
+    build:
+      context: .
+      dockerfile: Dockerfile.jazzy
+    container_name: ros2_jazzy
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - LIBGL_ALWAYS_SOFTWARE=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./ws:/home/ros/ws
+    network_mode: host
+    ipc: host
+    privileged: true
+    stdin_open: true
+    tty: true
+    command: bash

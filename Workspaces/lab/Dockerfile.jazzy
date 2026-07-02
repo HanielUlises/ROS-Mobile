@@ -1,0 +1,40 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
+
+# --- Locale y utilidades base ---
+RUN apt-get update && apt-get install -y \
+    locales curl gnupg2 lsb-release software-properties-common \
+    build-essential git wget nano sudo \
+    && locale-gen en_US en_US.UTF-8 \
+    && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+
+# --- Repos de ROS2 ---
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+    | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# --- Instalación ROS2 Jazzy (desktop full) ---
+RUN apt-get update && apt-get install -y \
+    ros-jazzy-desktop \
+    ros-dev-tools \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- rosdep ---
+RUN rosdep init || true && rosdep update
+
+# --- Usuario no-root (evita problemas con X11/permisos) ---
+ARG USERNAME=ros
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER $USERNAME
+WORKDIR /home/$USERNAME/ws
+
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /home/$USERNAME/.bashrc
+
+CMD ["bash"]
