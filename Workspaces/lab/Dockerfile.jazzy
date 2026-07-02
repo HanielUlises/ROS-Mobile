@@ -26,10 +26,7 @@ RUN rosdep init || true && rosdep update
 
 # --- Usuario no-root (evita problemas con X11/permisos) ---
 ARG USERNAME=ros
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+RUN useradd --create-home --shell /bin/bash $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER $USERNAME
