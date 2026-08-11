@@ -36,14 +36,20 @@
     minimum_travel_heading: 0.20
     scan_buffer_size: 10
     scan_buffer_maximum_scan_distance: 10.0
-    link_match_minimum_response_fine: 0.10
+    link_match_minimum_response_fine: 0.15
     link_scan_maximum_distance: 1.5
     do_loop_closing: true
-    loop_search_maximum_distance: 3.0
-    loop_match_minimum_chain_size: 10
-    loop_match_maximum_variance_coarse: 3.0
-    loop_match_minimum_response_coarse: 0.35
-    loop_match_minimum_response_fine: 0.45
+    # Loop-closure acceptance is tightened well beyond the stock values. The
+    # scenario is a rectangular hall of near-identical aisles, which is a worst
+    # case for perceptual aliasing: at the default thresholds the matcher
+    # accepts closures between look-alike aisles, and a single false closure
+    # rotates part of the pose graph, leaving a duplicated, rotated copy of the
+    # environment in the published grid.
+    loop_search_maximum_distance: 2.5
+    loop_match_minimum_chain_size: 15
+    loop_match_maximum_variance_coarse: 1.0
+    loop_match_minimum_response_coarse: 0.50
+    loop_match_minimum_response_fine: 0.60
 
     # Correlation
     correlation_search_space_dimension: 0.5

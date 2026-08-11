@@ -60,49 +60,83 @@
         </visual>
       </link>
 
-      <!-- Shelf aisles: three columns, each split so a lateral passage exists -->
+      <!--
+        Shelf aisles: three columns, each split so a lateral passage exists.
+
+        Block lengths and the position of each lateral gap are deliberately
+        irregular. An evenly spaced array of identical blocks is a worst case
+        for perceptual aliasing: from inside an aisle every column produces the
+        same scan, the loop-closure search cannot tell them apart, and a false
+        closure folds the pose graph. Varying the geometry gives each aisle a
+        distinguishable signature and keeps the scenario closer to a real
+        warehouse, where bays differ in length and occupancy.
+      -->
       <link name="shelf_a1">
-        <pose>-3 2.0 0.5 0 0 0</pose>
-        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+        <pose>-3 2.4 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.2 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.2 1.0</size></box></geometry>
           <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
         </visual>
       </link>
       <link name="shelf_a2">
-        <pose>-3 -2.0 0.5 0 0 0</pose>
-        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+        <pose>-3 -2.2 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 2.6 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 2.6 1.0</size></box></geometry>
           <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
         </visual>
       </link>
 
       <link name="shelf_b1">
-        <pose>0 2.0 0.5 0 0 0</pose>
-        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+        <pose>0.2 1.5 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 4.4 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 4.4 1.0</size></box></geometry>
           <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
         </visual>
       </link>
       <link name="shelf_b2">
-        <pose>0 -2.0 0.5 0 0 0</pose>
-        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+        <pose>0.2 -2.8 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 2.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 2.0 1.0</size></box></geometry>
           <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
         </visual>
       </link>
 
       <link name="shelf_c1">
-        <pose>3 2.0 0.5 0 0 0</pose>
-        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+        <pose>3.1 2.9 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 2.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 2.0 1.0</size></box></geometry>
           <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
         </visual>
       </link>
       <link name="shelf_c2">
-        <pose>3 -2.0 0.5 0 0 0</pose>
-        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+        <pose>3.1 -1.6 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.6 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.6 1.0</size></box></geometry>
           <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- Asymmetric landmarks. Two pillars and a chamfered corner give the
+           scan matcher globally unambiguous structure to anchor on. -->
+      <link name="pillar_north">
+        <pose>-1.6 3.4 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.4 0.4 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.4 0.4 1.0</size></box></geometry>
+          <material><ambient>0.5 0.5 0.55 1</ambient><diffuse>0.5 0.5 0.55 1</diffuse></material>
+        </visual>
+      </link>
+      <link name="pillar_south">
+        <pose>1.7 -3.5 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.4 0.4 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.4 0.4 1.0</size></box></geometry>
+          <material><ambient>0.5 0.5 0.55 1</ambient><diffuse>0.5 0.5 0.55 1</diffuse></material>
+        </visual>
+      </link>
+      <link name="corner_chamfer">
+        <pose>5.0 3.0 0.5 0 0 -0.7853981</pose>
+        <collision name="c"><geometry><box><size>0.2 2.4 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.2 2.4 1.0</size></box></geometry>
+          <material><ambient>0.6 0.6 0.6 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material>
         </visual>
       </link>
     </model>

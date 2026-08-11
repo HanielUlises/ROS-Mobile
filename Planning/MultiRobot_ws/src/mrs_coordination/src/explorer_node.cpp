@@ -31,7 +31,9 @@ public:
   {
     declare_parameter<std::string>("robot_name", "robot1");
     declare_parameter<double>("linear_speed", 0.25);
-    declare_parameter<double>("angular_speed", 0.9);
+    // Kept modest on purpose: fast in-place rotation is what most often breaks
+    // correlative scan matching at a 10 Hz scan rate.
+    declare_parameter<double>("angular_speed", 0.7);
     declare_parameter<double>("front_clearance", 0.65);
     declare_parameter<double>("side_clearance", 0.45);
     declare_parameter<double>("front_half_angle", 0.45);   // rad, ~26 deg
