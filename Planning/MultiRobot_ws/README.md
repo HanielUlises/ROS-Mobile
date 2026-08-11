@@ -1,6 +1,6 @@
 # Collaborative 2D SLAM for a Ground Fleet under Intermittent Connectivity
 
-**TT 2026-B193 — *Planificación Epistémica y SLAM en Entornos Desconocidos para Sistemas Multiagente*
+***Planificación Epistémica y SLAM en Entornos Desconocidos para Sistemas Multiagente*
 Escuela Superior de Cómputo, Instituto Politécnico Nacional**
 
 First implementation iteration. This document specifies the simulated multi-robot
