@@ -224,7 +224,12 @@
       <publish_wheel_tf>false</publish_wheel_tf>
       <odometry_frame>${pf}odom</odometry_frame>
       <robot_base_frame>${pf}base_footprint</robot_base_frame>
-      <odometry_source>1</odometry_source>
+      <!-- 0 = ENCODER: dead-reckon from the wheel joints, starting at identity
+           at the spawn pose. Must not be 1 (WORLD): that publishes the absolute
+           Gazebo pose as odometry, which would anchor every agent's map frame at
+           the world origin instead of at its own start, and would also hand the
+           SLAM front end drift-free odometry it has no business having. -->
+      <odometry_source>0</odometry_source>
     </plugin>
 
     <plugin name="${ns}_joint_states" filename="libgazebo_ros_joint_state_publisher.so">

@@ -78,10 +78,11 @@ def _spawn_fleet(context, *args, **kwargs):
                 executable='robot_state_publisher',
                 name='robot_state_publisher',
                 output='screen',
+                # No frame_prefix here: the xacro already emits prefixed link
+                # names, and setting it as well would publish robot1/robot1/...
                 parameters=[{
                     'use_sim_time': True,
                     'robot_description': robot_description,
-                    'frame_prefix': prefix,
                 }],
             ),
 
@@ -179,6 +180,20 @@ def _spawn_fleet(context, *args, **kwargs):
         }],
     ))
 
+    if flag('record'):
+        actions.append(Node(
+            package='mrs_coordination',
+            executable='map_recorder_node',
+            name='map_recorder',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True,
+                'robot_names': robot_names,
+                'output_dir': LaunchConfiguration('record_dir'),
+                'sample_period': 2.0,
+            }],
+        ))
+
     return actions
 
 
@@ -211,6 +226,14 @@ def generate_launch_description():
         'use_slam', default_value='true',
         description='Start a slam_toolbox instance per robot. Disable to run '
                     'the simulation layer on its own.')
+
+    record_arg = DeclareLaunchArgument(
+        'record', default_value='false',
+        description='Dump merged-map snapshots and a coverage time series.')
+
+    record_dir_arg = DeclareLaunchArgument(
+        'record_dir', default_value='/tmp/mrs_run',
+        description='Destination directory for recorded runs.')
 
     comms_arg = DeclareLaunchArgument(
         'comms_dropout', default_value='false',
@@ -249,6 +272,8 @@ def generate_launch_description():
         rviz_arg,
         explorer_arg,
         slam_arg,
+        record_arg,
+        record_dir_arg,
         comms_arg,
         gzserver,
         gzclient,

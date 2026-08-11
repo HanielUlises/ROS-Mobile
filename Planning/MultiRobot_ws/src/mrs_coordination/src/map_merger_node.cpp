@@ -114,12 +114,22 @@ public:
 
       origins_[name] = Pose2D{flat_poses[3 * i], flat_poses[3 * i + 1], flat_poses[3 * i + 2]};
       connected_[name] = true;
+      stale_[name] = 0;
 
       map_subs_.push_back(
         create_subscription<nav_msgs::msg::OccupancyGrid>(
           "/" + name + "/map", qos,
           [this, name](nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
-            latest_maps_[name] = msg;
+            // A dropped link stops the flow of new observations; it does not
+            // erase what the fleet already received. The last map shared while
+            // connected therefore stays in the merge, and simply goes stale
+            // until the link returns. Discarding it instead would model the
+            // fleet as forgetting, which is not what a lost radio does.
+            if (!respect_comms_ || connected_[name]) {
+              latest_maps_[name] = msg;
+            } else {
+              ++stale_[name];
+            }
           }));
 
       comms_subs_.push_back(
@@ -129,9 +139,17 @@ public:
             const bool was = connected_[name];
             connected_[name] = msg->data;
             if (was != msg->data) {
-              RCLCPP_INFO(
-                get_logger(), "%s is now %s the shared map",
-                name.c_str(), msg->data ? "contributing to" : "disconnected from");
+              if (msg->data) {
+                RCLCPP_INFO(
+                  get_logger(), "%s reconnected, %lu withheld updates now superseded",
+                  name.c_str(), stale_[name]);
+                stale_[name] = 0;
+              } else {
+                RCLCPP_INFO(
+                  get_logger(),
+                  "%s disconnected, its last shared map is retained but frozen",
+                  name.c_str());
+              }
             }
           }));
 
@@ -173,18 +191,15 @@ private:
     return tf;
   }
 
-  // Robots that currently count towards the shared map.
+  // Robots that count towards the shared map: everyone whose map has reached
+  // the fleet at least once, connected or not (see the map callback).
   std::vector<std::string> contributors() const
   {
     std::vector<std::string> out;
     for (const auto & name : robot_names_) {
-      if (latest_maps_.count(name) == 0) {
-        continue;
+      if (latest_maps_.count(name) != 0) {
+        out.push_back(name);
       }
-      if (respect_comms_ && !connected_.at(name)) {
-        continue;
-      }
-      out.push_back(name);
     }
     return out;
   }
@@ -334,6 +349,7 @@ private:
 
   std::unordered_map<std::string, Pose2D> origins_;
   std::unordered_map<std::string, bool> connected_;
+  std::unordered_map<std::string, size_t> stale_;
   std::unordered_map<std::string, nav_msgs::msg::OccupancyGrid::SharedPtr> latest_maps_;
   std::unordered_map<std::string, rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr>
   coverage_pubs_;
