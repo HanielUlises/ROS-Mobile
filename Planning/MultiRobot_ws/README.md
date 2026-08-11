@@ -77,18 +77,27 @@ $\omega = \tfrac{r}{b}(\omega_R - \omega_L)$.
 | Wheel separation | $b$ | $0.300$ m |
 | Chassis footprint | — | $0.35 \times 0.28$ m |
 | Mass | — | $7.1$ kg |
-| Commanded cruise speed | $v$ | $0.25$ m s$^{-1}$ |
-| Commanded turn rate | $\omega$ | $0.90$ rad s$^{-1}$ |
+| Commanded cruise speed | $v$ | $0.22$ m s$^{-1}$ |
+| Commanded turn rate | $\omega$ | $0.50$ rad s$^{-1}$ |
 
 Odometry is integrated from the simulated wheel encoders and published as the
 transform $\mathsf{odom}_i \to \mathsf{base}_i$; it is subject to the usual
 unbounded drift, which the SLAM front end corrects through the
-$\mathsf{map}_i \to \mathsf{odom}_i$ transform.
+$\mathsf{map}_i \to \mathsf{odom}_i$ transform. Encoder integration is used in
+preference to the simulator's ground-truth pose deliberately: the latter would
+anchor $\mathsf{map}_i$ at the world origin rather than at the agent's own
+starting pose, and would hand the estimator drift-free odometry that no physical
+vehicle has.
+
+The commanded velocities are low by design. In-place rotation is the motion that
+most degrades correlative scan matching, and rotating hard against a wall slips
+the wheels — an error encoder odometry cannot observe and the matcher must
+absorb.
 
 ### 2.2 Exteroceptive sensing
 
 A planar lidar rigidly mounted on the chassis returns $360$ beams over a full
-$2\pi$ field of view at $10$ Hz, with range $[0.15,\, 8.0]$ m and additive
+$2\pi$ field of view at $15$ Hz, with range $[0.15,\, 8.0]$ m and additive
 Gaussian range noise of standard deviation $\sigma = 0.01$ m. Beams are cast on
 the CPU rather than the GPU so that the platform behaves identically in headless
 batch runs and interactive sessions.
@@ -222,61 +231,71 @@ the regime in which the asymmetries of interest arise.
 
 ### 5.1 Scenario
 
-A $12 \times 8$ m warehouse bounded by walls, containing three shelf aisles
-arranged as six $0.6 \times 3.0$ m blocks, with the eastern corridor obstructed
-by a removable barrier. The obstruction reproduces the motivating scenario of the
-proposal: one agent may observe the blockage while another, disconnected at that
-moment, does not.
+A $12 \times 8$ m warehouse bounded by walls, containing three shelf aisles of
+six blocks, with the eastern corridor obstructed by a removable barrier. The
+obstruction reproduces the motivating scenario of the proposal: one agent may
+observe the blockage while another, disconnected at that moment, does not.
 
-Two agents are deployed from opposite ends of the western aisle, at
-$(-5, +3)$ and $(-5, -3)$ metres. Exploration is driven by a reactive
-laser-based controller with a wall-following bias, deliberately *not* a
-deliberative planner: this iteration is concerned with the perceptual and
-communication substrate, and a fixed reactive policy keeps the exploration
-process constant while the fusion and connectivity semantics are evaluated.
-Replacing it is the subject of the planning objective (OE1).
+Bay lengths and the position of each lateral passage are irregular, and two
+pillars and a chamfered corner break the hall's translational symmetry. This is
+not decoration. An evenly spaced array of identical bays is a poor case for scan
+matching, since from inside an aisle every column returns much the same scan and
+the loop-closure search has little to separate them.
+
+Two agents are deployed at opposite ends of the hall facing inwards, at
+$(-5, +3, 0)$ and $(+5, -3, \pi)$. Deploying them together made their coverage
+almost entirely redundant, which understates what a fleet is for, and kept them
+close enough to spend much of the run observing one another — moving obstacles
+that a static-world SLAM front end has no mechanism to reject. The second
+deployment pose also exercises the rotational part of $T_i$ in the fusion, which
+a fleet of identically oriented agents would leave untested.
+
+Exploration is driven by a reactive laser-based controller with a wall-following
+bias, deliberately *not* a deliberative planner: this iteration is concerned with
+the perceptual and communication substrate, and a fixed reactive policy keeps the
+exploration process constant while the fusion and connectivity semantics are
+evaluated. Replacing it is the subject of the planning objective (OE1).
 
 ### 5.2 Map construction
 
 <a name="figure-1"></a>
 
-![Merged occupancy grid evolving over the run](docs/figures/map_growth.gif)
+![Fused occupancy grid evolving over the run](docs/figures/fig_growth.gif)
 
-**Figure 1.** Evolution of the fused occupancy grid over the run. Black denotes
-occupied cells, white free cells, grey unobserved cells. The canvas is fixed to
-the final extent, so growth of the mapped region is directly visible. Note that
-the grid never loses observed cells, in accordance with the monotonicity of
-Section [3.2](#32-retention-under-link-loss).
+**Figure 1.** Evolution of the fused grid $M$ over the run. Black denotes
+occupied cells, white free cells, light grey cells still carrying $\mathsf{u}$.
+The canvas is fixed to the final extent, so growth of the mapped region is
+directly visible rather than being hidden by a moving viewport.
 
 <a name="figure-2"></a>
 
-![Final merged occupancy grid](docs/figures/final_map.png)
+![Per-agent and fused occupancy grids](docs/figures/fig_maps.png)
 
-**Figure 2.** Fused occupancy grid at the end of the run. The outer walls, the
-six shelf blocks and the eastern obstruction are all recovered. The two agents'
-grids are expressed in distinct frames and composited through $T_i$; the absence
-of doubled walls at the seam between their explored regions indicates that the
-per-agent estimates remain mutually consistent over the run.
+**Figure 2.** Individual estimates $m_1$, $m_2$ and the fused estimate $M$ at the
+end of the run, composited onto a common canvas through each grid's own $T_i$.
+Panels (a) and (b) are what each agent alone believes; panel (c) is what the
+fleet holds. The fused panel is the cell-wise join of the other two and contains
+nothing absent from both, which is the defining property of $\oplus$: fusion
+propagates observations, it does not synthesise them.
 
 ### 5.3 Individual versus fleet knowledge
 
 <a name="figure-3"></a>
 
-![Explored area against time](docs/figures/coverage.png)
+![Explored area against time](docs/figures/fig_coverage.png)
 
-**Figure 3.** Explored area against simulation time. Thin coloured traces give
-each agent's own map; the heavy black trace gives the fused fleet map. Shaded
-bands mark intervals in which an agent's link is down. Area is reported in
-square metres rather than as a fraction of the canvas, since the canvas itself
-grows with the map and fractions would not be comparable across time.
+**Figure 3.** Explored area against simulation time. The heavy trace is the fused
+fleet map $M$; the thin traces are each agent's own map. The lower strip is the
+link process, one row per agent, with filled intervals marking $\ell_i = 0$. Area
+is reported in square metres rather than as a fraction of the canvas, since the
+canvas grows with the map and fractions would not be comparable across time.
 
 The quantity of interest is the vertical gap between the fused trace and each
 individual trace. It is the geometric measure of what an agent does *not* know
 but the fleet does — the epistemic asymmetry that motivates the modal treatment
-of the following iterations. During an outage the fused trace flattens with
-respect to the disconnected agent's contribution while that agent's own trace
-continues to climb, and the accumulated difference is recovered in a step at
-reconnection.
+of the following iterations. During an outage the fused trace stops tracking the
+disconnected agent while that agent's own trace continues to climb, and the
+accumulated difference is recovered as a step at reconnection.
 
 <a name="table-1"></a>
 

@@ -30,11 +30,14 @@ public:
   : rclcpp::Node("explorer"), rng_(std::random_device{}())
   {
     declare_parameter<std::string>("robot_name", "robot1");
-    declare_parameter<double>("linear_speed", 0.25);
-    // Kept modest on purpose: fast in-place rotation is what most often breaks
-    // correlative scan matching at a 10 Hz scan rate.
-    declare_parameter<double>("angular_speed", 0.7);
-    declare_parameter<double>("front_clearance", 0.65);
+    declare_parameter<double>("linear_speed", 0.22);
+    // Deliberately slow. In-place rotation is the motion that most often breaks
+    // correlative scan matching, and spinning hard next to a wall also slips the
+    // wheels, which encoder odometry cannot detect and the matcher must then
+    // absorb as error.
+    declare_parameter<double>("angular_speed", 0.5);
+    // Turning earlier keeps the vehicle off the walls it would otherwise scrape.
+    declare_parameter<double>("front_clearance", 0.75);
     declare_parameter<double>("side_clearance", 0.45);
     declare_parameter<double>("front_half_angle", 0.45);   // rad, ~26 deg
     declare_parameter<double>("control_rate", 20.0);

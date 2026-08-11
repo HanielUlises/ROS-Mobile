@@ -170,7 +170,10 @@
     <sensor name="${ns}_lidar" type="ray">
       <pose>0 0 0 0 0 0</pose>
       <visualize>false</visualize>
-      <update_rate>10.0</update_rate>
+      <!-- 15 Hz rather than the more usual 10: the dominant source of scan
+           matching error here is in-place rotation, and the angular step
+           between consecutive scans falls proportionally with the rate. -->
+      <update_rate>15.0</update_rate>
       <ray>
         <scan>
           <horizontal>

@@ -8,11 +8,16 @@
 # Relaxing that assumption (unknown relative poses, recovered by inter-robot
 # loop closure) is deferred: it is the geometric half of the epistemic map
 # fusion problem addressed later in the project.
+# Agents are deployed at opposite ends of the hall facing inwards. Starting them
+# together made their coverage almost entirely redundant, which understates the
+# point of a fleet, and kept them close enough to spend much of the run
+# observing one another as moving obstacles — something a static-world SLAM
+# front end has no way to reject.
 fleet:
   robots:
     - name: robot1
       initial_pose: {x: -5.0, y:  3.0, yaw:  0.0}
     - name: robot2
-      initial_pose: {x: -5.0, y: -3.0, yaw:  0.0}
+      initial_pose: {x:  5.0, y: -3.0, yaw:  3.14159265}
     - name: robot3
-      initial_pose: {x: -5.0, y:  0.0, yaw:  0.0}
+      initial_pose: {x:  5.0, y:  3.0, yaw:  3.14159265}
