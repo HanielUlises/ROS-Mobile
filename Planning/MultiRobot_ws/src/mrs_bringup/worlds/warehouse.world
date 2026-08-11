@@ -64,12 +64,12 @@
         Shelf aisles: three columns, each split so a lateral passage exists.
 
         Block lengths and the position of each lateral gap are deliberately
-        irregular. An evenly spaced array of identical blocks is a worst case
-        for perceptual aliasing: from inside an aisle every column produces the
-        same scan, the loop-closure search cannot tell them apart, and a false
-        closure folds the pose graph. Varying the geometry gives each aisle a
-        distinguishable signature and keeps the scenario closer to a real
-        warehouse, where bays differ in length and occupancy.
+        irregular. An evenly spaced array of identical blocks is a poor case for
+        scan matching: from inside an aisle every column produces much the same
+        scan, so the loop-closure search has little to tell them apart. Varying
+        the geometry gives each aisle a distinguishable signature and keeps the
+        scenario closer to a real warehouse, where bays differ in length and
+        occupancy.
       -->
       <link name="shelf_a1">
         <pose>-3 2.4 0.5 0 0 0</pose>

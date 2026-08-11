@@ -178,15 +178,27 @@ $$\tilde{m}_i(t) \;=\; m_i(\tau_i(t)), \qquad
 
 and $\mathcal{D}(t) = \{\, i : \tau_i(t) \text{ exists} \,\}$. An agent that
 loses its link therefore *freezes* rather than disappears: its contribution goes
-stale and stops tracking its own exploration, but nothing already shared is
-retracted. Consequently
+stale and stops tracking its own exploration, but it is not withdrawn from the
+fusion. The observable consequence — a plateau in the fused map while a
+disconnected agent keeps exploring alone, followed by a step at reconnection —
+is visible in Figure [3](#figure-3).
 
-$$\{\, c : M_t(c) \neq \mathsf{u} \,\} \;\subseteq\; \{\, c : M_{t'}(c) \neq \mathsf{u} \,\}
-\quad \text{for } t \le t',$$
+It is worth being precise about what this does *not* establish. Connectivity
+alone cannot remove an agent from $\mathcal{D}(t)$, so no cell is lost to a link
+drop. But $\tilde{m}_i$ is replaced wholesale on each delivery, and a pose-graph
+correction can move or retract cells within an agent's own estimate. Fleet
+knowledge is consequently monotone with respect to *connectivity*, not with
+respect to time in general:
 
-so fleet knowledge is monotone non-decreasing in time even though connectivity
-is not. The observable consequence — a plateau in the fused map while an agent
-keeps exploring alone — is visible in Figure [3](#figure-3).
+$$\mathcal{D}(t) \subseteq \mathcal{D}(t') \quad \text{for } t \le t',$$
+
+while $\{\, c : M_t(c) \neq \mathsf{u} \,\}$ may still shrink when an agent's
+SLAM back end revises its map. Making fleet knowledge monotone in the strong,
+cell-wise sense would require accumulating delivered observations into a
+persistent global grid, which in turn requires a principled treatment of how a
+retrospective pose correction acts on already-accumulated cells. That is a
+genuinely epistemic question — it is belief *revision*, not belief expansion —
+and it is deferred to the layer equipped to express it.
 
 ---
 

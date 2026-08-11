@@ -189,6 +189,7 @@ def _spawn_fleet(context, *args, **kwargs):
             parameters=[{
                 'use_sim_time': True,
                 'robot_names': robot_names,
+                'initial_poses': init_poses,
                 'output_dir': LaunchConfiguration('record_dir'),
                 'sample_period': 2.0,
             }],

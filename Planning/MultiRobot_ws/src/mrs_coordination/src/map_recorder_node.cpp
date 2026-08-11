@@ -61,12 +61,26 @@ public:
   : rclcpp::Node("map_recorder")
   {
     declare_parameter<std::vector<std::string>>("robot_names", {"robot1", "robot2"});
+    declare_parameter<std::vector<double>>("initial_poses", std::vector<double>{});
     declare_parameter<std::string>("output_dir", "/tmp/mrs_run");
     declare_parameter<double>("sample_period", 2.0);
 
     robot_names_ = get_parameter("robot_names").as_string_array();
     output_dir_ = get_parameter("output_dir").as_string();
     const double period = get_parameter("sample_period").as_double();
+
+    const auto flat_poses = get_parameter("initial_poses").as_double_array();
+    if (flat_poses.size() != robot_names_.size() * 3) {
+      RCLCPP_FATAL(
+        get_logger(),
+        "initial_poses must hold 3 values (x, y, yaw) per robot: expected %zu, got %zu",
+        robot_names_.size() * 3, flat_poses.size());
+      throw std::runtime_error("initial_poses / robot_names size mismatch");
+    }
+    for (size_t i = 0; i < robot_names_.size(); ++i) {
+      origins_[robot_names_[i]] =
+        Pose2D{flat_poses[3 * i], flat_poses[3 * i + 1], flat_poses[3 * i + 2]};
+    }
 
     std::filesystem::create_directories(output_dir_);
 
@@ -153,7 +167,7 @@ private:
 
     char filename[96];
     std::snprintf(filename, sizeof(filename), "/frame_%05d.grid", frame_index_);
-    writeGrid(output_dir_ + filename, grid, t);
+    writeGrid(output_dir_ + filename, grid, t, Pose2D{});
 
     // Per-agent snapshots as well, so the individual and fused estimates can be
     // compared side by side rather than only through their scalar areas. These
@@ -161,7 +175,7 @@ private:
     for (const auto & entry : robot_maps_) {
       std::snprintf(filename, sizeof(filename), "/frame_%05d_%s.grid",
         frame_index_, entry.first.c_str());
-      writeGrid(output_dir_ + filename, *entry.second, t);
+      writeGrid(output_dir_ + filename, *entry.second, t, origins_.at(entry.first));
     }
 
     csv_ << frame_index_ << ',' << t << ',' << knownArea(grid);
@@ -183,6 +197,8 @@ private:
   nav_msgs::msg::OccupancyGrid::SharedPtr merged_;
   std::unordered_map<std::string, double> areas_;
   std::unordered_map<std::string, bool> linked_;
+  std::unordered_map<std::string, Pose2D> origins_;
+  std::unordered_map<std::string, nav_msgs::msg::OccupancyGrid::SharedPtr> robot_maps_;
 
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr merged_sub_;
   std::vector<rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr> robot_map_subs_;
