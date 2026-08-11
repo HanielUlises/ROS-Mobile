@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<!--
+  Static 2D warehouse used as the exploration scenario for TT 2026-B193.
+
+  Layout: a 12 x 8 m arena with three shelf aisles. The east corridor (c3) can
+  be obstructed by the `corridor_c3_blockade` model, which reproduces the
+  motivating scenario of Section 1.2: R1 observes that c3 is blocked while R2
+  does not know it. The blockade is a separate model so it can be inserted or
+  deleted at runtime without touching the rest of the world.
+-->
+<sdf version="1.6">
+  <world name="warehouse">
+
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+
+    <scene>
+      <ambient>0.6 0.6 0.6 1</ambient>
+      <shadows>false</shadows>
+    </scene>
+
+    <model name="warehouse_walls">
+      <static>true</static>
+
+      <link name="wall_north">
+        <pose>0 4 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>12.15 0.15 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>12.15 0.15 1.0</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="wall_south">
+        <pose>0 -4 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>12.15 0.15 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>12.15 0.15 1.0</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="wall_west">
+        <pose>-6 0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.15 8.15 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.15 8.15 1.0</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="wall_east">
+        <pose>6 0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.15 8.15 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.15 8.15 1.0</size></box></geometry>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material>
+        </visual>
+      </link>
+
+      <!-- Shelf aisles: three columns, each split so a lateral passage exists -->
+      <link name="shelf_a1">
+        <pose>-3 2.0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+          <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+      <link name="shelf_a2">
+        <pose>-3 -2.0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+          <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="shelf_b1">
+        <pose>0 2.0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+          <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+      <link name="shelf_b2">
+        <pose>0 -2.0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+          <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+
+      <link name="shelf_c1">
+        <pose>3 2.0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+          <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+      <link name="shelf_c2">
+        <pose>3 -2.0 0.5 0 0 0</pose>
+        <collision name="c"><geometry><box><size>0.6 3.0 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 3.0 1.0</size></box></geometry>
+          <material><ambient>0.45 0.32 0.18 1</ambient><diffuse>0.45 0.32 0.18 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Corridor c3 blockade: `gz model -m corridor_c3_blockade -d` removes it -->
+    <model name="corridor_c3_blockade">
+      <static>true</static>
+      <pose>4.6 0 0.4 0 0 0</pose>
+      <link name="body">
+        <collision name="c"><geometry><box><size>0.6 1.4 0.8</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.6 1.4 0.8</size></box></geometry>
+          <material><ambient>0.75 0.15 0.10 1</ambient><diffuse>0.75 0.15 0.10 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

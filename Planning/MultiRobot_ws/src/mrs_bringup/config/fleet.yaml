@@ -1,0 +1,18 @@
+# Fleet definition for the multi-robot SLAM testbed.
+#
+# `initial_pose` is the ground-truth spawn pose in the Gazebo world frame. It is
+# also the origin of that robot's SLAM map frame (slam_toolbox anchors <ns>/map
+# at the robot's starting pose), so the same numbers double as the known
+# map -> <ns>/map transform used by the merger in this first iteration.
+#
+# Relaxing that assumption (unknown relative poses, recovered by inter-robot
+# loop closure) is deferred: it is the geometric half of the epistemic map
+# fusion problem addressed later in the project.
+fleet:
+  robots:
+    - name: robot1
+      initial_pose: {x: -5.0, y:  3.0, yaw:  0.0}
+    - name: robot2
+      initial_pose: {x: -5.0, y: -3.0, yaw:  0.0}
+    - name: robot3
+      initial_pose: {x: -5.0, y:  0.0, yaw:  0.0}
