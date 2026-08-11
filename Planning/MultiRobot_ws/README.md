@@ -107,9 +107,19 @@ batch runs and interactive sessions.
 Every agent runs an independent asynchronous pose-graph SLAM instance
 (`slam_toolbox`, a Karto-derived correlative scan matcher with a sparse
 pose-graph back end solved by Ceres). Nodes are inserted on a travelled distance
-of $0.20$ m or a heading change of $0.20$ rad; loop closures are searched within
+of $0.12$ m or a heading change of $0.12$ rad; loop closures are searched within
 a $3.0$ m radius over chains of at least $10$ nodes. The published grid
 resolution is $\rho = 0.05$ m.
+
+The keyframe interval is shorter than the values usually quoted for this front
+end, and the choice was forced by measurement rather than preference. At
+$0.20$ m / $0.20$ rad the agent that happened to travel furthest in a run
+accumulated heading error faster than loop closure could absorb it, and its grid
+showed the characteristic smeared, doubled walls. Shortening the interval between
+constraints removes the failure at the cost of a larger graph to optimise.
+Tightening the loop-closure acceptance thresholds instead was tried first and
+made matters worse, by rejecting the legitimate closures that would have
+corrected the drift.
 
 Crucially, no agent consumes another agent's scans, poses or pose graph. Coupling
 occurs exclusively at the level of published occupancy grids, through the
@@ -286,26 +296,45 @@ propagates observations, it does not synthesise them.
 
 **Figure 3.** Explored area against simulation time. The heavy trace is the fused
 fleet map $M$; the thin traces are each agent's own map. The lower strip is the
-link process, one row per agent, with filled intervals marking $\ell_i = 0$. Area
-is reported in square metres rather than as a fraction of the canvas, since the
-canvas grows with the map and fractions would not be comparable across time.
+link process, one row per agent, with filled intervals marking $\ell_i = 0$. Each
+agent spends $36\%$ of the run disconnected, the two duty cycles offset by
+$\delta$ so that the fleet passes through partially connected states.
 
 The quantity of interest is the vertical gap between the fused trace and each
 individual trace. It is the geometric measure of what an agent does *not* know
 but the fleet does — the epistemic asymmetry that motivates the modal treatment
-of the following iterations. During an outage the fused trace stops tracking the
-disconnected agent while that agent's own trace continues to climb, and the
-accumulated difference is recovered as a step at reconnection.
+of the following iterations. Here the two agents' final areas, $45.0$ and
+$23.5$ m², sum to almost exactly the fused $68.3$ m², so their coverage is very
+nearly disjoint and neither agent alone holds more than two thirds of what the
+fleet holds.
+
+Two caveats keep this figure honest. First, the gap shown is dominated by
+*complementarity* of the two explored regions, not by the outage dynamics: each
+agent's own coverage saturates within roughly the first $150$ s, after which the
+duty cycle continues but there is little new information left for an outage to
+delay. Distinguishing the two contributions requires a scenario in which
+exploration remains productive for the whole run, and is a matter for the
+comparative evaluation of OE4 rather than for this iteration. Second, area is
+reported in square metres rather than as a fraction of the canvas, since the
+canvas grows with the map and fractions would not be comparable across time.
 
 <a name="table-1"></a>
 
-**Table 1.** Explored area at the end of the run.
+**Table 1.** Explored area after $436$ s of simulation, two agents, $36\%$ link
+downtime each.
 
 | Quantity | Area (m²) | Share of fused map |
 |---|---|---|
-| Agent 1, own map | *see run output* | — |
-| Agent 2, own map | *see run output* | — |
-| Fused fleet map | *see run output* | 100 % |
+| Agent 1, own map $m_1$ | $45.0$ | $65.9\ \%$ |
+| Agent 2, own map $m_2$ | $23.5$ | $34.4\ \%$ |
+| Fused fleet map $M$ | $68.3$ | $100\ \%$ |
+
+The individual shares sum to $100.3\%$, i.e. the two agents overlap on only
+$0.2$ m² of the $68.3$ m² they jointly observed. With the agents deployed at
+opposite ends of the hall and no coordination between them beyond the geometry
+of the environment, the partition of the workspace is essentially incidental —
+which is precisely the sort of allocation a deliberative epistemic planner is
+meant to make deliberate rather than accidental.
 
 ---
 

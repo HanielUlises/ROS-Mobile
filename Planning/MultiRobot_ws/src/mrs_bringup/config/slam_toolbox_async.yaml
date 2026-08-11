@@ -32,9 +32,15 @@
     # Scan matching
     use_scan_matching: true
     use_scan_barycenter: true
-    minimum_travel_distance: 0.20
-    minimum_travel_heading: 0.20
-    scan_buffer_size: 10
+    # A dense graph. Keyframes every 0.12 m / 0.12 rad rather than the more
+    # common 0.2/0.2, with a correspondingly deeper running scan buffer. The
+    # observed failure mode was the agent that travelled furthest accumulating
+    # heading error faster than loop closure could absorb it, which shows up as
+    # smeared walls; shortening the interval between constraints attacks that
+    # directly, at the cost of a larger graph to optimise.
+    minimum_travel_distance: 0.12
+    minimum_travel_heading: 0.12
+    scan_buffer_size: 20
     scan_buffer_maximum_scan_distance: 10.0
     link_match_minimum_response_fine: 0.12
     link_scan_maximum_distance: 1.5
@@ -52,7 +58,9 @@
     loop_match_minimum_response_fine: 0.45
 
     # Correlation
-    correlation_search_space_dimension: 0.5
+    # Widened to 0.6 m so the fine search still brackets the odometry error
+    # accumulated between keyframes when a wheel slips during a turn.
+    correlation_search_space_dimension: 0.6
     correlation_search_space_resolution: 0.01
     correlation_search_space_smear_deviation: 0.1
 
