@@ -1,8 +1,5 @@
 # Collaborative 2D SLAM for a Ground Fleet under Intermittent Connectivity
 
-***Planificación Epistémica y SLAM en Entornos Desconocidos para Sistemas Multiagente*
-Escuela Superior de Cómputo, Instituto Politécnico Nacional**
-
 First implementation iteration. This document specifies the simulated multi-robot
 platform, the map fusion operator and the connectivity model that together form
 the perceptual substrate on which the epistemic planning layer of the project is
