@@ -35,9 +35,23 @@ constexpr int8_t kUnknown = -1;
 
 // Custom container rather than PGM: PGM cannot carry the grid origin, and the
 // origin is what lets every frame be composited onto one canvas.
-//   header: "MRSGRID <width> <height> <resolution> <origin_x> <origin_y> <stamp>\n"
+//   header: "MRSGRID <width> <height> <resolution> <origin_x> <origin_y> <stamp>
+//            <tx> <ty> <tyaw>\n"
 //   body:   width*height raw int8 cells, row-major, y increasing
+//
+// The trailing pose is the SE(2) transform carrying this grid's frame into the
+// global frame. It is identity for the fused grid, which is already global, and
+// the agent's deployment pose for a per-agent grid. Carrying it in the snapshot
+// means the renderer can place per-agent grids on the same canvas as the fused
+// one without needing the fleet configuration.
 constexpr char kMagic[] = "MRSGRID";
+
+struct Pose2D
+{
+  double x{0.0};
+  double y{0.0};
+  double yaw{0.0};
+};
 }  // namespace
 
 class MapRecorderNode : public rclcpp::Node
@@ -78,6 +92,7 @@ public:
           "/" + name + "/map", qos,
           [this, name](nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
             areas_[name] = knownArea(*msg);
+            robot_maps_[name] = msg;
           }));
 
       comms_subs_.push_back(
@@ -114,6 +129,19 @@ private:
     return static_cast<double>(known) * cell_area;
   }
 
+  static void writeGrid(
+    const std::string & path, const nav_msgs::msg::OccupancyGrid & grid, double t,
+    const Pose2D & pose)
+  {
+    std::ofstream out(path, std::ios::out | std::ios::binary);
+    out << kMagic << ' ' << grid.info.width << ' ' << grid.info.height << ' '
+        << grid.info.resolution << ' ' << grid.info.origin.position.x << ' '
+        << grid.info.origin.position.y << ' ' << t << ' '
+        << pose.x << ' ' << pose.y << ' ' << pose.yaw << '\n';
+    out.write(reinterpret_cast<const char *>(grid.data.data()),
+      static_cast<std::streamsize>(grid.data.size()));
+  }
+
   void sample()
   {
     if (!merged_) {
@@ -123,15 +151,18 @@ private:
     const double t = (now() - start_).seconds();
     const auto & grid = *merged_;
 
-    char filename[64];
+    char filename[96];
     std::snprintf(filename, sizeof(filename), "/frame_%05d.grid", frame_index_);
-    std::ofstream out(output_dir_ + filename, std::ios::out | std::ios::binary);
-    out << kMagic << ' ' << grid.info.width << ' ' << grid.info.height << ' '
-        << grid.info.resolution << ' ' << grid.info.origin.position.x << ' '
-        << grid.info.origin.position.y << ' ' << t << '\n';
-    out.write(reinterpret_cast<const char *>(grid.data.data()),
-      static_cast<std::streamsize>(grid.data.size()));
-    out.close();
+    writeGrid(output_dir_ + filename, grid, t);
+
+    // Per-agent snapshots as well, so the individual and fused estimates can be
+    // compared side by side rather than only through their scalar areas. These
+    // are each agent's own map, ungated by connectivity.
+    for (const auto & entry : robot_maps_) {
+      std::snprintf(filename, sizeof(filename), "/frame_%05d_%s.grid",
+        frame_index_, entry.first.c_str());
+      writeGrid(output_dir_ + filename, *entry.second, t);
+    }
 
     csv_ << frame_index_ << ',' << t << ',' << knownArea(grid);
     for (const auto & name : robot_names_) {
