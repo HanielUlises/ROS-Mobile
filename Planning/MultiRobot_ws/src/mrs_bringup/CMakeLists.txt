@@ -3,7 +3,7 @@ project(mrs_bringup)
 
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY launch worlds config rviz
+install(DIRECTORY launch worlds config rviz maps
   DESTINATION share/${PROJECT_NAME}
 )
 

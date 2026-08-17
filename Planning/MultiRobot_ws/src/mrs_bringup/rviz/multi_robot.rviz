@@ -53,6 +53,17 @@ Visualization Manager:
       Color Scheme: map
       Draw Behind: true
       Alpha: 0.7
+    - Class: rviz_default_plugins/Map
+      Name: robot3 Map
+      Enabled: false
+      Topic:
+        Value: /robot3/map
+        Depth: 1
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Color Scheme: map
+      Draw Behind: true
+      Alpha: 0.7
     - Class: rviz_default_plugins/LaserScan
       Name: robot1 Scan
       Enabled: true
@@ -76,6 +87,18 @@ Visualization Manager:
       Size (m): 0.04
       Style: Flat Squares
       Color: 255; 170; 0
+      Color Transformer: FlatColor
+    - Class: rviz_default_plugins/LaserScan
+      Name: robot3 Scan
+      Enabled: true
+      Topic:
+        Value: /robot3/scan
+        Depth: 5
+        Durability Policy: Volatile
+        Reliability Policy: Best Effort
+      Size (m): 0.04
+      Style: Flat Squares
+      Color: 0; 190; 130
       Color Transformer: FlatColor
     - Class: rviz_default_plugins/TF
       Name: TF

@@ -1,0 +1,29 @@
+# Fleet definition for the second iteration: three agents in the Willow Garage
+# office map (worlds/willow_office.world).
+#
+# As in the first iteration, `initial_pose` is both the ground-truth spawn pose
+# in the Gazebo world frame and the origin of that robot's SLAM map frame, so
+# the same numbers double as the known map -> <ns>/map transform used by the
+# merger.
+#
+# The three deployment poses sit in three different arms of the building's
+# corridor ring, each facing along its own arm: west corridor heading north,
+# north corridor heading west, east corridor heading south. Two considerations
+# fix them.
+#
+# Separation. Agents deployed near one another duplicate coverage and spend the
+# run observing each other as moving obstacles, which a static-world SLAM front
+# end cannot reject. One arm each keeps the three exploration processes
+# independent for long enough to be worth measuring.
+#
+# Orientation. The three yaws are mutually distinct and none is zero, so every
+# T_i in the fusion carries a non-trivial rotation. A fleet of identically
+# oriented agents would leave the rotational part of the operator untested.
+fleet:
+  robots:
+    - name: robot1
+      initial_pose: {x: -20.2, y:   2.0, yaw:  1.57079633}
+    - name: robot2
+      initial_pose: {x:   0.0, y:  23.6, yaw:  3.14159265}
+    - name: robot3
+      initial_pose: {x:   4.3, y:  -4.0, yaw: -1.57079633}

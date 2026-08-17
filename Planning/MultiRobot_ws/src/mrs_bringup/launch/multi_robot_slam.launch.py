@@ -29,8 +29,8 @@ from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.parameter_descriptions import ParameterValue
 
 
-def _load_fleet(bringup_share):
-    with open(os.path.join(bringup_share, 'config', 'fleet.yaml')) as handle:
+def _load_fleet(bringup_share, filename):
+    with open(os.path.join(bringup_share, 'config', filename)) as handle:
         return yaml.safe_load(handle)['fleet']['robots']
 
 
@@ -48,10 +48,11 @@ def _spawn_fleet(context, *args, **kwargs):
     xacro_file = os.path.join(description_share, 'urdf', 'ugv.urdf.xacro')
     slam_params = os.path.join(bringup_share, 'config', 'slam_toolbox_async.yaml')
 
-    robots = _load_fleet(bringup_share)
+    fleet_file = LaunchConfiguration('fleet').perform(context)
+    robots = _load_fleet(bringup_share, fleet_file)
     if n_robots > len(robots):
         raise RuntimeError(
-            f'requested {n_robots} robots but fleet.yaml only defines {len(robots)}')
+            f'requested {n_robots} robots but {fleet_file} only defines {len(robots)}')
     robots = robots[:n_robots]
 
     actions = []
@@ -209,7 +210,14 @@ def generate_launch_description():
 
     n_robots_arg = DeclareLaunchArgument(
         'n_robots', default_value='2',
-        description='Number of UGVs to spawn (bounded by config/fleet.yaml).')
+        description='Number of UGVs to spawn (bounded by the fleet file).')
+
+    # The deployment poses belong to the scenario, not to the fleet size: the
+    # first iteration's warehouse and the second iteration's office map need
+    # entirely different ones, and they must match whichever world is loaded.
+    fleet_arg = DeclareLaunchArgument(
+        'fleet', default_value='fleet.yaml',
+        description='Fleet definition in config/ giving the deployment poses.')
 
     gui_arg = DeclareLaunchArgument(
         'gui', default_value='true',
@@ -269,6 +277,7 @@ def generate_launch_description():
     return LaunchDescription([
         world_arg,
         n_robots_arg,
+        fleet_arg,
         gui_arg,
         rviz_arg,
         explorer_arg,
