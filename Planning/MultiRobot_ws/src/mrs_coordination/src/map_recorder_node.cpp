@@ -5,7 +5,13 @@
 //     own origin and resolution so the growing map can be rendered on a common
 //     canvas afterwards.
 //   * `coverage.csv`, one row per snapshot with simulation time, the merged
-//     known-cell fraction, and each robot's individual coverage and link state.
+//     known-cell fraction, each robot's individual coverage and link state, and
+//     each robot's estimated pose in the global frame.
+//
+// The pose columns are the estimate, map -> <robot>/base_footprint, not the
+// simulator's ground truth: they are what the fleet actually has, and reading
+// them back beside the grid they produced is the only way a replay of the run
+// shows the map and the trajectory that generated it in the same frame.
 //
 // Coverage is reported as explored area in square metres rather than a fraction
 // of the canvas: the canvas grows as the map does, so a fraction is not
@@ -17,6 +23,7 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -25,6 +32,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <tf2/utils.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 
 namespace mrs_coordination
 {
@@ -64,9 +75,11 @@ public:
     declare_parameter<std::vector<double>>("initial_poses", std::vector<double>{});
     declare_parameter<std::string>("output_dir", "/tmp/mrs_run");
     declare_parameter<double>("sample_period", 2.0);
+    declare_parameter<std::string>("global_frame", "map");
 
     robot_names_ = get_parameter("robot_names").as_string_array();
     output_dir_ = get_parameter("output_dir").as_string();
+    global_frame_ = get_parameter("global_frame").as_string();
     const double period = get_parameter("sample_period").as_double();
 
     const auto flat_poses = get_parameter("initial_poses").as_double_array();
@@ -87,9 +100,18 @@ public:
     csv_.open(output_dir_ + "/coverage.csv", std::ios::out | std::ios::trunc);
     csv_ << "frame,sim_time,merged_area_m2";
     for (const auto & name : robot_names_) {
-      csv_ << "," << name << "_area_m2," << name << "_linked";
+      csv_ << "," << name << "_area_m2," << name << "_linked"
+           << "," << name << "_x," << name << "_y," << name << "_yaw";
     }
     csv_ << "\n";
+
+    tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
+    // Bound to this node rather than to a listener-owned one: the private node
+    // a bare TransformListener creates does not inherit use_sim_time, and a
+    // buffer fed from a wall clock while every publisher stamps in simulation
+    // time has no common time across the chain, so every lookup fails as an
+    // extrapolation into a future it thinks has already happened.
+    tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_, this, false);
 
     const auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
 
@@ -156,6 +178,23 @@ private:
       static_cast<std::streamsize>(grid.data.size()));
   }
 
+  std::optional<Pose2D> lookupPose(const std::string & name)
+  {
+    try {
+      // Latest available rather than the sample instant: the transform chain is
+      // published by several nodes at several rates, and waiting for a common
+      // stamp would drop samples for no gain at a 2 s recording period.
+      const auto tf = tf_buffer_->lookupTransform(
+        global_frame_, name + "/base_footprint", tf2::TimePointZero);
+      return Pose2D{tf.transform.translation.x, tf.transform.translation.y,
+        tf2::getYaw(tf.transform.rotation)};
+    } catch (const tf2::TransformException & error) {
+      RCLCPP_WARN_THROTTLE(
+        get_logger(), *get_clock(), 10000, "no pose for %s: %s", name.c_str(), error.what());
+      return std::nullopt;
+    }
+  }
+
   void sample()
   {
     if (!merged_) {
@@ -181,6 +220,17 @@ private:
     csv_ << frame_index_ << ',' << t << ',' << knownArea(grid);
     for (const auto & name : robot_names_) {
       csv_ << ',' << areas_[name] << ',' << (linked_[name] ? 1 : 0);
+
+      // An unavailable pose is written empty rather than as a placeholder
+      // number: the estimate genuinely does not exist before the agent's SLAM
+      // instance has published its first correction, and a zero there would be
+      // read as the agent sitting at the world origin.
+      const auto pose = lookupPose(name);
+      if (pose) {
+        csv_ << ',' << pose->x << ',' << pose->y << ',' << pose->yaw;
+      } else {
+        csv_ << ",,,";
+      }
     }
     csv_ << '\n';
     csv_.flush();
@@ -190,6 +240,7 @@ private:
 
   std::vector<std::string> robot_names_;
   std::string output_dir_;
+  std::string global_frame_;
   int frame_index_{0};
   rclcpp::Time start_;
   std::ofstream csv_;
@@ -199,6 +250,9 @@ private:
   std::unordered_map<std::string, bool> linked_;
   std::unordered_map<std::string, Pose2D> origins_;
   std::unordered_map<std::string, nav_msgs::msg::OccupancyGrid::SharedPtr> robot_maps_;
+
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
 
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr merged_sub_;
   std::vector<rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr> robot_map_subs_;

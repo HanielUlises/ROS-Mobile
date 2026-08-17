@@ -16,6 +16,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 set(node_dependencies
   rclcpp
@@ -25,6 +26,7 @@ set(node_dependencies
   std_msgs
   tf2
   tf2_ros
+  tf2_geometry_msgs
 )
 
 add_executable(map_merger_node src/map_merger_node.cpp)
