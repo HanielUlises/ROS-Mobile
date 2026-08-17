@@ -5,6 +5,10 @@ platform, the map fusion operator and the connectivity model that together form
 the perceptual substrate on which the epistemic planning layer of the project is
 to be built.
 
+> The second iteration — the same substrate, unchanged, carried onto the floor
+> plan of a real building with three agents — is reported separately in
+> [`docs/iteration2.md`](docs/iteration2.md).
+
 ---
 
 ## Abstract

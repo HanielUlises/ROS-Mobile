@@ -195,7 +195,7 @@ def outage_spans(times, linked):
 
 def figure_coverage(csv_path, out_path):
     with open(csv_path) as handle:
-        rows = list(csv.DictReader(handle))
+        rows = [r for r in csv.DictReader(handle) if float(r['sim_time']) > 0.0]
     if not rows:
         print('coverage.csv is empty, skipping coverage figure')
         return None
@@ -300,7 +300,12 @@ def main():
     if not fused_paths:
         raise SystemExit(f'no fused frame_*.grid snapshots in {args.run_dir}')
 
-    fused = [read_grid(p) for p in fused_paths]
+    # Samples stamped t = 0 are taken before the simulator's clock starts, when
+    # the merger is still publishing its empty default canvas. They are not part
+    # of the run and would otherwise open every time series with a spike.
+    fused = [g for g in (read_grid(p) for p in fused_paths) if g[1]['t'] > 0.0]
+    if not fused:
+        raise SystemExit(f'no snapshots after the clock started in {args.run_dir}')
 
     agent_paths = {}
     for path in glob.glob(os.path.join(args.run_dir, 'frame_*_*.grid')):
