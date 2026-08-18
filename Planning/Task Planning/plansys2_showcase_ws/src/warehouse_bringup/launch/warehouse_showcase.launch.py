@@ -180,17 +180,23 @@ def _setup(context, *args, **kwargs):
                 '-Y', '0.0',
             ]))
 
-        actions.append(Node(
-            package='warehouse_actions',
-            executable='move_action',
-            name=f'move_{robot}',
-            output='screen',
-            parameters=[{
-                'action_name': 'move',
-                'specialized_arguments': [robot],
-                'robot_name': robot,
-                'roadmap': roadmap,
-            }]))
+        # Three driving actions, one performer each. `enter_dock` and
+        # `leave_dock` are the same motion as `move` — the difference between
+        # them is entirely in the domain, where entering a dock takes its
+        # standing place — so they run the same executable under a different
+        # `action_name`.
+        for driving_action in ('move', 'enter_dock', 'leave_dock'):
+            actions.append(Node(
+                package='warehouse_actions',
+                executable='move_action',
+                name=f'{driving_action}_{robot}',
+                output='screen',
+                parameters=[{
+                    'action_name': driving_action,
+                    'specialized_arguments': [robot],
+                    'robot_name': robot,
+                    'roadmap': roadmap,
+                }]))
 
         for action_name, dwell, carrying in (('pick', 8.0, True), ('drop', 8.0, False)):
             actions.append(Node(

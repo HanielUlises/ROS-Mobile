@@ -136,9 +136,14 @@ private:
       return false;
     }
 
+    // Docks are instances of the `dock` subtype: the domain gives that type a
+    // standing place, and a dock declared as a plain waypoint would be planned
+    // for as though any number of vehicles could stand on it.
     for (const auto & entry : roadmap["waypoints"]) {
       const auto name = entry.first.as<std::string>();
-      problem_->addInstance(plansys2::Instance{name, "waypoint"});
+      const auto kind = entry.second["kind"].as<std::string>();
+      problem_->addInstance(
+        plansys2::Instance{name, kind == "dock" ? "dock" : "waypoint"});
     }
     for (const auto & r : robots_) {
       problem_->addInstance(plansys2::Instance{r, "robot"});
@@ -154,8 +159,7 @@ private:
     for (size_t i = 0; i < crates_.size(); ++i) {
       problem_->addPredicate(plansys2::Predicate("(crate_at " + crates_[i] + " " + bays_[i] + ")"));
     }
-    problem_->addPredicate(plansys2::Predicate("(is_dock " + dock_ + ")"));
-    problem_->addPredicate(plansys2::Predicate("(dock_free " + dock_ + ")"));
+    problem_->addPredicate(plansys2::Predicate("(dock_clear " + dock_ + ")"));
 
     // The roadmap is undirected and the domain is directed, so each edge is
     // asserted both ways with the same duration. This is where the metric map
