@@ -284,9 +284,15 @@ int main(int argc, char ** argv)
 
   // `action_name` is what the executor matches on, and `specialized_arguments`
   // is what keeps one robot's performer from bidding on another robot's
-  // dispatch. Both are set from the launch file; the defaults here only make
-  // the node runnable on its own.
-  node->set_parameter(rclcpp::Parameter("action_name", "move"));
+  // dispatch. Both come from the launch file, which runs this same executable
+  // three times per robot — as `move`, `enter_dock` and `leave_dock`, which are
+  // one motion under three names because the domain, not the controller,
+  // distinguishes them. The fallback below applies only when the node is run
+  // by hand with no parameters; overriding unconditionally would collapse all
+  // three performers onto `move` and leave the dock actions unclaimed.
+  if (node->get_parameter("action_name").as_string().empty()) {
+    node->set_parameter(rclcpp::Parameter("action_name", "move"));
+  }
 
   // CascadeLifecycleNode::on_configure creates publishers and subscriptions,
   // which needs a spinning executor, so the transition is deferred by one tick.
