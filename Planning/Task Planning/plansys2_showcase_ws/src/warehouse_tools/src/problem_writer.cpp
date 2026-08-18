@@ -86,18 +86,10 @@ std::string writeProblem(
     out << r << ' ';
   }
   out << "- robot\n  ";
-  // Docks are declared as the `dock` subtype, which is what lets the domain
-  // give them a standing place that ordinary waypoints do not have.
   for (const auto & wp : roadmap.waypoints()) {
-    if (wp.kind != WaypointKind::Dock) {
-      out << wp.name << ' ';
-    }
+    out << wp.name << ' ';
   }
   out << "- waypoint\n  ";
-  for (const auto & dock : scenario.docks) {
-    out << dock << ' ';
-  }
-  out << "- dock\n  ";
   for (const auto & c : scenario.crates) {
     out << c << ' ';
   }
@@ -112,7 +104,17 @@ std::string writeProblem(
     out << "  (crate_at " << scenario.crates[i] << ' ' << scenario.crate_bay[i] << ")\n";
   }
   for (const auto & dock : scenario.docks) {
-    out << "  (dock_clear " << dock << ")\n";
+    out << "  (is_dock " << dock << ")\n";
+  }
+  // Every waypoint starts clear except the ones the fleet is standing on: the
+  // token is the place, so a robot's start position is a place already taken.
+  for (const auto & wp : roadmap.waypoints()) {
+    const bool occupied =
+      std::find(scenario.robot_start.begin(), scenario.robot_start.end(), wp.name) !=
+      scenario.robot_start.end();
+    if (!occupied) {
+      out << "  (wp_clear " << wp.name << ")\n";
+    }
   }
   // The roadmap is undirected and the domain is directed: both directions are
   // asserted, and both carry the same duration, because the vehicle's cost of

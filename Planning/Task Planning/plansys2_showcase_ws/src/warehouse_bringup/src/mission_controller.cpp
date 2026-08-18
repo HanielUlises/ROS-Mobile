@@ -19,6 +19,7 @@
 // whole point of the instrumentation, because they scale with fleet size in
 // opposite directions.
 
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 #include <memory>
@@ -136,14 +137,9 @@ private:
       return false;
     }
 
-    // Docks are instances of the `dock` subtype: the domain gives that type a
-    // standing place, and a dock declared as a plain waypoint would be planned
-    // for as though any number of vehicles could stand on it.
     for (const auto & entry : roadmap["waypoints"]) {
-      const auto name = entry.first.as<std::string>();
-      const auto kind = entry.second["kind"].as<std::string>();
       problem_->addInstance(
-        plansys2::Instance{name, kind == "dock" ? "dock" : "waypoint"});
+        plansys2::Instance{entry.first.as<std::string>(), "waypoint"});
     }
     for (const auto & r : robots_) {
       problem_->addInstance(plansys2::Instance{r, "robot"});
@@ -159,7 +155,16 @@ private:
     for (size_t i = 0; i < crates_.size(); ++i) {
       problem_->addPredicate(plansys2::Predicate("(crate_at " + crates_[i] + " " + bays_[i] + ")"));
     }
-    problem_->addPredicate(plansys2::Predicate("(dock_clear " + dock_ + ")"));
+    problem_->addPredicate(plansys2::Predicate("(is_dock " + dock_ + ")"));
+    // Every waypoint starts clear except the ones the fleet is standing on:
+    // single occupancy is a property of the place, so a start position is a
+    // place already taken.
+    for (const auto & entry : roadmap["waypoints"]) {
+      const auto name = entry.first.as<std::string>();
+      if (std::find(starts_.begin(), starts_.end(), name) == starts_.end()) {
+        problem_->addPredicate(plansys2::Predicate("(wp_clear " + name + ")"));
+      }
+    }
 
     // The roadmap is undirected and the domain is directed, so each edge is
     // asserted both ways with the same duration. This is where the metric map

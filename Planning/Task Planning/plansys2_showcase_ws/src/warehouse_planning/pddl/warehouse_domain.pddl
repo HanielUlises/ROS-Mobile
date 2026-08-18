@@ -13,27 +13,30 @@
 ;;   * Nothing in the domain assigns crates to robots. Every robot can serve
 ;;     every crate; the allocation is entirely the planner's to discover, which
 ;;     is what makes the single-agent and multi-agent runs comparable.
-;;   * The dock is a *place* with room for one vehicle, not merely a service
-;;     that handles one crate at a time. This is where a parallel plan has to
-;;     serialise, and the distinction is the whole of the revision below.
+;;   * A waypoint is a *place* that holds one vehicle. This is where a parallel
+;;     plan has to serialise, and it took two revisions to get right.
 ;;
-;; On the dock as a place. The first version of this domain held a `dock_free`
+;; On waypoints as places. The first version of this domain held a `dock_free`
 ;; token that a `drop` took and returned, which serialises the handovers but
-;; says nothing about the floor they happen on. Two robots could therefore be
-;; `robot_at` the same dock simultaneously, one waiting its turn to drop —
-;; consistent in the model, impossible in the warehouse. In every multi-robot
-;; run that is exactly how the mission ended: the second vehicle stopped half a
-;; metre short of a dock its plan said was available, and its `move` timed out.
-;; The token is now taken by *entering* the dock and returned by *leaving* it,
-;; which needs the two dedicated actions below, because a single generic `move`
-;; has no way to say "this destination admits one vehicle".
+;; says nothing about the floor they happen on: two robots could be `robot_at`
+;; the same dock at once, one waiting its turn — consistent in the model,
+;; impossible in the warehouse. Every multi-robot run ended exactly there, with
+;; the second vehicle stopped half a metre short of a dock its plan said was
+;; free and its `move` timing out.
+;;
+;; Making the dock itself exclusive fixed that and moved the failure one node
+;; upstream: with three and four robots the queue formed on the corridor node
+;; *in front of* the dock, which the model still treated as having room for
+;; everybody. Single occupancy is therefore asserted of every waypoint, which is
+;; both the general statement of the constraint and the one that needs no
+;; special-case actions: `(wp_clear ?to)` is taken when a vehicle commits to
+;; driving somewhere and `(wp_clear ?from)` is returned when it has actually
+;; left.
 (define (domain warehouse)
 (:requirements :strips :typing :durative-actions :fluents :negative-preconditions)
 
 (:types
-  robot crate - object
-  waypoint - object
-  dock - waypoint
+  robot waypoint crate - object
 )
 
 (:predicates
@@ -42,9 +45,17 @@
   (holding ?r - robot ?c - crate)
   (gripper_free ?r - robot)
   (connected ?from - waypoint ?to - waypoint)
-  ;; True while no vehicle stands on this dock: the physical capacity of the
-  ;; place, held as a token so the planner has to schedule around it.
-  (dock_clear ?d - dock)
+  ;; True while no vehicle stands on this waypoint. The physical capacity of
+  ;; the place, held as a token so the planner has to schedule around it — the
+  ;; single most consequential predicate in the domain, and the one whose
+  ;; absence ended the first three multi-robot runs.
+  (wp_clear ?wp - waypoint)
+  ;; Static: which waypoints are shipping docks. A `dock` subtype would say the
+  ;; same thing more elegantly and is what this domain used for one revision,
+  ;; but POPF does not bind objects of a subtype to a supertype parameter, so a
+  ;; robot could never `move` onto a dock and the goal was reported unreachable.
+  ;; A flat type with a static predicate is the portable statement.
+  (is_dock ?wp - waypoint)
   (delivered ?c - crate)
 )
 
@@ -61,42 +72,13 @@
   :duration (= ?duration (travel_time ?from ?to))
   :condition (and
     (at start (robot_at ?r ?from))
+    (at start (wp_clear ?to))
     (over all (connected ?from ?to)))
   :effect (and
     (at start (not (robot_at ?r ?from)))
-    (at end (robot_at ?r ?to)))
-)
-
-;; Drive onto a dock, taking its one standing place for the whole approach.
-;; The token is taken at the *start* of the drive rather than on arrival: a
-;; vehicle committed to a dock already occupies the approach to it, and taking
-;; the token on arrival would let two robots drive at the same slot and
-;; discover the conflict with their bumpers.
-(:durative-action enter_dock
-  :parameters (?r - robot ?from - waypoint ?d - dock)
-  :duration (= ?duration (travel_time ?from ?d))
-  :condition (and
-    (at start (robot_at ?r ?from))
-    (at start (dock_clear ?d))
-    (over all (connected ?from ?d)))
-  :effect (and
-    (at start (not (robot_at ?r ?from)))
-    (at start (not (dock_clear ?d)))
-    (at end (robot_at ?r ?d)))
-)
-
-;; Drive off a dock, returning the standing place at the end of the drive —
-;; when the vehicle is actually clear of it, not when it starts to move.
-(:durative-action leave_dock
-  :parameters (?r - robot ?d - dock ?to - waypoint)
-  :duration (= ?duration (travel_time ?d ?to))
-  :condition (and
-    (at start (robot_at ?r ?d))
-    (over all (connected ?d ?to)))
-  :effect (and
-    (at start (not (robot_at ?r ?d)))
+    (at start (not (wp_clear ?to)))
     (at end (robot_at ?r ?to))
-    (at end (dock_clear ?d)))
+    (at end (wp_clear ?from)))
 )
 
 (:durative-action pick
@@ -113,13 +95,14 @@
 )
 
 ;; Handing the crate over. No separate capacity token: a robot can only be here
-;; if it holds the dock's standing place, so the handovers are serialised by
-;; the same fact that keeps the vehicles apart.
+;; if it holds this waypoint's standing place, so the handovers are serialised
+;; by the same fact that keeps the vehicles apart.
 (:durative-action drop
-  :parameters (?r - robot ?c - crate ?d - dock)
+  :parameters (?r - robot ?c - crate ?d - waypoint)
   :duration (= ?duration 8)
   :condition (and
     (over all (robot_at ?r ?d))
+    (over all (is_dock ?d))
     (at start (holding ?r ?c)))
   :effect (and
     (at start (not (holding ?r ?c)))
