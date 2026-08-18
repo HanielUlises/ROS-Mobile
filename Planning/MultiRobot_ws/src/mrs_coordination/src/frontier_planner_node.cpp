@@ -668,7 +668,7 @@ private:
 
     Frontier * best = nullptr;
     double best_value = -kInf;
-    int usable = 0;
+    int usable = 0;  // reachable and not blacklisted, for the log
     for (auto & frontier : frontiers) {
       if (!std::isfinite(frontier.distance) || blacklisted(frontier.centroid)) {
         continue;
@@ -684,11 +684,15 @@ private:
       }
     }
 
-    if (!best && usable > 0) {
-      // Every frontier is within arm's reach, which happens exactly when the
-      // belief is too young to plan over. Drive forward instead and let the
-      // next scan enlarge it: one reactive primitive, used only to bootstrap
-      // the deliberative one.
+    if (!best && !frontiers.empty()) {
+      // There is a frontier but none the planner will commit to: either they
+      // are all within arm's reach, which is the state of the world in the
+      // first seconds of a run when the belief is a disc a metre across, or
+      // they are all blacklisted after failed approaches. Drive forward and let
+      // the next scan enlarge the belief and the blacklist expire. One reactive
+      // primitive, used to bootstrap the deliberative one and to get out from
+      // under it — standing still in either case ends the agent's run, since
+      // nothing about a stationary agent's situation changes.
       state_ = "probe";
       goal_valid_ = false;
       path_.clear();
@@ -854,6 +858,17 @@ private:
 
     checkStuck(*pose);
 
+    if (elapsed() < recover_until_) {
+      geometry_msgs::msg::Twist cmd;
+      if (rearBlocked()) {
+        cmd.angular.z = angular_speed_;
+      } else {
+        cmd.linear.x = -0.5 * linear_speed_;
+      }
+      cmd_pub_->publish(cmd);
+      return;
+    }
+
     if (state_ == "probe" && !goal_valid_) {
       geometry_msgs::msg::Twist cmd;
       if (frontBlocked()) {
@@ -918,7 +933,17 @@ private:
     cmd_pub_->publish(cmd);
   }
 
+  bool rearBlocked() const
+  {
+    return sectorBlocked(M_PI, 0.5, 0.30);
+  }
+
   bool frontBlocked() const
+  {
+    return sectorBlocked(0.0, front_half_angle_, front_clearance_);
+  }
+
+  bool sectorBlocked(double centre, double half_width, double clearance) const
   {
     if (!scan_) {
       return false;
@@ -926,11 +951,11 @@ private:
     const auto & scan = *scan_;
     for (size_t i = 0; i < scan.ranges.size(); ++i) {
       const double angle = normalizeAngle(scan.angle_min + i * scan.angle_increment);
-      if (std::fabs(angle) > front_half_angle_) {
+      if (std::fabs(normalizeAngle(angle - centre)) > half_width) {
         continue;
       }
       const double range = scan.ranges[i];
-      if (std::isfinite(range) && range >= scan.range_min && range < front_clearance_) {
+      if (std::isfinite(range) && range >= scan.range_min && range < clearance) {
         return true;
       }
     }
@@ -973,6 +998,10 @@ private:
       robot_name_.c_str(), goal_.x, goal_.y);
     blacklist_.emplace_back(goal_, elapsed());
     ++abandoned_;
+    // Back out of whatever the vehicle failed to get through before planning
+    // again: replanning from a pose wedged in a doorway usually produces the
+    // same approach and the same failure.
+    recover_until_ = elapsed() + 2.5;
     goal_valid_ = false;
     path_.clear();
     blocked_since_ = kInf;
@@ -1098,6 +1127,7 @@ private:
   bool linked_{true};
   bool enabled_{true};
   double blocked_since_{kInf};
+  double recover_until_{-1.0};
   double last_progress_{0.0};
   Point2D progress_ref_;
   std::vector<std::pair<Point2D, double>> blacklist_;
