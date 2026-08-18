@@ -22,9 +22,10 @@ to a fleet by cost-utility scoring with announced goals
 [[2](#ref2), [3](#ref3), [4](#ref4)], which is the standard construction of the
 multi-robot exploration literature — because that is the baseline the project's
 epistemic planner has to beat, and because the point at which the classical
-answer degrades is precisely where the epistemic question begins. That point is reached here, and it is
-visible in the numbers: what the planner cannot represent is not where the other
-agents *are*, but what they have and have not been *told*.
+answer degrades is precisely where the epistemic question begins. That point is
+reached here, and it is visible in the numbers: what the planner cannot
+represent is not where the other agents *are*, but what they have and have not
+been *told*.
 
 ---
 
@@ -389,8 +390,8 @@ all.
 
 **The work is distributed evenly rather than by accident.** The reactive run's
 per-agent shares are $35 / 70 / 42\ \%$ — agent 2 did twice the work of agent 1,
-having wandered north out of the spine into the large room at $(10, 12)$ while
-agent 1 paced a $10$ m stretch of corridor. The deliberative run's shares are
+having wandered north out of the spine into the large room at $x \approx 10$
+while agent 1 paced the western corridor back and forth. The deliberative run's shares are
 $52.0 / 52.9 / 52.4\ \%$: three agents that each took about half the building,
 which is what an assignment mechanism is supposed to produce and what no
 reactive policy has any means to produce. The spread across agents falls from
@@ -624,16 +625,27 @@ hand. Each viewer is given its own nested X server, so the recording contains
 the viewer and nothing else of the desktop:
 
 ```bash
+# Ogre's hardware GLX path does not survive a nested server; llvmpipe does.
+export LIBGL_ALWAYS_SOFTWARE=1
 Xephyr :77 -screen 1440x860 -ac -br -noreset &
 Xephyr :78 -screen 1440x860 -ac -br -noreset &
 
-ros2 launch mrs_bringup iteration3_explore.launch.py gui:=false use_rviz:=false &
-sleep 170                                   # let the world load and the fleet settle
+# a copy of the world carrying a <gui><camera> pose, so gzclient opens looking
+# down the spine instead of at the origin
+ros2 launch mrs_bringup multi_robot_slam.launch.py world:=$PWD/fr079_capture.world \
+    fleet:=fleet_fr079.yaml n_robots:=3 explorer:=frontier \
+    gui:=false use_rviz:=false comms_dropout:=true &
+sleep 330                     # let the world load and the fleet map something
 
 DISPLAY=:77 gzclient &
-DISPLAY=:78 rviz2 -d install/mrs_bringup/share/mrs_bringup/rviz/multi_robot.rviz \
-    --ros-args -p use_sim_time:=true &
-sleep 30
+DISPLAY=:78 rviz2 -d capture.rviz --ros-args -p use_sim_time:=true &
+sleep 35
+# no window manager runs on these displays, so the windows are placed by hand
+for d in 77 78; do
+  for w in $(DISPLAY=:$d xdotool search --onlyvisible ""); do
+    DISPLAY=:$d xdotool windowmove $w 0 0 windowsize $w 1440 860
+  done
+done
 
 ffmpeg -f x11grab -framerate 10 -video_size 1440x860 -i :77 -t 140 gazebo.mp4
 ffmpeg -f x11grab -framerate 10 -video_size 1440x860 -i :78 -t 140 rviz.mp4
