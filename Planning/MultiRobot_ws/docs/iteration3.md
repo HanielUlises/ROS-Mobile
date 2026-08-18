@@ -1,0 +1,646 @@
+# Third Iteration — Deliberation on the Delivered Map
+
+Third implementation iteration. The substrate specified in the
+[first iteration](../README.md) — the fusion operator $\oplus$, the per-agent
+link process $\ell_i(t)$ and the per-agent SLAM front end — is again carried
+over **unchanged**. What changes is the thing sitting on top of it: the reactive
+wall follower that drove the fleet through the first two iterations is replaced
+by a deliberative, coordinated frontier planner that plans on the fleet map *as
+delivered*, and the two policies are run against each other in the same
+building, from the same deployment poses, under the same link process.
+
+The second iteration ended with a measurement and a diagnosis. The measurement:
+three agents exploring the Willow Garage floor plan spent $27\ \%$ of all their
+observation on ground another agent had already covered, two of the three
+entrained onto the same corridor, and half the workspace was still unseen after
+ten minutes. The diagnosis: a policy that drives from the laser alone has no
+representation of where anybody has been, so nothing in it can prevent this.
+
+This iteration supplies the representation and measures what it buys. It is
+deliberately the *classical* answer — cost-utility frontier assignment with
+announced goals, the standard construction of the multi-robot exploration
+literature — because that is the baseline the project's epistemic planner has to
+beat, and because the point at which the classical answer degrades is precisely
+where the epistemic question begins. That point is reached here, and it is
+visible in the numbers: what the planner cannot represent is not where the other
+agents *are*, but what they have and have not been *told*.
+
+---
+
+## 1. Scenario
+
+### 1.1 Source map
+
+The environment is the standard `fr079` grid map of building 079 of the
+University of Freiburg computer science campus — one long corridor with some
+forty offices and labs opening off both sides — from the Robotics Data Set
+Repository, in the rendering published with the DynamicVoronoi code of Lau,
+Sprunk and Burgard. `tools/png_to_map.py` quantises that image into a
+`map_server` pair at an assumed $0.05$ m per pixel, which makes the
+$909 \times 322$ pixel image a $45.5 \times 16.1$ m building; the assumption and
+its consequences are recorded in
+[`maps/SOURCE.md`](../src/mrs_bringup/maps/SOURCE.md).
+
+The building is chosen for its **topology**, not its size. A corridor spine with
+many small rooms hung off it turns exploration into a sequence of discrete,
+spatially separated tasks: a room is a unit of work, entering it is a commitment
+of a minute or more, and two agents entering the same room is a waste that can
+be counted. A corridor ring — the second iteration's Willow Garage map — does
+not have this property, because there the work is a continuum and any partition
+of it is as good as any other. If an assignment mechanism is to be shown to do
+anything, it has to be given a scenario in which assignment is a real decision.
+
+### 1.2 From map to world
+
+The extrusion pipeline of the second iteration is reused verbatim, with two of
+its scenario choices simply absent: the map is already axis-aligned, so there is
+no deskew ($\texttt{--angle 0}$), and the whole building is extruded, so there is
+no crop window. The morphological radii remain, and are tighter here
+($\texttt{--open 3 --close 1}$) than on the Willow map for a specific reason:
+this building's interior partitions are thin, and a closing wide enough to
+bridge a $0.1$ m partition merges the rooms on either side of it into one.
+
+<a name="figure-1"></a>
+
+![Source map, cleaned map, extruded world](figures/iter3/fig_scenario.png)
+
+**Figure 1.** Provenance of the scenario. (a) the published `fr079` image
+quantised into free / occupied / unknown; (b) the same grid after opening and
+closing, with the wall band the extrusion uses drawn in ink; (c) the resulting
+Gazebo world with the three deployment poses and their headings. Ink is
+obstacle, white is free, grey is unobserved, in all three panels.
+
+The extrusion yields **3316 box links** carrying $178.3$ m$^2$ of wall and
+enclosing $303.1$ m$^2$ of navigable floor. The box count is more than double the
+Willow world's for a smaller floor area, which is the price of a building made
+of many small rooms: the greedy maximal-rectangle cover has less long straight
+wall to amortise over.
+
+### 1.3 Deployment
+
+| Agent | $x$ [m] | $y$ [m] | $\theta$ [rad] | Position on the spine |
+|---|---|---|---|---|
+| 1 | $-13.0$ | $-0.10$ | $\pi$ | west end, facing along the corridor |
+| 2 | $+2.0$ | $-0.15$ | $+\pi/2$ | centre, facing into the north rooms |
+| 3 | $+17.0$ | $-0.15$ | $-\pi/2$ | east end, facing into the south rooms |
+
+This building has no corridor ring, so the second iteration's "one arm each" has
+no meaning; the agents are instead spaced along the spine at roughly $15$ m
+intervals, the largest mutual separation the building admits. Two of the three
+start facing a room rather than along the corridor: a deliberative planner is
+indifferent to its initial heading, and the reactive baseline it is measured
+against should not be handed the corridor for free.
+
+### 1.4 What is deliberately unchanged
+
+The fusion operator, the duty-cycle link model ($T_{\mathrm{up}} = 45$ s,
+$T_{\mathrm{down}} = 25$ s, phase offset $\delta = 12$ s), the vehicle, the
+lidar and the `slam_toolbox` tuning are all exactly as specified in the first
+iteration. The two policies share their locomotion parameters as well —
+$0.22$ m s$^{-1}$ forward, $0.5$ rad s$^{-1}$ turning, the same $0.35$ m laser
+safety stop — so that a difference between the runs is a difference in
+*decisions* and not in speed.
+
+---
+
+## 2. The planner
+
+`mrs_coordination/frontier_planner_node` replaces the reactive explorer
+node-for-node: same namespace, same `cmd_vel`, same enable topic. It takes one
+extra parameter — the fleet roster — because unlike the reactive policy it
+reasons about the other agents. One planning cycle, every $2$ s, is four steps.
+
+### 2.1 Belief assembly
+
+The agent plans on
+
+$$B_i(t) \;=\; \tilde{M}_i(t) \,\oplus\, m_i(t),$$
+
+the fleet grid *as last received while this agent's link was up*, joined with
+its own current grid under the merger's occupancy-dominant operator: unknown is
+absorbed by anything known, and any agent reporting an obstacle beats free
+space. The two grids are painted onto a common canvas by forward projection —
+source cells scattered into the target rather than the target sampled — so that
+a rotated grid acquires no interpolation artefacts.
+
+The gating is the whole point, and it is enforced at the subscription:
+
+```cpp
+fleet_map_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+  "/map", map_qos,
+  [this](nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
+    if (linked_) { fleet_map_ = msg; ++deliveries_; }
+    else         { ++withheld_; }
+  });
+```
+
+Latching the fleet map unconditionally would hand the planner knowledge the
+radio never delivered, which is exactly the fiction the project exists to
+remove. The two counters are written to the run log, so every claim made below
+about what an agent knew is checkable against how many fleet maps it actually
+received and how many were withheld from it.
+
+### 2.2 Costmap and wavefront
+
+Cells at or above an occupancy of $60$, and cells within the robot radius of
+one, are lethal; the inflation is a multi-source breadth-first search in cells,
+which at this radius differs from a Euclidean distance transform by less than
+one cell.
+
+The radius is $0.16$ m — the *inscribed* radius of the $0.35 \times 0.28$ m
+chassis, not the circumscribed one. On a clean costmap the conservative choice
+would be right. This grid is scan-matched: walls are smeared by a cell or two
+and a $0.9$ m doorway reads narrower than it is, and at $0.28$ m the inflation
+seals most of this building's doorways, the wavefront cannot leave the room the
+agent is in, and the planner reports the building explored when two thirds of it
+has never been seen. The laser safety stop, not the inflation, is what keeps the
+vehicle off the walls. This is the single most consequential parameter in the
+node and the one most specific to the fact that the map is *estimated*.
+
+One Dijkstra wavefront is then run from the agent's own cell over the
+traversable belief. It answers three questions at once — what is reachable, how
+far every frontier is, and which way to walk — which is why the planner runs one
+search per cycle rather than one $A^*$ per candidate goal.
+
+### 2.3 Frontiers and the coordination discount
+
+A frontier cell is reachable free space with an unobserved $4$-neighbour: the
+boundary between what the agent believes and what nobody has looked at.
+Frontier cells are clustered by connectivity, clusters below $6$ cells
+($0.3$ m of frontier) are discarded as scan-matcher noise, and each surviving
+cluster is represented by the member nearest its own centroid — the centroid of
+a curved frontier need not lie on the frontier, and the representative must be a
+cell the wavefront has already proved reachable.
+
+Each cluster is scored
+
+$$V(f) \;=\; \underbrace{\lambda\, w(f)\, \gamma(f)}_{\text{gain}} \;-\;
+             \underbrace{d(f)}_{\text{travel}},
+\qquad
+\gamma(f) \;=\; \min_{j \neq i} \min\!\left(1, \frac{\lVert f - g_j \rVert}{r_c}\right),$$
+
+with $w(f)$ the cluster's width in metres, $\lambda = 12$, $d(f)$ the travel the
+wavefront measured, $g_j$ the goal agent $j$ last announced and $r_c = 6$ m,
+about the diameter of a room here. The discount $\gamma$ is the entire
+collaboration: it removes the value of a frontier somebody else has already said
+they are driving to, and pushes two agents apart by about one unit of work and
+no further.
+
+Claims travel over the same radio as the maps. An agent publishes its goal only
+while its link is up, and accepts an incoming claim only while its own link is
+up:
+
+```cpp
+if (!linked_ || msg->header.frame_id == robot_name_) { return; }
+claims_[msg->header.frame_id] = Point2D{msg->point.x, msg->point.y};
+```
+
+so a disconnected agent neither announces where it is going nor hears where
+anyone else is going, and keeps acting on whatever it last heard. This is the
+mechanism the results section is about.
+
+Three guards keep the argmax from degenerating. A hysteresis factor of $1.15$
+holds the current goal unless a candidate is clearly better — without it, the
+discount arriving with a claim and the shrinking of a frontier as it is observed
+make the argmax oscillate between two rooms and the agent spends the run in the
+corridor between them. Frontiers closer than $1.0$ m are not committed to, since
+the agent would arrive inside its own goal tolerance before the map had changed.
+And a goal the vehicle fails to reach — blocked for $4$ s, or moving less than
+$0.35$ m in $12$ s — is abandoned and blacklisted within $1.2$ m for $90$ s,
+because a doorway narrower than the map says does not stop being selected just
+because the approach failed.
+
+### 2.4 Execution
+
+The optimal path is recovered by gradient backtracking down the wavefront, then
+shortcut: repeatedly take the furthest waypoint still in line of sight through
+traversable cells. This replaces the staircase of an eight-connected grid path
+with the straight segments a differential drive can follow without weaving. A
+pure-pursuit controller with a $0.55$ m lookahead follows it, turning in place
+when the heading error exceeds $0.7$ rad, under a laser safety stop that has the
+last word: the plan is computed on a belief up to one planning period old and
+coarser than the laser, and the scan is the authority on what is in front of the
+vehicle right now — including the other agents, which the static-world belief
+never contains.
+
+Two degenerate states are worth naming because they appear in the logs.
+`probe` is the bootstrap: when every frontier is within arm's reach, which is
+the state of the world in the first seconds of a run, the agent drives forward
+reactively until the belief is large enough to deliberate on. `idle` is the
+terminal state: no reachable frontier, the agent stops but keeps planning,
+because a fleet map arriving at the next link-up can reopen the problem. An
+agent sitting in `idle` while another agent is exploring ground it could have
+taken is the classical planner's version of the coordination failure, and it is
+what Section 4 measures.
+
+---
+
+## 3. The run
+
+$620$ s of simulation, three agents, connectivity cycling throughout. Everything
+in this section is the deliberative policy; the reactive baseline enters in
+Section 4.
+
+<a name="figure-2"></a>
+
+![Replay of the deliberative run](figures/iter3/fig_run.gif)
+
+**Figure 2.** The run replayed. Left: the fused fleet grid $M$ accumulating,
+with each agent's estimated trajectory drawn over it and its current pose marked
+— filled while its link is up, hollow while it is down. Right: explored area
+against time with a cursor at the frame's own timestamp, over the link strip.
+The trajectories are the SLAM estimate, not simulator ground truth: the video
+shows what the fleet believes. Also available as
+[`fig_run.mp4`](figures/iter3/fig_run.mp4), and as
+[`fig_growth.gif`](figures/iter3/fig_growth.gif) for the fused grid alone.
+
+<a name="figure-3"></a>
+
+![Gazebo view of the fleet in fr079](figures/iter3/fig_gazebo.gif)
+
+**Figure 3.** The simulator itself: the three vehicles in the extruded `fr079`
+world, driving under the deliberative planner. This is the ground truth the
+fleet is trying to recover — the walls here are where the walls are, not where
+scan matching believes they are — and it is worth one look precisely because
+every other figure in this document is the fleet's estimate rather than the
+world.
+
+<a name="figure-4"></a>
+
+![RViz view of the fleet's belief](figures/iter3/fig_rviz.gif)
+
+**Figure 4.** The same run seen through RViz: the fused fleet grid, the three
+agents' TF frames and laser returns, and each agent's committed plan on
+`/<ns>/plan`. The plans are the visible difference between this iteration and
+the previous two — under the reactive policy there is nothing to draw, because
+the agent has no goal to draw.
+
+### 3.1 Individual and fleet maps
+
+<a name="figure-5"></a>
+
+![Per-agent and fused occupancy grids](figures/iter3/fig_maps.png)
+
+**Figure 5.** The three individual estimates and the fused estimate at the end
+of the run, composited onto a common canvas through each grid's own $T_i$.
+Panels (a)–(c) are what each agent alone believes; panel (d) is what the fleet
+holds.
+
+The operator behaves as in the first two iterations: the fused panel is the
+cell-wise join of the other three, contains nothing absent from all of them, and
+composes three distinct rotations without a visible seam. Fleet knowledge is
+again not monotone in time — 5 of the 309 samples after warm-up show the fused
+area falling, by at most $0.6$ m$^2$, against 7 samples and $1.2$ m$^2$ under
+the reactive policy — and again this is the pose-graph correction retracting
+cells inside an agent's own estimate that the first iteration documents.
+
+### 3.2 Coverage
+
+<a name="figure-6"></a>
+
+![Explored area against time](figures/iter3/fig_coverage.png)
+
+**Figure 6.** Explored area against simulation time for the deliberative run.
+The heavy trace is the fused fleet map $M$; the thin traces are each agent's own
+map. The lower strip is the link process, one row per agent, with filled
+intervals marking $\ell_i = 0$.
+
+<a name="table-1"></a>
+
+**Table 1.** State at the end of the deliberative run, $620$ s, three agents.
+Path lengths are polyline sums over the $2$ s pose samples and so are lower
+bounds on the distance actually travelled.
+
+| Quantity | Area [m$^2$] | Share of $M$ | Link downtime | Path [m] | m$^2$ per metre |
+|---|---|---|---|---|---|
+| Agent 1, own map $m_1$ | $156.6$ | $52.0\ \%$ | $34.7\ \%$ | $71.6$ | $2.19$ |
+| Agent 2, own map $m_2$ | $159.6$ | $52.9\ \%$ | $36.1\ \%$ | $77.1$ | $2.07$ |
+| Agent 3, own map $m_3$ | $158.0$ | $52.4\ \%$ | $36.7\ \%$ | $60.1$ | $2.63$ |
+| Fused fleet map $M$ | $301.4$ | $100\ \%$ | — | $208.8$ | $1.44$ |
+
+The fleet map reaches $301.4$ m$^2$, which is $99.4\ \%$ of the $303.1$ m$^2$ of
+navigable floor the extrusion reports. **The building is explored.** That single
+fact changes what this iteration can and cannot measure, and Section 4 is
+written around it.
+
+---
+
+## 4. The comparison
+
+Two runs, same world, same deployment poses, same link process, same locomotion
+limits, differing in one word of the command line.
+
+<a name="figure-7"></a>
+
+![Final fused grids and trajectories under both policies](figures/iter3/fig_policies.png)
+
+**Figure 7.** What each policy did. (a) the reactive baseline, (b) the
+deliberative planner, each showing the final fused grid with the three
+estimated trajectories drawn over it. The two panels contain almost the same
+map. They do not contain the same trajectories.
+
+<a name="figure-8"></a>
+
+![Coverage and redundancy against time for both policies](figures/iter3/fig_compare.png)
+
+**Figure 8.** (a) explored area against time, fused (heavy) and per agent
+(thin), baseline dashed and grey, deliberative solid and black; the dotted line
+is the navigable floor the extrusion reports. (b) observation redundancy
+$\sum_i A(m_i) / A(M)$ — one is a perfect partition of the work, $n$ is $n$
+agents doing the same work $n$ times.
+
+<a name="table-2"></a>
+
+**Table 2.** The two runs, truncated to their common window.
+
+| | Reactive | Deliberative |
+|---|---|---|
+| Fused area $A(M)$ | $304.8$ m$^2$ ($100.6\ \%$ of navigable) | $301.4$ m$^2$ ($99.4\ \%$) |
+| Total path length | $349.1$ m | $208.8$ m |
+| Area per metre travelled | $0.87$ m$^2$ m$^{-1}$ | $1.44$ m$^2$ m$^{-1}$ |
+| Per-agent shares of $M$ | $35.1 / 69.9 / 42.0\ \%$ | $52.0 / 52.9 / 52.4\ \%$ |
+| Redundancy $\sum_i A(m_i)/A(M)$ | $1.47$ | $1.57$ |
+| $t$ at $150$ / $200$ / $250$ m$^2$ | $62$ / $130$ / $487$ s | $117$ / $211$ / $410$ s |
+| $90\ \%$ of own final extent | $515$ s | $549$ s |
+
+Four things are worth reading off this, in decreasing order of how much they
+should be believed.
+
+**Both policies explore the whole building, so area does not separate them.**
+This is the opposite of the second iteration, where the fleet stopped at
+$53.8\ \%$ of the reachable floor because the policy ran out of behaviour. The
+`fr079` spine is small enough and connected enough that ten minutes of three
+agents at $0.22$ m s$^{-1}$ saturates it either way. Any claim of the form "the
+deliberative planner explores more" is unsupported here — and would have been
+unsupported in the other direction too, since the reactive run's $100.6\ \%$
+merely says the extrusion's navigable-floor figure and the fleet's fused area
+are the same number to within their own noise.
+
+**The deliberative planner buys the same map for $40\ \%$ less driving.** $208.8$
+m against $349.1$ m, or $1.44$ m$^2$ per metre travelled against $0.87$. This is
+the result of this iteration. It is visible in Figure [7](#figure-7) without any
+statistics: the reactive trajectories are dense hairballs of repeated
+corridor traverses, because a wall follower in a corridor spine keeps meeting
+its own path; the deliberative trajectories are direct transits between rooms,
+because each transit was the cost term of an argmax. On a battery-limited
+vehicle this is the metric that decides whether a building can be covered at
+all.
+
+**The work is distributed evenly rather than by accident.** The reactive run's
+per-agent shares are $35 / 70 / 42\ \%$ — agent 2 did twice the work of agent 1,
+having wandered north out of the spine into the large room at $(10, 12)$ while
+agent 1 paced a $10$ m stretch of corridor. The deliberative run's shares are
+$52.0 / 52.9 / 52.4\ \%$: three agents that each took about half the building,
+which is what an assignment mechanism is supposed to produce and what no
+reactive policy has any means to produce. The spread across agents falls from
+$34.8$ points to $0.9$.
+
+**Redundancy by area does not improve, and should not have been expected to.**
+$1.57$ against $1.47$: the deliberative fleet overlaps slightly *more*. The
+reason is geometric rather than algorithmic. Every room in this building opens
+off one corridor, so every agent must traverse the shared spine to reach
+anything, and an $8$ m lidar sweeping $360^\circ$ re-observes that spine and
+everything visible through the doorways off it each time. Overlap measured in
+observed area is therefore dominated by a corridor that cannot be partitioned,
+and it is the wrong instrument for this building — which is worth stating
+plainly, because it is the instrument the second iteration used and reported
+$27\ \%$ duplication with. Travel, not area overlap, is what the coordination
+discount actually reduces here.
+
+### 4.1 What the planner had to work with
+
+<a name="figure-9"></a>
+
+![Reachable frontiers and committed travel](figures/iter3/fig_planner.png)
+
+**Figure 9.** (a) the number of reachable frontier clusters each agent's own
+belief contains, and (b) the travel it has committed to, with each agent's link
+outages marked as bars along the bottom.
+
+Panel (a) is the figure this whole iteration was built to produce. The three
+traces are three agents' answers to the same question — *how much of this
+building is still unexplored?* — computed from the same fusion operator over the
+same fleet, and they are frequently different answers:
+
+| Quantity | Value |
+|---|---|
+| Mean spread in reachable-frontier count across the three agents | $11.8$ clusters |
+| Largest spread | $87$ clusters, at $t = 539$ s |
+| Fraction of the run on which all three agree exactly | $18.5\ \%$ |
+| Mean spread while all three links are up | $5.9$ |
+| Mean spread while at least one link is down | $14.2$ |
+| Fraction of the run with all three linked | $29.7\ \%$ |
+
+The disagreement is not noise and it is not a bug: it is the link process
+appearing in the planner's own state. Each agent received $757$–$782$ fleet maps
+and had $414$–$439$ withheld from it — $36\ \%$, which is the duty cycle's
+downtime and no coincidence. Between $t \approx 520$ s and $t \approx 545$ s
+agent 1 believes $87$ frontier clusters remain while agents 2 and 3 believe
+about $5$ do: agent 1 is holding a fleet map from before its outage, in which
+the eastern rooms the others have since finished are still unknown, and it is
+planning against that map. Nothing in the node represents this. The planner
+treats its belief as *the* state of the world, and the only reason the run does
+not end badly is that a stale map makes an agent redundant rather than wrong.
+
+The same staleness applies to the coordination discount. All three agents hold
+two claims at all times — the roster is three — but a claim is refreshed only
+while the *receiving* agent's link is up, so for a third of the run each agent
+is steering around where somebody else said they were going up to $25$ s ago.
+This is the mechanism by which two agents can commit to the same room while both
+believing they have deconflicted, and it is exactly the situation a planner that
+could represent *"agent $j$ does not know that I have taken this room"* would
+handle differently.
+
+### 4.2 Two honest observations about the instrumentation
+
+The `reached` counter — goals whose tolerance the vehicle entered — is **zero**
+for all three agents across $620$ s, against $149$–$192$ replans. This does not
+mean the agents never got anywhere; it means a goal is almost always superseded
+by a better one, or dissolved by the frontier being observed from a distance,
+before the vehicle physically arrives within $0.45$ m of it. Frontier goals are
+waypoints in a gradient, not tasks that complete, and a counter that assumes
+otherwise measures nothing. Reporting exploration progress as *frontiers
+reached* would be wrong here; area and travel are the honest metrics.
+
+The relaxed-inflation retry of Section 2.2 fires on $6.5\ \%$, $7.0\ \%$ and
+$10.0\ \%$ of the three agents' planning cycles. It is therefore not a rare
+rescue from a pathological state but a routine part of planning on a
+scan-matched grid in a building with $0.9$ m doorways, and the run before it
+existed is the evidence for what happens without it: agent 3 sealed into a
+$6.3$ m$^2$ pocket at $t \approx 95$ s, reporting no reachable frontier, and
+stationary for the remaining $500$ s of that run.
+
+---
+
+## 5. What this makes concrete for the epistemic layer
+
+The first iteration built the substrate and motivated the planning objective by
+pointing at an allocation that happened to be good and calling it accidental.
+The second exhibited an allocation that was actively bad and measured what it
+cost. The third replaces the policy with the standard remedy and finds that the
+remedy works on exactly the axis the classical literature promises — travel,
+and the even division of labour — while leaving one thing untouched, and it is
+the thing this project exists to address.
+
+**The remedy is real.** $40\ \%$ less driving for the same map, and per-agent
+shares of $52 / 53 / 52$ against $35 / 70 / 42$. A planner that consumes the
+fused lattice and the other agents' announcements is straightforwardly better
+than one that consumes the laser alone, and any claim the epistemic layer makes
+must be measured against *this* baseline, not against the reactive policy of the
+first two iterations. That is the main deliverable of this iteration and the
+reason it exists.
+
+**What the remedy cannot do is represent the delivery itself.** The planner has
+exactly two channels through which another agent's existence reaches it — the
+fused grid and the claim topic — and both are gated by the same link indicator,
+and neither carries any record of *when* what arrived, or of what the other
+agent knows about what this agent has done. The consequences are measurable in
+the run:
+
+- The three agents disagree about how much of the building remains unexplored on
+  $81.5\ \%$ of the run, by $11.8$ frontier clusters on average and by $87$ at
+  worst; the disagreement is $2.4\times$ larger while some link is down than
+  while all are up.
+- Each agent acted on a claim set refreshed only during its own uptime — for
+  $36\ \%$ of the run, on announcements up to $25$ s old — while itself
+  announcing nothing.
+- The planner's state at those moments is indistinguishable, from inside the
+  node, from the state in which it has genuinely finished. It cannot tell "there
+  is nothing left" from "I have not been told what is left".
+
+In the vocabulary of the epistemic layer: the fusion operator establishes
+*distributed knowledge* among the agents whose grids have been delivered, and
+the claim topic is a public announcement to whoever was listening. A frontier
+planner is a function of the agent's own belief, so it is a function of first-
+order knowledge only. Every failure listed above is a failure to represent
+higher-order attitudes — what agent $i$ believes agent $j$ knows about the
+building and about $i$'s own commitments — which is precisely what the DEL layer
+supplies and what no amount of tuning $\lambda$, $r_c$ or the hysteresis can
+approximate.
+
+Two concrete requirements for that layer fall out of this run, and they are
+worth recording because they were not obvious before it:
+
+1. **Coverage is the wrong headline metric in a saturating environment.** Both
+   policies mapped $\approx 100\ \%$ of `fr079` in $620$ s. If OE4's comparison
+   is to discriminate, its scenarios must either be large enough not to
+   saturate, or be scored on cost — travel, energy, time-to-$x\ \%$ — rather
+   than final area. This iteration's design assumed the former and got the
+   latter; the metric was replaced after the fact, which is exactly the kind of
+   decision that should be made before the runs and is recorded here so that it
+   is.
+2. **The disagreement itself is the observable to plan against.** The spread in
+   Figure [9](#figure-9)(a) is a directly measurable, policy-independent
+   quantity that exists only because delivery is intermittent. An epistemic
+   planner that reasons about who has been told what should reduce it, or should
+   exploit it deliberately; either way it gives the OE4 evaluation a dependent
+   variable that is about *knowledge* rather than about geometry, which the area
+   and travel metrics are not.
+
+---
+
+## 6. Limitations
+
+The limitations of the first two iterations are carried over unchanged: known
+relative initialisation, deterministic fusion without cell-wise covariance, no
+symbolic layer, static planar worlds, two to three agents. Four are specific to
+this one.
+
+1. **One run per policy.** Both policies are stochastic — the reactive one in
+   its turn commitments, the deliberative one through the timing of scan
+   matching, claim arrival and the link phase — so every number below is one
+   sample, not an expectation. The comparison supports statements of the form
+   "this happens and costs this much", not "this happens with this frequency".
+   Repeated runs under a controlled seed are a prerequisite for the OE4
+   evaluation and are not attempted here.
+2. **The scale of the world is an assumption.** The published `fr079` image
+   carries no metadata; $0.05$ m per pixel is taken from the dataset's
+   distribution and makes the building $45.5 \times 16.1$ m. If that is wrong,
+   every metric length in this iteration is wrong by the same factor — though
+   every *ratio*, which is what the comparison rests on, is not.
+3. **The coordination is claim-based, not allocation-based.** Each agent solves
+   its own single-agent problem with a discount applied to frontiers others have
+   announced. This is the standard construction, and it is deliberately not a
+   joint assignment (Hungarian, auction, or otherwise): a joint assignment would
+   need agreement about the set of tasks and the set of bidders, which is
+   exactly what intermittent connectivity denies. What is measured here is
+   therefore the best a decentralised, announcement-based scheme can do, which
+   is the right baseline for a layer whose selling point is reasoning about
+   *whether the announcement arrived*.
+4. **The inflation radius is doing more work than a parameter should.** Section 4
+   documents an agent sealed into a pocket of its own map by an inflation radius
+   already reduced to the chassis's inscribed radius, and the relaxed retry that
+   recovers it. Both the failure and the recovery are properties of planning on
+   a scan-matched grid at $0.05$ m, and neither is a property of the exploration
+   policy under test. A costmap that carried the SLAM front end's own
+   uncertainty would not need the workaround; the project's scope puts that
+   uncertainty out of reach, so the workaround stays and is reported.
+
+---
+
+## 7. Reproduction
+
+```bash
+# 1. fetch the source image and quantise it into a map_server pair (once)
+curl -O http://www2.informatik.uni-freiburg.de/~lau/dynamicvoronoi/FR079.png
+python3 tools/png_to_map.py FR079.png \
+    -o src/mrs_bringup/maps/fr079-lau-0.05 --resolution 0.05
+
+# 2. extrude it into the world (once; the world file is checked in)
+python3 tools/map_to_world.py --map src/mrs_bringup/maps/fr079-lau-0.05 \
+    --name fr079_office --angle 0 --open 3 --close 1 --band 0.4 \
+    -o src/mrs_bringup/worlds/fr079_office.world
+
+# 3. build, then run each policy once, headless, recording
+colcon build --symlink-install
+source install/setup.bash
+
+ros2 launch mrs_bringup iteration3_explore.launch.py \
+    record:=true record_dir:=/tmp/mrs_iter3_frontier          # deliberative
+ros2 launch mrs_bringup iteration3_explore.launch.py explorer:=reactive \
+    record:=true record_dir:=/tmp/mrs_iter3_reactive          # baseline
+
+# 4. figures
+python3 tools/render_scenario.py --map src/mrs_bringup/maps/fr079-lau-0.05 \
+    --world src/mrs_bringup/worlds/fr079_office.world \
+    --fleet src/mrs_bringup/config/fleet_fr079.yaml \
+    --angle 0 --crop 0 0 0 0 --open 3 --close 1 --rows \
+    -o docs/figures/iter3/fig_scenario.png
+python3 tools/render_run.py     /tmp/mrs_iter3_frontier -o docs/figures/iter3 --gif-stride 6
+python3 tools/render_video.py   /tmp/mrs_iter3_frontier -o docs/figures/iter3 --stride 2 --fps 15
+python3 tools/render_compare.py reactive=/tmp/mrs_iter3_reactive \
+    frontier=/tmp/mrs_iter3_frontier -o docs/figures/iter3 --reachable 303.1
+```
+
+The two runs differ in one word of the command line. Drop `gui:=false
+use_rviz:=false` to watch either of them live; the RViz configuration carries
+displays for all three agents, and under the deliberative policy each agent also
+publishes its current plan on `/<ns>/plan`.
+
+Figures [3](#figure-3) and [4](#figure-4) are screen recordings rather than
+renderings, and are made from a separate short run with the viewers started by
+hand. Each viewer is given its own nested X server, so the recording contains
+the viewer and nothing else of the desktop:
+
+```bash
+Xephyr :77 -screen 1440x860 -ac -br -noreset &
+Xephyr :78 -screen 1440x860 -ac -br -noreset &
+
+ros2 launch mrs_bringup iteration3_explore.launch.py gui:=false use_rviz:=false &
+sleep 170                                   # let the world load and the fleet settle
+
+DISPLAY=:77 gzclient &
+DISPLAY=:78 rviz2 -d install/mrs_bringup/share/mrs_bringup/rviz/multi_robot.rviz \
+    --ros-args -p use_sim_time:=true &
+sleep 30
+
+ffmpeg -f x11grab -framerate 10 -video_size 1440x860 -i :77 -t 140 gazebo.mp4
+ffmpeg -f x11grab -framerate 10 -video_size 1440x860 -i :78 -t 140 rviz.mp4
+
+# 8x, 10 fps, palette-quantised, for a GIF small enough to sit in a repository
+for v in gazebo rviz; do
+  ffmpeg -i $v.mp4 -vf "setpts=PTS/8,fps=10,scale=880:-2,split[a][b];\
+[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer" \
+      docs/figures/iter3/fig_$v.gif
+done
+```
