@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>warehouse_actions</name>
+  <version>1.0.0</version>
+  <description>
+    PlanSys2 action performers for the warehouse showcase: one `move` node per
+    robot that turns a waypoint symbol into a drive, and one `pick`/`drop` node
+    per robot that holds the action for its declared duration and shows the
+    crate's new place.
+  </description>
+  <maintainer email="hanielulises@gmail.com">Haniel Ulises</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>plansys2_executor</depend>
+  <depend>plansys2_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>yaml-cpp</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

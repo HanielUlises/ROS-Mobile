@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>warehouse_tools</name>
+  <version>1.0.0</version>
+  <description>
+    Offline tooling for the PlanSys2 warehouse showcase: the roadmap builder
+    that derives the planner's waypoint graph from the warehouse's occupancy
+    map, the PDDL problem generator both the benchmark and the mission
+    controller are driven from, and the planner benchmark that sweeps fleet size
+    against workload.
+  </description>
+  <maintainer email="hanielulises@gmail.com">Haniel Ulises</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>yaml-cpp</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

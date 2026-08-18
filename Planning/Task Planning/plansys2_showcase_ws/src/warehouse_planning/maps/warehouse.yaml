@@ -1,0 +1,16 @@
+# Occupancy grid of the AWS RoboMaker small warehouse, in the same frame as the
+# Gazebo world, converted once from the PNG the upstream package ships:
+#
+#   convert src/aws-robomaker-small-warehouse-world/maps/005/map_rotated.png \
+#       -colorspace Gray src/warehouse_planning/maps/warehouse.pgm
+#
+# The resolution and origin are upstream's (maps/005/map.yaml) and are what put
+# the grid in the world frame; the conversion changes the container, not the
+# geometry. Keeping a PGM rather than the PNG is deliberate: the roadmap builder
+# reads it with twenty lines of C++ and no image library.
+image: warehouse.pgm
+resolution: 0.050000
+origin: [-7.000, -10.500000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196

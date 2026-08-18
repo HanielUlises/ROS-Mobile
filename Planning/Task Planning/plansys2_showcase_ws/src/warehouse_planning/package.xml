@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>warehouse_planning</name>
+  <version>1.0.0</version>
+  <description>
+    PDDL domain, roadmap and planner configuration for the PlanSys2 warehouse
+    logistics showcase. Carries no code: the domain and the waypoint graph are
+    the data every other package in the workspace reads.
+  </description>
+  <maintainer email="hanielulises@gmail.com">Haniel Ulises</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
