@@ -17,11 +17,12 @@ ten minutes. The diagnosis: a policy that drives from the laser alone has no
 representation of where anybody has been, so nothing in it can prevent this.
 
 This iteration supplies the representation and measures what it buys. It is
-deliberately the *classical* answer — cost-utility frontier assignment with
-announced goals, the standard construction of the multi-robot exploration
-literature — because that is the baseline the project's epistemic planner has to
-beat, and because the point at which the classical answer degrades is precisely
-where the epistemic question begins. That point is reached here, and it is
+deliberately the *classical* answer — frontier exploration [[1](#ref1)] extended
+to a fleet by cost-utility scoring with announced goals
+[[2](#ref2), [3](#ref3), [4](#ref4)], which is the standard construction of the
+multi-robot exploration literature — because that is the baseline the project's
+epistemic planner has to beat, and because the point at which the classical
+answer degrades is precisely where the epistemic question begins. That point is reached here, and it is
 visible in the numbers: what the planner cannot represent is not where the other
 agents *are*, but what they have and have not been *told*.
 
@@ -35,8 +36,8 @@ The environment is the standard `fr079` grid map of building 079 of the
 University of Freiburg computer science campus — one long corridor with some
 forty offices and labs opening off both sides — from the Robotics Data Set
 Repository, in the rendering published with the DynamicVoronoi code of Lau,
-Sprunk and Burgard. `tools/png_to_map.py` quantises that image into a
-`map_server` pair at an assumed $0.05$ m per pixel, which makes the
+Sprunk and Burgard [[5](#ref5)]. `tools/png_to_map.py` quantises that image
+into a `map_server` pair at an assumed $0.05$ m per pixel, which makes the
 $909 \times 322$ pixel image a $45.5 \times 16.1$ m building; the assumption and
 its consequences are recorded in
 [`maps/SOURCE.md`](../src/mrs_bringup/maps/SOURCE.md).
@@ -172,7 +173,7 @@ cluster is represented by the member nearest its own centroid — the centroid o
 a curved frontier need not lie on the frontier, and the representative must be a
 cell the wavefront has already proved reachable.
 
-Each cluster is scored
+Each cluster is scored, in the cost-utility form of [[3](#ref3)],
 
 $$V(f) \;=\; \underbrace{\lambda\, w(f)\, \gamma(f)}_{\text{gain}} \;-\;
              \underbrace{d(f)}_{\text{travel}},
@@ -644,3 +645,38 @@ for v in gazebo rviz; do
       docs/figures/iter3/fig_$v.gif
 done
 ```
+
+---
+
+## References
+
+<a name="ref1"></a>
+[1] B. Yamauchi, "A frontier-based approach for autonomous exploration," in
+*Proc. IEEE Int. Symp. on Computational Intelligence in Robotics and
+Automation*, 1997, pp. 146–151.
+
+<a name="ref2"></a>
+[2] B. Yamauchi, "Frontier-based exploration using multiple robots," in *Proc.
+2nd Int. Conf. on Autonomous Agents*, 1998, pp. 47–53.
+
+<a name="ref3"></a>
+[3] W. Burgard, M. Moors, C. Stachniss and F. Schneider, "Coordinated
+multi-robot exploration," *IEEE Transactions on Robotics*, vol. 21, no. 3,
+pp. 376–386, 2005.
+
+<a name="ref4"></a>
+[4] R. Simmons, D. Apfelbaum, W. Burgard, D. Fox, M. Moors, S. Thrun and
+H. Younes, "Coordination for multi-robot exploration and mapping," in *Proc.
+AAAI*, 2000, pp. 852–858.
+
+<a name="ref5"></a>
+[5] B. Lau, C. Sprunk and W. Burgard, "Efficient grid-based spatial
+representations for robot navigation in dynamic environments," *Robotics and
+Autonomous Systems*, vol. 61, no. 10, pp. 1116–1130, 2013. (Source of the
+`fr079` rendering used here; the underlying log is C. Stachniss's, distributed
+through the Robotics Data Set Repository.)
+
+<a name="ref6"></a>
+[6] T. Bolander and M. B. Andersen, "Epistemic planning for single- and
+multi-agent systems," *Journal of Applied Non-Classical Logics*, vol. 21, no. 1,
+pp. 9–34, 2011.
