@@ -412,12 +412,12 @@ private:
   // inflation is a multi-source BFS in cells rather than a Euclidean distance
   // transform: at this radius the two differ by less than one cell and the BFS
   // costs nothing.
-  void inflate()
+  void inflate(double robot_radius)
   {
     const size_t n = belief_.data.size();
     lethal_.assign(n, 0);
 
-    const int radius = std::max(1, static_cast<int>(std::round(robot_radius_ / belief_.res)));
+    const int radius = std::max(1, static_cast<int>(std::round(robot_radius / belief_.res)));
     std::vector<int16_t> depth(n, -1);
     std::deque<int> queue;
 
@@ -648,7 +648,7 @@ private:
       return;
     }
 
-    inflate();
+    inflate(robot_radius_);
 
     int start = startCell(pose->x, pose->y);
     if (start < 0) {
@@ -664,6 +664,41 @@ private:
 
     wavefront(start);
     auto frontiers = findFrontiers();
+    bool relaxed = false;
+
+    // Relaxed retry. The inflation is a preference, not a constraint — the
+    // laser safety stop is what keeps the vehicle off the walls — and on a
+    // scan-matched grid of a building with 0.9 m doorways it can seal an agent
+    // into a pocket of its own map. When that happens the agent reads its
+    // situation as 'nothing left to explore', which is indistinguishable in the
+    // log from having genuinely finished, and it stops for the rest of the run.
+    // Measured in this building: at the nominal 0.16 m an agent parked in the
+    // east corridor had a 6.3 m2 reachable component and no frontier at all,
+    // while one cell less of inflation gave it 23.6 m2 and 380 frontier cells.
+    // So when the nominal radius yields nothing, the search is repeated once at
+    // one cell of clearance before the agent is allowed to conclude it is done.
+    if (frontiers.empty()) {
+      inflate(belief_.res);
+      const int relaxed_start = startCell(pose->x, pose->y);
+      if (relaxed_start >= 0) {
+        wavefront(relaxed_start);
+        frontiers = findFrontiers();
+        relaxed = !frontiers.empty();
+        if (relaxed) {
+          start = relaxed_start;
+          RCLCPP_INFO_THROTTLE(
+            get_logger(), *get_clock(), 10000,
+            "%s sealed at %.2f m inflation; planning at %.2f m",
+            robot_name_.c_str(), robot_radius_, belief_.res);
+        }
+      }
+      if (!relaxed) {
+        // Restore the nominal costmap, so that a genuinely finished agent is
+        // not left holding a permissive one.
+        inflate(robot_radius_);
+        wavefront(start);
+      }
+    }
     n_frontiers_ = static_cast<int>(frontiers.size());
 
     Frontier * best = nullptr;
@@ -742,7 +777,9 @@ private:
     goal_cells_ = best->size;
     goal_distance_ = best->distance;
     goal_value_ = best_value;
-    state_ = "driving";
+    // Logged distinctly, so that a run can be audited for how much of it was
+    // driven on the nominal costmap and how much on the relaxed one.
+    state_ = relaxed ? "driving_relaxed" : "driving";
 
     buildPath(best->cell);
     publishClaim();
