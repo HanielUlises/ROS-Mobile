@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
-"""Render the provenance of the second iteration's scenario.
+"""Render the provenance of an iteration's scenario.
 
-Three panels: the occupancy map as downloaded, the same map deskewed and
-cleaned with the crop window marked, and the extruded Gazebo world with the
-fleet's deployment poses. The point of the figure is that the geometry the
+Three panels: the occupancy map as published, the same map deskewed and cleaned
+with the crop window marked if there is one, and the extruded Gazebo world with
+the fleet's deployment poses. The point of the figure is that the geometry the
 agents explore is not authored — it is a map a robot built of a real building,
 and the figure shows every step between the two.
 
+The defaults describe the second iteration's Willow Garage scenario; the third
+iteration's Freiburg building is a wide, uncropped, already-axis-aligned map and
+is rendered as a stack:
+
     python3 tools/render_scenario.py -o docs/figures/iter2/fig_scenario.png
+
+    python3 tools/render_scenario.py --map src/mrs_bringup/maps/fr079-lau-0.05 \
+        --world src/mrs_bringup/worlds/fr079_office.world \
+        --fleet src/mrs_bringup/config/fleet_fr079.yaml \
+        --angle 0 --open 3 --close 1 --rows -o docs/figures/iter3/fig_scenario.png
 """
 
 import argparse
@@ -55,7 +64,14 @@ def main():
     parser.add_argument('--world', default='src/mrs_bringup/worlds/willow_office.world')
     parser.add_argument('--fleet', default='src/mrs_bringup/config/fleet_willow.yaml')
     parser.add_argument('--angle', type=float, default=22.5)
-    parser.add_argument('--crop', type=float, nargs=4, default=[-23, -8, 8, 26])
+    parser.add_argument('--crop', type=float, nargs=4, default=[-23, -8, 8, 26],
+                        help='crop window in metres; pass 0 0 0 0 for none')
+    parser.add_argument('--open', type=int, default=6, dest='open_px',
+                        help='opening radius in cells, as given to map_to_world')
+    parser.add_argument('--close', type=int, default=3, dest='close_px',
+                        help='closing radius in cells, as given to map_to_world')
+    parser.add_argument('--rows', action='store_true',
+                        help='stack the panels vertically, for a wide building')
     parser.add_argument('-o', '--output', required=True)
     args = parser.parse_args()
 
@@ -65,7 +81,7 @@ def main():
 
     free, res = m2w.load_free_mask(args.map + '.pgm', args.map + '.yaml')
     occupied = raw_occupied(args.map + '.pgm')
-    cleaned = m2w.clean(m2w.rotate_mask(free, args.angle), 6, 3)
+    cleaned = m2w.clean(m2w.rotate_mask(free, args.angle), args.open_px, args.close_px)
     rows, cols = np.nonzero(cleaned)
     centre_col, centre_row = cols.mean(), rows.mean()
 
@@ -76,8 +92,14 @@ def main():
     band_px = max(int(round(0.4 / res)), 1)
     walls = ndimage.binary_dilation(cleaned, m2w.disk(band_px)) & ~cleaned
 
-    fig, axes = plt.subplots(1, 3, figsize=(6.9, 2.75),
-                             gridspec_kw=dict(wspace=0.22))
+    cropped = args.crop != [0, 0, 0, 0]
+
+    if args.rows:
+        fig, axes = plt.subplots(3, 1, figsize=(6.9, 5.4),
+                                 gridspec_kw=dict(hspace=0.55))
+    else:
+        fig, axes = plt.subplots(1, 3, figsize=(6.9, 2.75),
+                                 gridspec_kw=dict(wspace=0.22))
 
     # (a) as downloaded --------------------------------------------------
     ax = axes[0]
@@ -101,10 +123,13 @@ def main():
                        np.where(cleaned, style.FREE, style.UNKNOWN))
     ax.imshow(classes, cmap=style.OCC_CMAP, norm=style.OCC_NORM,
               origin='upper', interpolation='nearest', extent=extent)
-    x0, y0, x1, y1 = args.crop
-    ax.add_patch(Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False,
-                           edgecolor=style.SERIES[1], lw=1.0, zorder=5))
-    ax.set_title(rf'deskewed ${args.angle:.1f}^\circ$, cropped')
+    if cropped:
+        x0, y0, x1, y1 = args.crop
+        ax.add_patch(Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False,
+                               edgecolor=style.SERIES[1], lw=1.0, zorder=5))
+        ax.set_title(rf'deskewed ${args.angle:.1f}^\circ$, cropped')
+    else:
+        ax.set_title('cleaned, wall band')
     ax.set_xlabel(r'$x$ [m]')
     style.panel_label(ax, '(b)')
 
@@ -131,14 +156,23 @@ def main():
                 rf'${index + 1}$', color=colour, ha='center', va='center',
                 fontsize=7.5, zorder=6)
 
-    ax.set_xlim(x0, x1)
-    ax.set_ylim(y0, y1)
+    if cropped:
+        ax.set_xlim(x0, x1)
+        ax.set_ylim(y0, y1)
+    else:
+        xs = [x for x, _, _, _, _, _ in boxes]
+        ys = [y for _, y, _, _, _, _ in boxes]
+        ax.set_xlim(min(xs) - 0.5, max(xs) + 0.5)
+        ax.set_ylim(min(ys) - 0.5, max(ys) + 0.5)
     ax.set_title('extruded world')
     ax.set_xlabel(r'$x$ [m]')
     style.panel_label(ax, '(c)')
 
     for ax in axes:
         ax.set_aspect('equal')
+        if args.rows:
+            ax.set_xlabel(r'$x$ [m]')
+            ax.set_ylabel(r'$y$ [m]')
         ax.xaxis.set_minor_locator(AutoMinorLocator(2))
         ax.yaxis.set_minor_locator(AutoMinorLocator(2))
 

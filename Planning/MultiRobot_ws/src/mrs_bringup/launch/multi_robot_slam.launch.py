@@ -286,14 +286,24 @@ def generate_launch_description():
         description='Cycle inter-robot connectivity on and off to emulate '
                     'restricted communication.')
 
-    gzserver = IncludeLaunchDescription(
+    # Scoped, because an included description's launch arguments are otherwise
+    # set in the *parent* context as well: pinning Gazebo's `record` below would
+    # then also clear this file's own `record` argument and silently disable the
+    # run recorder. The group confines the setting to the include.
+    gzserver = GroupAction([IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(gazebo_share, 'launch', 'gzserver.launch.py')),
         launch_arguments={
             'world': LaunchConfiguration('world'),
             'verbose': 'true',
+            # Pinned, because an included description inherits the parent's
+            # launch configurations by name: this launch file's `record`
+            # argument, which asks *our* recorder for grid snapshots, would
+            # otherwise also switch on Gazebo's own state log and fill
+            # ~/.gazebo/log with gigabytes nothing here reads.
+            'record': 'false',
         }.items(),
-    )
+    )], scoped=True)
 
     gzclient = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

@@ -143,6 +143,13 @@ public:
     declare_parameter<double>("robot_radius", 0.28);
     declare_parameter<int>("occupied_threshold", 60);
     declare_parameter<int>("min_frontier_cells", 6);
+    // A frontier closer than this is not worth committing to: the agent would
+    // arrive inside its own goal tolerance before the SLAM front end has
+    // published a map in which that frontier has moved, re-select it, and
+    // oscillate on the spot. Early in a run, when the whole belief is a disc a
+    // metre across, that is the difference between exploring and standing
+    // still.
+    declare_parameter<double>("min_goal_distance", 1.0);
     declare_parameter<double>("gain_weight", 12.0);
     declare_parameter<double>("distance_weight", 1.0);
     declare_parameter<double>("hysteresis", 1.15);
@@ -171,6 +178,7 @@ public:
     robot_radius_ = get_parameter("robot_radius").as_double();
     occupied_threshold_ = static_cast<int8_t>(get_parameter("occupied_threshold").as_int());
     min_frontier_cells_ = static_cast<int>(get_parameter("min_frontier_cells").as_int());
+    min_goal_distance_ = get_parameter("min_goal_distance").as_double();
     gain_weight_ = get_parameter("gain_weight").as_double();
     distance_weight_ = get_parameter("distance_weight").as_double();
     hysteresis_ = get_parameter("hysteresis").as_double();
@@ -651,8 +659,13 @@ private:
 
     Frontier * best = nullptr;
     double best_value = -kInf;
+    int usable = 0;
     for (auto & frontier : frontiers) {
       if (!std::isfinite(frontier.distance) || blacklisted(frontier.centroid)) {
+        continue;
+      }
+      ++usable;
+      if (frontier.distance < min_goal_distance_) {
         continue;
       }
       frontier.value = score(frontier);
@@ -660,6 +673,18 @@ private:
         best_value = frontier.value;
         best = &frontier;
       }
+    }
+
+    if (!best && usable > 0) {
+      // Every frontier is within arm's reach, which happens exactly when the
+      // belief is too young to plan over. Drive forward instead and let the
+      // next scan enlarge it: one reactive primitive, used only to bootstrap
+      // the deliberative one.
+      state_ = "probe";
+      goal_valid_ = false;
+      path_.clear();
+      writeLog(0, 0.0);
+      return;
     }
 
     if (!best) {
@@ -819,6 +844,17 @@ private:
     }
 
     checkStuck(*pose);
+
+    if (state_ == "probe" && !goal_valid_) {
+      geometry_msgs::msg::Twist cmd;
+      if (frontBlocked()) {
+        cmd.angular.z = angular_speed_;
+      } else {
+        cmd.linear.x = linear_speed_;
+      }
+      cmd_pub_->publish(cmd);
+      return;
+    }
 
     if (!goal_valid_ || path_.size() < 2) {
       stop();
@@ -1021,6 +1057,7 @@ private:
   double robot_radius_{0.28};
   int8_t occupied_threshold_{60};
   int min_frontier_cells_{6};
+  double min_goal_distance_{1.0};
   double gain_weight_{12.0};
   double distance_weight_{1.0};
   double hysteresis_{1.15};
