@@ -1,0 +1,27 @@
+# Fleet definition for the third iteration: three agents in the Freiburg
+# building 079 map (worlds/fr079_office.world).
+#
+# As in the earlier iterations, `initial_pose` is both the ground-truth spawn
+# pose in the Gazebo world frame and the origin of that robot's SLAM map frame,
+# so the same numbers double as the known map -> <ns>/map transform used by the
+# merger.
+#
+# This building has no corridor ring to deploy into: it is a single spine with
+# rooms hung off both sides, so "one arm each" has no meaning here. The three
+# agents are instead spaced along the spine at roughly 15 m intervals, west,
+# centre and east, which is the largest mutual separation the building admits
+# and keeps the three exploration processes independent at the start of the run.
+#
+# The yaws are mutually distinct and none is zero, so every T_i in the fusion
+# carries a non-trivial rotation, and two of the three start facing a room
+# rather than along the corridor: a deliberative planner is indifferent to its
+# initial heading, and the reactive baseline it is compared against should not
+# be handed the corridor for free.
+fleet:
+  robots:
+    - name: robot1
+      initial_pose: {x: -13.0, y: -0.10, yaw:  3.14159265}
+    - name: robot2
+      initial_pose: {x:   2.0, y: -0.15, yaw:  1.57079633}
+    - name: robot3
+      initial_pose: {x:  17.0, y: -0.15, yaw: -1.57079633}

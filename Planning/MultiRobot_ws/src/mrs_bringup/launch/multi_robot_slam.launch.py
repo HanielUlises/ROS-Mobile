@@ -44,6 +44,11 @@ def _spawn_fleet(context, *args, **kwargs):
 
     use_explorer = flag('use_explorer')
     use_slam = flag('use_slam')
+    explorer_type = LaunchConfiguration('explorer').perform(context).lower()
+    if explorer_type not in ('reactive', 'frontier'):
+        raise RuntimeError(
+            f"explorer must be 'reactive' or 'frontier', got '{explorer_type}'")
+    record_dir = LaunchConfiguration('record_dir').perform(context)
 
     xacro_file = os.path.join(description_share, 'urdf', 'ugv.urdf.xacro')
     slam_params = os.path.join(bringup_share, 'config', 'slam_toolbox_async.yaml')
@@ -56,6 +61,7 @@ def _spawn_fleet(context, *args, **kwargs):
     robots = robots[:n_robots]
 
     actions = []
+    groups = {}
     for robot in robots:
         name = robot['name']
         prefix = f'{name}/'
@@ -124,7 +130,7 @@ def _spawn_fleet(context, *args, **kwargs):
                 ],
             ))
 
-        if use_explorer:
+        if use_explorer and explorer_type == 'reactive':
             group.append(Node(
                 package='mrs_coordination',
                 executable='explorer_node',
@@ -137,11 +143,36 @@ def _spawn_fleet(context, *args, **kwargs):
                 }],
             ))
 
-        actions.append(GroupAction(group))
+        groups[name] = group
 
     # Coordination layer: shared across the whole fleet, so it lives outside the
     # per-robot namespaces.
     robot_names = [r['name'] for r in robots]
+
+    # The deliberative planner needs the fleet roster, unlike the reactive
+    # policy, because it reasons about the goals the other agents announce. It
+    # is otherwise a drop-in replacement: same namespace, same cmd_vel, same
+    # enable topic.
+    if use_explorer and explorer_type == 'frontier':
+        for name in robot_names:
+            groups[name].append(Node(
+                package='mrs_coordination',
+                executable='frontier_planner_node',
+                name='frontier_planner',
+                output='screen',
+                parameters=[{
+                    'use_sim_time': True,
+                    'robot_name': name,
+                    'robot_names': robot_names,
+                    'global_frame': 'map',
+                    'base_frame': f'{name}/base_footprint',
+                    'log_path': (os.path.join(record_dir, f'planner_{name}.csv')
+                                 if flag('record') else ''),
+                }],
+            ))
+
+    for name in robot_names:
+        actions.append(GroupAction(groups[name]))
     init_poses = []
     for r in robots:
         init_poses += [
@@ -229,7 +260,13 @@ def generate_launch_description():
 
     explorer_arg = DeclareLaunchArgument(
         'use_explorer', default_value='true',
-        description='Start the reactive explorer so the robots drive themselves.')
+        description='Start an exploration policy so the robots drive themselves.')
+
+    explorer_type_arg = DeclareLaunchArgument(
+        'explorer', default_value='reactive',
+        description="Exploration policy: 'reactive' for the laser-driven "
+                    "wall follower of the first two iterations, 'frontier' for "
+                    'the deliberative coordinated frontier planner.')
 
     slam_arg = DeclareLaunchArgument(
         'use_slam', default_value='true',
@@ -281,6 +318,7 @@ def generate_launch_description():
         gui_arg,
         rviz_arg,
         explorer_arg,
+        explorer_type_arg,
         slam_arg,
         record_arg,
         record_dir_arg,

@@ -38,6 +38,9 @@ ament_target_dependencies(comms_link_node ${node_dependencies})
 add_executable(explorer_node src/explorer_node.cpp)
 ament_target_dependencies(explorer_node ${node_dependencies})
 
+add_executable(frontier_planner_node src/frontier_planner_node.cpp)
+ament_target_dependencies(frontier_planner_node ${node_dependencies})
+
 add_executable(map_recorder_node src/map_recorder_node.cpp)
 ament_target_dependencies(map_recorder_node ${node_dependencies})
 
@@ -45,6 +48,7 @@ install(TARGETS
   map_merger_node
   comms_link_node
   explorer_node
+  frontier_planner_node
   map_recorder_node
   DESTINATION lib/${PROJECT_NAME}
 )
