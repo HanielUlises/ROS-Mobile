@@ -18,6 +18,8 @@
 // `r2` is never bid on by `r1`'s performer.
 
 #include <cmath>
+#include <functional>
+#include <limits>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -64,6 +66,12 @@ public:
     // executor is told the action failed, which is information, where a
     // performer that never returns is not.
     declare_parameter<double>("timeout_factor", 4.0);
+    // How long the vehicle holds still in front of another robot before it
+    // tries to make room. Long enough that a robot crossing our path is simply
+    // waited out, short enough that a genuine head-on standoff is broken well
+    // inside the action's timeout.
+    declare_parameter<double>("yield_after", 6.0);
+    declare_parameter<double>("yield_duration", 3.0);
   }
 
   CallbackReturnT on_configure(const rclcpp_lifecycle::State & state) override
@@ -74,6 +82,12 @@ public:
     goal_tolerance_ = get_parameter("goal_tolerance").as_double();
     front_clearance_ = get_parameter("front_clearance").as_double();
     timeout_factor_ = get_parameter("timeout_factor").as_double();
+    yield_after_ = get_parameter("yield_after").as_double();
+    yield_duration_ = get_parameter("yield_duration").as_double();
+    // Deterministic, and different for different robots: r1 yields to one side,
+    // r2 to the other. A random choice would work on average and be impossible
+    // to reproduce in a report.
+    yield_direction_ = (std::hash<std::string>{}(robot_name_) % 2 == 0) ? 1.0 : -1.0;
     loadRoadmap(get_parameter("roadmap").as_string());
 
     cmd_pub_ = create_publisher<geometry_msgs::msg::Twist>(
@@ -99,6 +113,7 @@ public:
     goal_ = waypoints_.at(args[2]);
     start_ = now();
     start_distance_ = -1.0;
+    blocked_since_ = std::numeric_limits<double>::infinity();
     RCLCPP_INFO(
       get_logger(), "%s: move %s -> %s (%.2f, %.2f)", robot_name_.c_str(),
       args[1].c_str(), args[2].c_str(), goal_.x, goal_.y);
@@ -170,12 +185,40 @@ private:
       cmd.linear.x = cruise_speed_ * std::max(0.3, 1.0 - std::fabs(error) / 0.35);
       cmd.angular.z = std::clamp(1.5 * error, -turn_speed_, turn_speed_);
     }
+    // Anything in front of the vehicle here is another robot: the map has no
+    // moving obstacles, and the roadmap proved this segment free. The classical
+    // plan has nothing to say about the situation — it reserved *time* on the
+    // dock, never *space* in the corridor — so the executor has to resolve it.
+    //
+    // Waiting alone does not: two robots meeting head-on both wait, neither
+    // moves, and both actions run to their timeout. That is what the first
+    // two-robot run of this showcase did, and it is documented in the report
+    // rather than tuned away. What follows is the minimum needed to break the
+    // symmetry: after `yield_after` seconds of being blocked, back up and turn,
+    // to a side chosen by the robot's own name so that two robots facing each
+    // other pick opposite sides rather than mirroring each other into a second
+    // deadlock.
     if (frontBlocked()) {
-      // Another robot, almost always: the map has no moving obstacles. Waiting
-      // is the right response — the plan's ordering, not this controller, is
-      // what resolves the conflict.
-      cmd.linear.x = 0.0;
-      cmd.angular.z = 0.0;
+      if (!std::isfinite(blocked_since_)) {
+        blocked_since_ = (now() - start_).seconds();
+      }
+      const double blocked_for = (now() - start_).seconds() - blocked_since_;
+      if (blocked_for > yield_after_) {
+        cmd.linear.x = -0.5 * cruise_speed_;
+        cmd.angular.z = yield_direction_ * turn_speed_;
+        if (blocked_for > yield_after_ + yield_duration_) {
+          // One yield was not enough — the other robot is yielding into us, or
+          // the corridor is genuinely too narrow to pass. Reset the clock and
+          // try again from the new pose; the action's own timeout is what
+          // eventually reports the failure upward.
+          blocked_since_ = (now() - start_).seconds();
+        }
+      } else {
+        cmd.linear.x = 0.0;
+        cmd.angular.z = 0.0;
+      }
+    } else {
+      blocked_since_ = std::numeric_limits<double>::infinity();
     }
     cmd_pub_->publish(cmd);
 
@@ -218,6 +261,10 @@ private:
   double front_clearance_{0.35};
   double timeout_factor_{4.0};
   double start_distance_{-1.0};
+  double yield_after_{6.0};
+  double yield_duration_{3.0};
+  double yield_direction_{1.0};
+  double blocked_since_{std::numeric_limits<double>::infinity()};
   rclcpp::Time start_;
   rclcpp::Time deadline_;
 
