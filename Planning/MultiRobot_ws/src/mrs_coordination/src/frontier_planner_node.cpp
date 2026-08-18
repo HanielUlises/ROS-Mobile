@@ -285,9 +285,7 @@ public:
   }
 
 private:
-  // ----------------------------------------------------------------------
   // belief assembly
-  // ----------------------------------------------------------------------
 
   // B_i = M_delivered (+) m_i, on a canvas covering both, under the merger's
   // occupancy-dominant join: unknown is absorbed by anything known, and any
@@ -404,9 +402,7 @@ private:
     }
   }
 
-  // ----------------------------------------------------------------------
   // costmap, wavefront, frontiers
-  // ----------------------------------------------------------------------
 
   // Lethal = occupied, or within the robot's radius of an occupied cell. The
   // inflation is a multi-source BFS in cells rather than a Euclidean distance
@@ -631,9 +627,7 @@ private:
     return false;
   }
 
-  // ----------------------------------------------------------------------
   // planning cycle
-  // ----------------------------------------------------------------------
 
   void plan()
   {
@@ -878,10 +872,7 @@ private:
     return total;
   }
 
-  // ----------------------------------------------------------------------
   // control
-  // ----------------------------------------------------------------------
-
   void control()
   {
     if (!enabled_) {
@@ -1050,10 +1041,7 @@ private:
     cmd_pub_->publish(geometry_msgs::msg::Twist{});
   }
 
-  // ----------------------------------------------------------------------
   // plumbing
-  // ----------------------------------------------------------------------
-
   std::optional<Pose2D> lookupPose()
   {
     try {
