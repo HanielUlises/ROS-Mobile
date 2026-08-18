@@ -258,51 +258,41 @@ shows what the fleet believes. Also available as
 
 <a name="figure-3"></a>
 
-![Gazebo view of the fleet in fr079](figures/iter3/fig_gazebo.gif)
-
-**Figure 3.** The simulator itself: the three vehicles in the extruded `fr079`
-world, driving under the deliberative planner. This is the ground truth the
-fleet is trying to recover — the walls here are where the walls are, not where
-scan matching believes they are — and it is worth one look precisely because
-every other figure in this document is the fleet's estimate rather than the
-world.
-
-<a name="figure-4"></a>
-
 ![RViz view of the fleet's belief](figures/iter3/fig_rviz.gif)
 
-**Figure 4.** The same run seen through RViz: the fused fleet grid, the three
-agents' TF frames and laser returns, and each agent's committed plan on
-`/<ns>/plan`. The plans are the visible difference between this iteration and
-the previous two — under the reactive policy there is nothing to draw, because
-the agent has no goal to draw.
+**Figure 3.** A separate short run seen live through RViz, at $6\times$ speed:
+the fused fleet grid as the merger publishes it, the three agents' TF frames and
+their laser returns. Where Figure [2](#figure-2) is a reconstruction from
+recorded snapshots, this is the fleet's belief as the operator would actually
+see it at run time, and the radial spray at the doorways is the lidar seeing
+through them exactly as the source map's own spray was.
 
 ### 3.1 Individual and fleet maps
 
-<a name="figure-5"></a>
+<a name="figure-4"></a>
 
 ![Per-agent and fused occupancy grids](figures/iter3/fig_maps.png)
 
-**Figure 5.** The three individual estimates and the fused estimate at the end
+**Figure 4.** The three individual estimates and the fused estimate at the end
 of the run, composited onto a common canvas through each grid's own $T_i$.
 Panels (a)–(c) are what each agent alone believes; panel (d) is what the fleet
 holds.
 
-The operator behaves as in the first two iterations: the fused panel is the
+The fusion operator behaves as in the first two iterations: the fused panel is the
 cell-wise join of the other three, contains nothing absent from all of them, and
 composes three distinct rotations without a visible seam. Fleet knowledge is
-again not monotone in time — 5 of the 309 samples after warm-up show the fused
-area falling, by at most $0.6$ m$^2$, against 7 samples and $1.2$ m$^2$ under
-the reactive policy — and again this is the pose-graph correction retracting
+again not monotone in time — 5 of the 597 samples after warm-up show the fused
+area falling, by at most $0.6$ m$^2$, against 7 of 617 and $1.2$ m$^2$ under the
+reactive policy — and again this is the pose-graph correction retracting
 cells inside an agent's own estimate that the first iteration documents.
 
 ### 3.2 Coverage
 
-<a name="figure-6"></a>
+<a name="figure-5"></a>
 
 ![Explored area against time](figures/iter3/fig_coverage.png)
 
-**Figure 6.** Explored area against simulation time for the deliberative run.
+**Figure 5.** Explored area against simulation time for the deliberative run.
 The heavy trace is the fused fleet map $M$; the thin traces are each agent's own
 map. The lower strip is the link process, one row per agent, with filled
 intervals marking $\ell_i = 0$.
@@ -332,20 +322,20 @@ written around it.
 Two runs, same world, same deployment poses, same link process, same locomotion
 limits, differing in one word of the command line.
 
-<a name="figure-7"></a>
+<a name="figure-6"></a>
 
 ![Final fused grids and trajectories under both policies](figures/iter3/fig_policies.png)
 
-**Figure 7.** What each policy did. (a) the reactive baseline, (b) the
+**Figure 6.** What each policy did. (a) the reactive baseline, (b) the
 deliberative planner, each showing the final fused grid with the three
 estimated trajectories drawn over it. The two panels contain almost the same
 map. They do not contain the same trajectories.
 
-<a name="figure-8"></a>
+<a name="figure-7"></a>
 
 ![Coverage and redundancy against time for both policies](figures/iter3/fig_compare.png)
 
-**Figure 8.** (a) explored area against time, fused (heavy) and per agent
+**Figure 7.** (a) explored area against time, fused (heavy) and per agent
 (thin), baseline dashed and grey, deliberative solid and black; the dotted line
 is the navigable floor the extrusion reports. (b) observation redundancy
 $\sum_i A(m_i) / A(M)$ — one is a perfect partition of the work, $n$ is $n$
@@ -380,7 +370,7 @@ are the same number to within their own noise.
 
 **The deliberative planner buys the same map for $40\ \%$ less driving.** $208.8$
 m against $349.1$ m, or $1.44$ m$^2$ per metre travelled against $0.87$. This is
-the result of this iteration. It is visible in Figure [7](#figure-7) without any
+the result of this iteration. It is visible in Figure [6](#figure-6) without any
 statistics: the reactive trajectories are dense hairballs of repeated
 corridor traverses, because a wall follower in a corridor spine keeps meeting
 its own path; the deliberative trajectories are direct transits between rooms,
@@ -411,11 +401,11 @@ discount actually reduces here.
 
 ### 4.1 What the planner had to work with
 
-<a name="figure-9"></a>
+<a name="figure-8"></a>
 
 ![Reachable frontiers and committed travel](figures/iter3/fig_planner.png)
 
-**Figure 9.** (a) the number of reachable frontier clusters each agent's own
+**Figure 8.** (a) the number of reachable frontier clusters each agent's own
 belief contains, and (b) the travel it has committed to, with each agent's link
 outages marked as bars along the bottom.
 
@@ -513,8 +503,8 @@ the run:
 In the vocabulary of the epistemic layer: the fusion operator establishes
 *distributed knowledge* among the agents whose grids have been delivered, and
 the claim topic is a public announcement to whoever was listening. A frontier
-planner is a function of the agent's own belief, so it is a function of first-
-order knowledge only. Every failure listed above is a failure to represent
+planner is a function of the agent's own belief, so it is a function of
+first-order knowledge only. Every failure listed above is a failure to represent
 higher-order attitudes — what agent $i$ believes agent $j$ knows about the
 building and about $i$'s own commitments — which is precisely what the DEL layer
 supplies and what no amount of tuning $\lambda$, $r_c$ or the hysteresis can
@@ -527,12 +517,12 @@ worth recording because they were not obvious before it:
    policies mapped $\approx 100\ \%$ of `fr079` in $620$ s. If OE4's comparison
    is to discriminate, its scenarios must either be large enough not to
    saturate, or be scored on cost — travel, energy, time-to-$x\ \%$ — rather
-   than final area. This iteration's design assumed the former and got the
-   latter; the metric was replaced after the fact, which is exactly the kind of
-   decision that should be made before the runs and is recorded here so that it
-   is.
+   than final area. This iteration was designed on the first assumption and
+   `fr079` saturated anyway, so its headline metric became travel only after the
+   runs were in hand. That is the wrong order to decide a metric in, and it is
+   recorded here rather than quietly repaired.
 2. **The disagreement itself is the observable to plan against.** The spread in
-   Figure [9](#figure-9)(a) is a directly measurable, policy-independent
+   Figure [8](#figure-8)(a) is a directly measurable, policy-independent
    quantity that exists only because delivery is intermittent. An epistemic
    planner that reasons about who has been told what should reduce it, or should
    exploit it deliberately; either way it gives the OE4 evaluation a dependent
@@ -619,44 +609,40 @@ use_rviz:=false` to watch either of them live; the RViz configuration carries
 displays for all three agents, and under the deliberative policy each agent also
 publishes its current plan on `/<ns>/plan`.
 
-Figures [3](#figure-3) and [4](#figure-4) are screen recordings rather than
-renderings, and are made from a separate short run with the viewers started by
-hand. Each viewer is given its own nested X server, so the recording contains
-the viewer and nothing else of the desktop:
+Figure [3](#figure-3) is a screen recording rather than a rendering, made from
+a separate short run with RViz started by hand. It is given its own nested X
+server, so that the recording contains the viewer and nothing else of the
+desktop:
 
 ```bash
 # Ogre's hardware GLX path does not survive a nested server; llvmpipe does.
 export LIBGL_ALWAYS_SOFTWARE=1
-Xephyr :77 -screen 1440x860 -ac -br -noreset &
 Xephyr :78 -screen 1440x860 -ac -br -noreset &
 
-# a copy of the world carrying a <gui><camera> pose, so gzclient opens looking
-# down the spine instead of at the origin
-ros2 launch mrs_bringup multi_robot_slam.launch.py world:=$PWD/fr079_capture.world \
-    fleet:=fleet_fr079.yaml n_robots:=3 explorer:=frontier \
-    gui:=false use_rviz:=false comms_dropout:=true &
+ros2 launch mrs_bringup iteration3_explore.launch.py gui:=false use_rviz:=false &
 sleep 330                     # let the world load and the fleet map something
 
-DISPLAY=:77 gzclient &
+# capture.rviz is multi_robot.rviz with the TopDownOrtho scale dropped to 19,
+# so that all 45 m of the building fit in the viewport
 DISPLAY=:78 rviz2 -d capture.rviz --ros-args -p use_sim_time:=true &
 sleep 35
-# no window manager runs on these displays, so the windows are placed by hand
-for d in 77 78; do
-  for w in $(DISPLAY=:$d xdotool search --onlyvisible ""); do
-    DISPLAY=:$d xdotool windowmove $w 0 0 windowsize $w 1440 860
-  done
+# no window manager runs on this display, so the window is placed by hand
+for w in $(DISPLAY=:78 xdotool search --onlyvisible ""); do
+  DISPLAY=:78 xdotool windowmove $w 0 0 windowsize $w 1440 860
 done
 
-ffmpeg -f x11grab -framerate 10 -video_size 1440x860 -i :77 -t 140 gazebo.mp4
 ffmpeg -f x11grab -framerate 10 -video_size 1440x860 -i :78 -t 140 rviz.mp4
 
-# 8x, 10 fps, palette-quantised, for a GIF small enough to sit in a repository
-for v in gazebo rviz; do
-  ffmpeg -i $v.mp4 -vf "setpts=PTS/8,fps=10,scale=880:-2,split[a][b];\
-[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer" \
-      docs/figures/iter3/fig_$v.gif
-done
+# 6x, 10 fps, palette-quantised, for a GIF small enough to sit in a repository
+ffmpeg -i rviz.mp4 -vf "crop=1440:844:0:0,setpts=PTS/6,fps=10,scale=900:-2,\
+split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer" \
+    docs/figures/iter3/fig_rviz.gif
 ```
+
+`gzclient` was recorded the same way and is *not* included: under llvmpipe in a
+nested server it draws its own interface and the simulation clock but never the
+world geometry, so the recording shows an empty grid. Panel (c) of Figure
+[1](#figure-1) is the ground truth this figure would have shown.
 
 ---
 
