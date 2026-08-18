@@ -140,7 +140,16 @@ public:
 
     // Planning.
     declare_parameter<double>("plan_period", 2.0);
-    declare_parameter<double>("robot_radius", 0.28);
+    // The *inscribed* radius of the 0.35 x 0.28 m chassis, not the
+    // circumscribed one. Inflating by the circumscribed radius is the
+    // conservative choice on a clean costmap, but this grid is scan-matched:
+    // walls are smeared by up to a cell or two and a 0.9 m doorway shows up
+    // narrower than it is. At 0.28 m the inflation seals most of the building's
+    // doorways, the wavefront cannot leave the room the agent is in, and the
+    // planner reports the building explored when two thirds of it has never
+    // been seen. The laser safety stop, not the inflation, is what keeps the
+    // vehicle off the walls.
+    declare_parameter<double>("robot_radius", 0.16);
     declare_parameter<int>("occupied_threshold", 60);
     declare_parameter<int>("min_frontier_cells", 6);
     // A frontier closer than this is not worth committing to: the agent would
@@ -1054,7 +1063,7 @@ private:
   double front_half_angle_{0.35};
   double lookahead_{0.55};
   double goal_tolerance_{0.45};
-  double robot_radius_{0.28};
+  double robot_radius_{0.16};
   int8_t occupied_threshold_{60};
   int min_frontier_cells_{6};
   double min_goal_distance_{1.0};

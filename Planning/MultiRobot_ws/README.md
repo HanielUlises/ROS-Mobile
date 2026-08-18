@@ -8,6 +8,11 @@ to be built.
 > The second iteration — the same substrate, unchanged, carried onto the floor
 > plan of a real building with three agents — is reported separately in
 > [`docs/iteration2.md`](docs/iteration2.md).
+>
+> The third — the reactive explorer replaced by a deliberative, coordinated
+> frontier planner that plans on the *delivered* fleet map, in a second real
+> building, and measured against the reactive baseline in the same world — is
+> reported in [`docs/iteration3.md`](docs/iteration3.md).
 
 ---
 

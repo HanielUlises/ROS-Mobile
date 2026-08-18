@@ -145,8 +145,11 @@ def figure_compare(runs, labels, out_path, reachable=None):
     fig, axes = plt.subplots(1, 2, figsize=(6.9, 2.6),
                              gridspec_kw=dict(wspace=0.28))
 
-    styles = {labels[0]: dict(color=style.SERIES[3], ls='--'),
-              labels[1]: dict(color=style.INK, ls='-')}
+    # The baseline is drawn grey and dashed, the policy under test in ink: the
+    # two runs differ in one word of the command line and should differ in one
+    # visual dimension on the page.
+    styles = {labels[0]: dict(color='#9a9a9a', ls='--'),
+              labels[1]: dict(color=style.RULE, ls='-')}
 
     ax = axes[0]
     for key in labels:
@@ -161,7 +164,7 @@ def figure_compare(runs, labels, out_path, reachable=None):
         ax.annotate('reachable floor', xy=(runs[labels[0]]['t'][-1] * 0.02,
                                            reachable),
                     xytext=(0, -9), textcoords='offset points',
-                    fontsize=6.5, color=style.MUTED)
+                    fontsize=6.5, color='#7a7a7a')
     ax.set_xlabel(r'simulation time [s]')
     ax.set_ylabel(r'explored area [m$^2$]')
     ax.legend(loc='lower right')
