@@ -116,7 +116,9 @@ reasons about the other agents. One planning cycle, every $2$ s, is four steps.
 
 The agent plans on
 
-$$B_i(t) \;=\; \tilde{M}_i(t) \,\oplus\, m_i(t),$$
+$$
+B_i(t) \;=\; \tilde{M}_i(t) \,\oplus\, m_i(t),
+$$
 
 the fleet grid *as last received while this agent's link was up*, joined with
 its own current grid under the merger's occupancy-dominant operator: unknown is
@@ -144,8 +146,20 @@ received and how many were withheld from it.
 
 ### 2.2 Costmap and wavefront
 
-Cells at or above an occupancy of $60$, and cells within the robot radius of
-one, are lethal; the inflation is a multi-source breadth-first search in cells,
+Write $B_i$ for the belief grid of agent $i$ and $o(c) \in \{-1\} \cup [0,100]$
+for the occupancy it assigns cell $c$, with $-1$ denoting the unobserved value
+$\mathsf{u}$. For an inflation radius $\rho$ the lethal set and the traversable
+set are
+
+$$
+\mathcal{L}_\rho \;=\; \bigl\{\, c \;:\; \exists\, c' ,\ o(c') \ge 60
+\ \wedge\ \lVert c - c' \rVert \le \rho \,\bigr\},
+\qquad
+\mathcal{T}_\rho \;=\; \bigl\{\, c \;:\; 0 \le o(c) < 60 \,\bigr\}
+\setminus \mathcal{L}_\rho ,
+$$
+
+and the inflation is computed as a multi-source breadth-first search in cells,
 which at this radius differs from a Euclidean distance transform by less than
 one cell.
 
@@ -159,30 +173,51 @@ has never been seen. The laser safety stop, not the inflation, is what keeps the
 vehicle off the walls. This is the single most consequential parameter in the
 node and the one most specific to the fact that the map is *estimated*.
 
-One Dijkstra wavefront is then run from the agent's own cell over the
-traversable belief. It answers three questions at once — what is reachable, how
-far every frontier is, and which way to walk — which is why the planner runs one
-search per cycle rather than one $A^*$ per candidate goal.
+One Dijkstra wavefront is then run from the agent's own cell $x_i$ over
+$\mathcal{T}_\rho$, yielding the cost-to-go
+
+$$
+g_\rho : \mathcal{T}_\rho \to \mathbb{R}_{\ge 0} \cup \{\infty\},
+\qquad
+\mathcal{R}_\rho(x_i) \;=\; \bigl\{\, c \;:\; g_\rho(c) < \infty \,\bigr\},
+$$
+
+with $\mathcal{R}_\rho(x_i)$ the reachable component. One search answers three
+questions at once — what is reachable, how far every frontier is, and which way
+to walk, by gradient backtracking on $g_\rho$ — which is why the planner runs a
+single search per cycle rather than one $A^*$ per candidate goal.
 
 ### 2.3 Frontiers and the coordination discount
 
 A frontier cell is reachable free space with an unobserved $4$-neighbour: the
-boundary between what the agent believes and what nobody has looked at.
-Frontier cells are clustered by connectivity, clusters below $6$ cells
-($0.3$ m of frontier) are discarded as scan-matcher noise, and each surviving
-cluster is represented by the member nearest its own centroid — the centroid of
-a curved frontier need not lie on the frontier, and the representative must be a
-cell the wavefront has already proved reachable.
+boundary between what the agent believes and what nobody has looked at,
+
+$$
+\Phi_\rho \;=\; \bigl\{\, c \in \mathcal{R}_\rho(x_i)
+\;:\; \exists\, c' \in \mathcal{N}_4(c),\ o(c') = \mathsf{u} \,\bigr\}.
+$$
+
+$\Phi_\rho$ is partitioned into $8$-connected clusters
+$f \subseteq \Phi_\rho$; clusters with $\lvert f \rvert < 6$ cells
+($0.3$ m of frontier) are discarded as scan-matcher noise, and each survivor is
+represented by
+$\arg\min_{c \in f} \lVert c - \bar{f} \rVert$, its member nearest its own
+centroid $\bar{f}$ — the centroid of a curved frontier need not lie on the
+frontier, and the representative must be a cell the wavefront has already proved
+reachable.
 
 Each cluster is scored, in the cost-utility form of [[3](#ref3)],
 
-$$V(f) \;=\; \underbrace{\lambda\, w(f)\, \gamma(f)}_{\text{gain}} \;-\;
+$$
+V(f) \;=\; \underbrace{\lambda\, w(f)\, \gamma(f)}_{\text{gain}} \;-\;
              \underbrace{d(f)}_{\text{travel}},
 \qquad
-\gamma(f) \;=\; \min_{j \neq i} \min\!\left(1, \frac{\lVert f - g_j \rVert}{r_c}\right),$$
+\gamma(f) \;=\; \min_{j \neq i} \min\!\left(1, \frac{\lVert f - g_j \rVert}{r_c}\right),
+$$
 
-with $w(f)$ the cluster's width in metres, $\lambda = 12$, $d(f)$ the travel the
-wavefront measured, $g_j$ the goal agent $j$ last announced and $r_c = 6$ m,
+with $w(f) = \lvert f \rvert \,\delta$ the cluster's width in metres,
+$\lambda = 12$, $d(f) = g_\rho(f)$ the travel the wavefront measured, $g_j$ the
+goal agent $j$ last announced and $r_c = 6$ m,
 about the diameter of a room here. The discount $\gamma$ is the entire
 collaboration: it removes the value of a frontier somebody else has already said
 they are driving to, and pushes two agents apart by about one unit of work and
@@ -297,6 +332,28 @@ The heavy trace is the fused fleet map $M$; the thin traces are each agent's own
 map. The lower strip is the link process, one row per agent, with filled
 intervals marking $\ell_i = 0$.
 
+Three quantities are reported for every run in this document, and it is worth
+fixing them once. For a grid $m$ let
+
+$$
+A(m) \;=\; \delta^2 \,\bigl\lvert \{\, c : m(c) \neq \mathsf{u} \,\}
+\bigr\rvert
+$$
+
+be its explored area at resolution $\delta = 0.05$ m. With $L_i$ the polyline
+length of agent $i$'s estimated trajectory, the fleet's **redundancy** and
+**observation efficiency** are
+
+$$
+\varrho \;=\; \frac{\sum_{i} A(m_i)}{A(M)} \;\in\; [1, n],
+\qquad
+\eta \;=\; \frac{A(M)}{\sum_{i} L_i} \quad [\text{m}^2\,\text{m}^{-1}].
+$$
+
+$\varrho = 1$ is a perfect partition of the work and $\varrho = n$ is $n$ agents
+doing the same work $n$ times; $\eta$ is what the fleet obtained per metre it
+drove.
+
 <a name="table-1"></a>
 
 **Table 1.** State at the end of the deliberative run, $620$ s, three agents.
@@ -337,23 +394,23 @@ map. They do not contain the same trajectories.
 
 **Figure 7.** (a) explored area against time, fused (heavy) and per agent
 (thin), baseline dashed and grey, deliberative solid and black; the dotted line
-is the navigable floor the extrusion reports. (b) observation redundancy
-$\sum_i A(m_i) / A(M)$ — one is a perfect partition of the work, $n$ is $n$
-agents doing the same work $n$ times.
+is the navigable floor the extrusion reports. (b) the redundancy $\varrho$
+defined in Section 3.2 — $\varrho = 1$ is a perfect partition of the work,
+$\varrho = n$ is $n$ agents doing the same work $n$ times.
 
 <a name="table-2"></a>
 
 **Table 2.** The two runs, truncated to their common window.
 
-| | Reactive | Deliberative |
-|---|---|---|
-| Fused area $A(M)$ | $304.8$ m$^2$ ($100.6\ \%$ of navigable) | $301.4$ m$^2$ ($99.4\ \%$) |
-| Total path length | $349.1$ m | $208.8$ m |
-| Area per metre travelled | $0.87$ m$^2$ m$^{-1}$ | $1.44$ m$^2$ m$^{-1}$ |
-| Per-agent shares of $M$ | $35.1 / 69.9 / 42.0\ \%$ | $52.0 / 52.9 / 52.4\ \%$ |
-| Redundancy $\sum_i A(m_i)/A(M)$ | $1.47$ | $1.57$ |
-| $t$ at $150$ / $200$ / $250$ m$^2$ | $62$ / $130$ / $487$ s | $117$ / $211$ / $410$ s |
-| $90\ \%$ of own final extent | $515$ s | $549$ s |
+| Quantity | Symbol | Reactive | Deliberative |
+|---|---|---|---|
+| Fused area | $A(M)$ | $304.8$ m$^2$ ($100.6\ \%$ of navigable) | $301.4$ m$^2$ ($99.4\ \%$) |
+| Fleet path length | $\sum_i L_i$ | $349.1$ m | $208.8$ m |
+| Observation efficiency | $\eta$ | $0.87$ m$^2$ m$^{-1}$ | $1.44$ m$^2$ m$^{-1}$ |
+| Per-agent shares of $M$ | $A(m_i)/A(M)$ | $35.1 / 69.9 / 42.0\ \%$ | $52.0 / 52.9 / 52.4\ \%$ |
+| Redundancy | $\varrho$ | $1.47$ | $1.57$ |
+| $t$ at $150$ / $200$ / $250$ m$^2$ | — | $62$ / $130$ / $487$ s | $117$ / $211$ / $410$ s |
+| $90\ \%$ of own final extent | — | $515$ s | $549$ s |
 
 Four things are worth reading off this, in decreasing order of how much they
 should be believed.
@@ -369,7 +426,8 @@ merely says the extrusion's navigable-floor figure and the fleet's fused area
 are the same number to within their own noise.
 
 **The deliberative planner buys the same map for $40\ \%$ less driving.** $208.8$
-m against $349.1$ m, or $1.44$ m$^2$ per metre travelled against $0.87$. This is
+m against $349.1$ m, an efficiency ratio
+$\eta_{\mathrm{del}}/\eta_{\mathrm{re}} = 1.44/0.87 = 1.66$. This is
 the result of this iteration. It is visible in Figure [6](#figure-6) without any
 statistics: the reactive trajectories are dense hairballs of repeated
 corridor traverses, because a wall follower in a corridor spine keeps meeting
@@ -384,11 +442,12 @@ having wandered north out of the spine into the large room at $x \approx 10$
 while agent 1 paced the western corridor back and forth. The deliberative run's shares are
 $52.0 / 52.9 / 52.4\ \%$: three agents that each took about half the building,
 which is what an assignment mechanism is supposed to produce and what no
-reactive policy has any means to produce. The spread across agents falls from
-$34.8$ points to $0.9$.
+reactive policy has any means to produce. The spread
+$\max_i A(m_i)/A(M) - \min_i A(m_i)/A(M)$ falls from $34.8$ to $0.9$ points.
 
 **Redundancy by area does not improve, and should not have been expected to.**
-$1.57$ against $1.47$: the deliberative fleet overlaps slightly *more*. The
+$\varrho = 1.57$ against $1.47$: the deliberative fleet overlaps slightly
+*more*. The
 reason is geometric rather than algorithmic. Every room in this building opens
 off one corridor, so every agent must traverse the shared spine to reach
 anything, and an $8$ m lidar sweeping $360^\circ$ re-observes that spine and
@@ -412,21 +471,40 @@ outages marked as bars along the bottom.
 Panel (a) is the figure this whole iteration was built to produce. The three
 traces are three agents' answers to the same question — *how much of this
 building is still unexplored?* — computed from the same fusion operator over the
-same fleet, and they are frequently different answers:
+same fleet, and they are frequently different answers.
 
-| Quantity | Value |
-|---|---|
-| Mean spread in reachable-frontier count across the three agents | $11.8$ clusters |
-| Largest spread | $87$ clusters, at $t = 539$ s |
-| Fraction of the run on which all three agree exactly | $18.5\ \%$ |
-| Mean spread while all three links are up | $5.9$ |
-| Mean spread while at least one link is down | $14.2$ |
-| Fraction of the run with all three linked | $29.7\ \%$ |
+Let $\nu_i(t) = \lvert \{\, f \subseteq \Phi_\rho(B_i(t)) \,\} \rvert$ be
+the number of reachable frontier clusters agent $i$'s belief contains, and
+define the fleet's **disagreement**
+
+$$
+\Delta(t) \;=\; \max_{i} \nu_i(t) \;-\; \min_{i} \nu_i(t) .
+$$
+
+$\Delta$ is a property of the *fleet's knowledge*, not of the building: it is
+identically zero for a fleet whose members share a map, and it is bounded below
+by nothing at all for one whose members do not.
+
+| Quantity | Symbol | Value |
+|---|---|---|
+| Mean disagreement | $\overline{\Delta}$ | $11.8$ clusters |
+| Largest disagreement | $\max_t \Delta(t)$ | $87$ clusters, at $t = 539$ s |
+| Fraction of the run in exact agreement | $\Pr[\Delta = 0]$ | $18.5\ \%$ |
+| Mean disagreement, fleet fully connected | $\mathbb{E}[\Delta \mid \ell \equiv 1]$ | $5.9$ |
+| Mean disagreement, some link down | $\mathbb{E}[\Delta \mid \ell \not\equiv 1]$ | $14.2$ |
+| Fraction of the run fully connected | $\Pr[\ell \equiv 1]$ | $29.7\ \%$ |
 
 The disagreement is not noise and it is not a bug: it is the link process
-appearing in the planner's own state. Each agent received $757$–$782$ fleet maps
-and had $414$–$439$ withheld from it — $36\ \%$, which is the duty cycle's
-downtime and no coincidence. Between $t \approx 520$ s and $t \approx 545$ s
+appearing in the planner's own state. Writing $D_i$ and $H_i$ for the fleet maps
+agent $i$ received and had withheld, the run gives
+$D_i \in [757, 782]$, $H_i \in [414, 439]$ and a withholding rate
+
+$$
+\frac{H_i}{D_i + H_i} \;=\; 0.36 \;=\; \frac{T_{\mathrm{down}}}
+{T_{\mathrm{up}} + T_{\mathrm{down}}},
+$$
+
+which is the duty cycle's own downtime and no coincidence. Between $t \approx 520$ s and $t \approx 545$ s
 agent 1 believes $87$ frontier clusters remain while agents 2 and 3 believe
 about $5$ do: agent 1 is holding a fleet map from before its outage, in which
 the eastern rooms the others have since finished are still unknown, and it is
@@ -436,8 +514,15 @@ not end badly is that a stale map makes an agent redundant rather than wrong.
 
 The same staleness applies to the coordination discount. All three agents hold
 two claims at all times — the roster is three — but a claim is refreshed only
-while the *receiving* agent's link is up, so for a third of the run each agent
-is steering around where somebody else said they were going up to $25$ s ago.
+while the *receiving* agent's link is up, so the age of the claim agent $i$ is
+steering around is bounded by its own outage,
+
+$$
+\operatorname{age}\bigl(g_j \text{ as held by } i\bigr) \;\le\;
+T_{\mathrm{down}} \;=\; 25\ \text{s},
+$$
+
+for the $36\ \%$ of the run during which $\ell_i = 0$.
 This is the mechanism by which two agents can commit to the same room while both
 believing they have deconflicted, and it is exactly the situation a planner that
 could represent *"agent $j$ does not know that I have taken this room"* would
@@ -490,9 +575,9 @@ agent knows about what this agent has done. The consequences are measurable in
 the run:
 
 - The three agents disagree about how much of the building remains unexplored on
-  $81.5\ \%$ of the run, by $11.8$ frontier clusters on average and by $87$ at
-  worst; the disagreement is $2.4\times$ larger while some link is down than
-  while all are up.
+  $81.5\ \%$ of the run, by $\overline{\Delta} = 11.8$ frontier clusters on
+  average and by $87$ at worst; conditioning on connectivity, the ratio
+  $\mathbb{E}[\Delta \mid \ell \not\equiv 1] / \mathbb{E}[\Delta \mid \ell \equiv 1]$ is $2.4$.
 - Each agent acted on a claim set refreshed only during its own uptime — for
   $36\ \%$ of the run, on announcements up to $25$ s old — while itself
   announcing nothing.
