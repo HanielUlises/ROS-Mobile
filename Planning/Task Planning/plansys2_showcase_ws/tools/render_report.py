@@ -18,6 +18,7 @@ from collections import defaultdict
 
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.patheffects as path_effects   # noqa: E402
 import matplotlib.pyplot as plt   # noqa: E402
 import numpy as np                # noqa: E402
 import yaml                       # noqa: E402
@@ -84,17 +85,33 @@ def figure_roadmap(roadmap_path, map_yaml, out_path):
 
     style = {'dock': (SERIES[1], 's', 5.0), 'storage': (SERIES[2], 'o', 4.5),
              'charger': (SERIES[3], 'D', 4.0), 'corridor': (SERIES[0], '.', 4.0)}
+
+    # Labels are pushed away from the graph's own centroid and given a white
+    # halo: a station name that sits on top of an edge, or on top of the next
+    # station's name, is worse than no label at all.
+    cx = np.mean([v['x'] for v in roadmap['waypoints'].values()])
+    cy = np.mean([v['y'] for v in roadmap['waypoints'].values()])
+    halo = [path_effects.withStroke(linewidth=1.8, foreground='white')]
+
     for name, entry in roadmap['waypoints'].items():
         colour, marker, size = style[entry['kind']]
         ax.plot([entry['x']], [entry['y']], marker=marker, ms=size, color=colour,
                 linestyle='none', zorder=4)
-        if entry['kind'] != 'corridor':
-            ax.annotate(name, (entry['x'], entry['y']), textcoords='offset points',
-                        xytext=(5, 2.5), fontsize=5.5, color=colour, zorder=5)
+        if entry['kind'] == 'corridor':
+            continue
+        right = entry['x'] >= cx
+        above = entry['y'] >= cy
+        ax.annotate(name, (entry['x'], entry['y']), textcoords='offset points',
+                    xytext=(6 if right else -6, 5 if above else -9),
+                    ha='left' if right else 'right',
+                    va='bottom' if above else 'top',
+                    fontsize=5.5, color=colour, zorder=6,
+                    path_effects=halo)
 
     ax.set_xlabel(r'$x$ [m]')
     ax.set_ylabel(r'$y$ [m]')
     ax.set_aspect('equal')
+    ax.margins(x=0.08, y=0.03)
     ax.set_title(f"{len(positions)} waypoints, {len(roadmap['edges'])} edges")
     fig.savefig(out_path, bbox_inches='tight')
     plt.close(fig)
@@ -119,8 +136,14 @@ def figure_run(run_dir, out_path, title):
     colour = {'move': SERIES[0], 'enter_dock': SERIES[5], 'leave_dock': SERIES[5],
               'pick': SERIES[2], 'drop': SERIES[1]}
 
-    fig, axes = plt.subplots(2, 1, figsize=(6.6, 3.4), sharex=True,
-                             gridspec_kw=dict(height_ratios=[2.0, 1.0], hspace=0.18))
+    # One lane per robot, so a single-agent schedule is a strip and a four-agent
+    # schedule is four; a fixed height would make the two incomparable by eye.
+    lane_height = 0.42
+    fig, axes = plt.subplots(2, 1, figsize=(6.6, 1.5 + lane_height * len(robots)),
+                             sharex=True,
+                             gridspec_kw=dict(
+                                 height_ratios=[max(1.0, 0.62 * len(robots)), 1.0],
+                                 hspace=0.2))
 
     ax = axes[0]
     for row in plan:
@@ -134,12 +157,12 @@ def figure_run(run_dir, out_path, title):
     ax.set_yticks(range(len(robots)))
     ax.set_yticklabels(robots)
     ax.set_ylabel('robot')
-    ax.set_title(title)
+    ax.set_title(title, pad=18)
     ax.invert_yaxis()
     handles = [plt.Rectangle((0, 0), 1, 1, color=colour[k])
-               for k in ('move', 'pick', 'drop', 'enter_dock')]
-    ax.legend(handles, ['move', 'pick', 'drop', 'enter / leave dock'],
-              loc='upper right', ncol=4)
+               for k in ('move', 'pick', 'drop')]
+    ax.legend(handles[:3], ['move', 'pick', 'drop'],
+              loc='lower center', bbox_to_anchor=(0.5, 1.02), ncol=3)
 
     ax = axes[1]
     t = np.array([float(r['wall_time_s']) for r in progress])
@@ -167,8 +190,8 @@ def figure_scaling(scaling_csv, out_path):
     for row in rows:
         by_crates[int(row['crates'])].append(row)
 
-    fig, axes = plt.subplots(1, 3, figsize=(7.4, 2.5),
-                             gridspec_kw=dict(wspace=0.32))
+    fig, axes = plt.subplots(1, 3, figsize=(7.4, 2.6),
+                             gridspec_kw=dict(wspace=0.36))
 
     ax = axes[0]
     for index, crates in enumerate(sorted(by_crates)):
@@ -181,7 +204,9 @@ def figure_scaling(scaling_csv, out_path):
     ax.set_xlabel('robots')
     ax.set_ylabel('makespan [s]')
     ax.grid(True)
-    ax.legend(ncol=2)
+    # Below the axes: inside the panel the legend covered the 8- and 10-crate
+    # curves, which are the ones the reader is being asked to compare.
+    ax.legend(ncol=3, loc='upper center', bbox_to_anchor=(0.5, -0.28))
 
     ax = axes[1]
     for index, crates in enumerate(sorted(by_crates)):
@@ -197,7 +222,11 @@ def figure_scaling(scaling_csv, out_path):
     ax.set_yscale('log')
     ax.set_xlabel('robots')
     ax.set_ylabel('planning time [s]')
-    ax.set_title('x = timeout')
+    # Bottom right: the crosses live along the top of this panel, and a note
+    # placed among them is a note nobody can read.
+    ax.annotate(r'$\times$ = budget exhausted', xy=(0.97, 0.04),
+                xycoords='axes fraction', ha='right', fontsize=6.5,
+                color='#555555')
     ax.grid(True, which='both')
 
     ax = axes[2]
@@ -250,12 +279,15 @@ def figure_fleet(run_dirs, out_path):
 
     ax = axes[0]
     width = 0.36
-    ax.bar(sizes - width / 2, makespans, width, color=SERIES[0], label='planned makespan')
+    ax.bar(sizes - width / 2, makespans, width, color=SERIES[0], label='planned')
     ax.bar(sizes + width / 2, executions, width, color=SERIES[1], label='measured')
     ax.set_xlabel('robots')
     ax.set_ylabel('time [s]')
     ax.set_xticks(sizes)
-    ax.legend()
+    ax.set_ylim(0, max(makespans.max(), executions.max()) * 1.12)
+    # Above the axes: inside the panel the legend sat on the topmost y-tick
+    # label, which is the one the tall bars are read against.
+    ax.legend(ncol=2, loc='lower center', bbox_to_anchor=(0.5, 1.01))
     ax.grid(True, axis='y')
 
     ax = axes[1]
@@ -263,6 +295,7 @@ def figure_fleet(run_dirs, out_path):
     ax.set_xlabel('robots')
     ax.set_ylabel('fleet distance [m]')
     ax.set_xticks(sizes)
+    ax.set_ylim(0, distances.max() * 1.2)
     ax.grid(True, axis='y')
 
     ax = axes[2]
@@ -270,6 +303,7 @@ def figure_fleet(run_dirs, out_path):
     ax.set_xlabel('robots')
     ax.set_ylabel('time held still [%]')
     ax.set_xticks(sizes)
+    ax.set_ylim(0, min(100.0, idle_fraction.max() * 1.25))
     ax.grid(True, axis='y')
 
     fig.savefig(out_path, bbox_inches='tight')
