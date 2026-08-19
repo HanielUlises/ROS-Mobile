@@ -77,7 +77,7 @@ admitted only if the whole segment clears the same radius:
 ```math
 E \;=\; \bigl\{\, \{u,v\} \subset W \;:\;
 \lVert u - v \rVert \le \ell_{\max}
-\ \wedge\
+\;\wedge\;
 \min_{\lambda \in [0,1]} d\bigl((1-\lambda)u + \lambda v\bigr) \ge r \,\bigr\},
 \qquad \ell_{\max} = 6\ \text{m}.
 ```
@@ -224,24 +224,32 @@ dispatch for $`r_2`$ is never bid on by $`r_1`$'s performer.
 
 The `move` performer is where a symbol becomes a metre. Given
 $`\texttt{move}(r,u,v)`$ it looks $v$ up in the same roadmap the problem was
-generated from and closes the error
-$`e = \xi_v - x_r`$ with a turn-then-drive law,
+generated from and closes the error $`e = \xi_v - x_r`$, whose heading component
+is $`e_\theta`$, with a turn-then-drive law:
 
 ```math
 (\upsilon, \omega) \;=\;
 \begin{cases}
-\bigl(0,\ \operatorname{sgn}(e_\theta)\,\omega_{\max}\bigr),
-  & \lvert e_\theta \rvert > 0.35\ \text{rad},\\[2pt]
-\bigl(v_c \max(0.3,\, 1 - \lvert e_\theta \rvert / 0.35),\
-      \operatorname{clip}(1.5\,e_\theta)\bigr),
+\bigl(0,\ \omega_{\max}\,\mathrm{sgn}\,e_\theta \bigr),
+  & \lvert e_\theta \rvert > \theta_0, \\[4pt]
+\bigl(v_c\,\kappa(e_\theta),\ \gamma(1.5\,e_\theta) \bigr),
   & \text{otherwise},
 \end{cases}
 ```
 
-reporting success when $`\lVert e \rVert < 0.25`$ m and failure when the elapsed
-time exceeds four times the nominal duration. It halts for anything the laser
-returns within $0.35$ m ahead, which in a static warehouse is always another
-robot — the mechanism that dominates the second report.
+with a turn threshold $`\theta_0 = 0.35`$ rad, a forward-speed taper and an
+angular saturation
+
+```math
+\kappa(e) \;=\; \max\!\left(0.3,\ 1 - \frac{\lvert e \rvert}{\theta_0}\right),
+\qquad
+\gamma(x) \;=\; \max\bigl(-\omega_{\max},\ \min(\omega_{\max},\ x)\bigr).
+```
+
+The performer reports success when $`\lVert e \rVert < 0.25`$ m and failure
+when the elapsed time exceeds four times the nominal duration. It halts for
+anything the laser returns within $0.35$ m ahead, which in a static warehouse is
+always another robot — the mechanism that dominates the second report.
 
 ---
 
