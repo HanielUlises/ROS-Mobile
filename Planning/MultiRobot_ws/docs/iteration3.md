@@ -518,7 +518,7 @@ while the *receiving* agent's link is up, so the age of the claim agent $i$ is
 steering around is bounded by its own outage,
 
 $$
-\operatorname{age}\bigl(g_j \text{ as held by } i\bigr) \;\le\;
+\mathrm{age}\bigl(g_j \text{ as held by } i\bigr) \;\le\;
 T_{\mathrm{down}} \;=\; 25\ \text{s},
 $$
 
